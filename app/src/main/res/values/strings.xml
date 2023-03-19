@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">NeWork</string>
+    <string name="login">LOGIN</string>
+    <string name="password">PASSWORD</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="username">USERNAME</string>
+    <string name="repeat_password">REPEAT PASSWORD</string>
+</resources>

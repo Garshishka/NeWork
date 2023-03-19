@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NeWork</string>
+    <string name="login">ЛОГИН</string>
+    <string name="password">ПАРОЛЬ</string>
+    <string name="sign_in">Авторизоваться</string>
+    <string name="sign_up">Зарегестрироваться</string>
+    <string name="username">ИМЯ ПОЛЬЗОВАТЕЛЯ</string>
+    <string name="repeat_password">ПОВТОРИТЕ ПАРОЛЬ</string>
+</resources>
