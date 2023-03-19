@@ -6,4 +6,6 @@
     <string name="sign_up">Sign Up</string>
     <string name="username">USERNAME</string>
     <string name="repeat_password">REPEAT PASSWORD</string>
+    <string name="login_error">Login Error: :%1$s</string>
+    <string name="login_wrong">Wrong login or password</string>
 </resources>

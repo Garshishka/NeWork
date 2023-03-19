@@ -54,6 +54,22 @@
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DEBUG"
+            />
+        <TextView
+            android:id="@+id/debug_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="id"/>
+        <TextView
+            android:id="@+id/debug_token"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="token"/>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
