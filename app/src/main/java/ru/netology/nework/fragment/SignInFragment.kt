@@ -39,6 +39,10 @@ class SignInFragment : Fragment() {
         binding.apply {
             //DEBUG
             showAuth()
+
+            debugGo.setOnClickListener {
+                findNavController().navigate(R.id.action_fragment_sing_in_to_hilt_PostFeedFragment)
+            }
            //DEBUG
 
             signUpButton.setOnClickListener {

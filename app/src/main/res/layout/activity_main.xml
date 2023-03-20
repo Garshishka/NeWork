@@ -9,7 +9,8 @@
     app:navGraph ="@navigation/nav_main"
     app:defaultNavHost ="true"
     tools:context=".MainActivity"
-    tools:layout="@layout/fragment_sign_in">
+
+    >
 
 
 </androidx.fragment.app.FragmentContainerView>

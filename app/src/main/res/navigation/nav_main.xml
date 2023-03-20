@@ -6,6 +6,12 @@
     app:startDestination="@id/fragment_sing_in">
 
     <fragment
+        android:id="@+id/postFeedFragment"
+        android:name="ru.netology.nework.fragment.PostFeedFragment"
+        android:label="Hilt_PostFeedFragment"
+        tools:layout="@layout/fragment_posts"/>
+
+    <fragment
         android:id="@+id/fragment_sing_in"
         android:name="ru.netology.nework.fragment.SignInFragment"
         android:label="fragment_sing_in"
@@ -13,12 +19,17 @@
         <action
             android:id="@+id/action_fragment_sing_in_to_signUpFragment"
             app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_fragment_sing_in_to_hilt_PostFeedFragment"
+            app:destination="@id/postFeedFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/signUpFragment"
         android:name="ru.netology.nework.fragment.SignUpFragment"
         android:label="SignUpFragment"
         tools:layout="@layout/fragment_sign_up"/>
+
 
 
 </navigation>

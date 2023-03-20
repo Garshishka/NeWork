@@ -14,7 +14,7 @@
         android:src="@drawable/ic_launcher_foreground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@sample/posts_avatars" />
+        tools:srcCompat="@drawable/ic_baseline_error_outline_48" />
 
     <TextView
         android:id="@+id/author"
@@ -104,18 +104,18 @@
         android:contentDescription="@string/description_post_likes"
         android:checkable="true"
         app:icon="@drawable/ic_like_24dp"
-        app:layout_constraintEnd_toStartOf="@id/share"
+        app:layout_constraintEnd_toStartOf="@id/mention"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barrierBottom"
         tools:text="5"
         style="@style/Widget.AppTheme.LikeCheckBox"/>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/share"
+        android:id="@+id/mention"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/picture_size"
         android:layout_marginStart="@dimen/margin_default"
-        android:contentDescription="@string/description_post_shares"
+        android:contentDescription="@string/description_post_mentions"
         app:icon="@drawable/ic_baseline_share_24"
         app:layout_constraintStart_toEndOf="@id/like"
         app:layout_constraintTop_toBottomOf="@id/barrierBottom"
@@ -131,7 +131,7 @@
         app:layout_constraintBottom_toBottomOf="@id/viewsIcon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/viewsIcon"
-        tools:text="@sample/posts.json/data/views" />
+        tools:text="500" />
 
     <ImageButton
         android:id="@+id/viewsIcon"
@@ -160,7 +160,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        app:constraint_referenced_ids="viewsIcon, viewsText, like, share"
+        app:constraint_referenced_ids="viewsIcon, viewsText, like, mention"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,7 +14,7 @@
     <string name="attached_content">Прикрепленное</string>
     <string name="play_video">Показать видео</string>
     <string name="description_post_likes">Нравится</string>
-    <string name="description_post_shares">Поделиться</string>
+    <string name="description_post_mentions">Упоминания</string>
     <string name="description_post_views">Кол-во просмотров</string>
     <string name="not_on_server_yet">Еще не загружено</string>
 </resources>
