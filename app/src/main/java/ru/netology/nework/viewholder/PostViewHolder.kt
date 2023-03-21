@@ -2,9 +2,13 @@ package ru.netology.nework.viewholder
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import ru.netology.nework.R
 import ru.netology.nework.databinding.LayoutPostBinding
 import ru.netology.nework.dto.AttachmentType
 import ru.netology.nework.dto.Post
+import ru.netology.nework.utils.load
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 class PostViewHolder(
     private val binding: LayoutPostBinding
@@ -14,21 +18,30 @@ class PostViewHolder(
         binding.apply {
             //wholePost.setOnClickListener { onInteractionListener.onPostClick(post) }
             author.text = post.author
-            //val publishedTime = Timestamp(post.published.toLong()*1_000)
-            published.text = post.published//Date(publishedTime.time).toString()
+            if(post.authorAvatar!= null){
+                avatar.load(post.authorAvatar, true)
+            }
+            else{
+                avatar.setImageResource(R.drawable.baseline_person_24)
+            }
+            val publishedTime = OffsetDateTime.parse(post.published).toLocalDateTime()
+            val formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd")
+            published.text = publishedTime.format(formatter)
+
             content.text = post.content
-            like.text = formattingBigNumbers(post.likesAmount)
+            like.text = formattingBigNumbers(post.likeOwnerIds.size.toLong())
             like.isChecked = post.likedByMe
             //like.setOnClickListener { onInteractionListener.onLike(post) }
-            mention.text = formattingBigNumbers(post.mentionsAmount)
+            mention.text = formattingBigNumbers(post.mentionIds.size.toLong())
            //mention.setOnClickListener { onInteractionListener.onShare(post) }
             //viewsText.text = formattingBigNumbers(post.views)
 
             if (post.attachment != null) {
                 attachmentPicture.visibility = View.VISIBLE
-               // val attachmentUrl = "${BuildConfig.BASE_URL}/media/${post.attachment.url}"
-               // binding.attachmentPicture.load(attachmentUrl)
+
                 if (post.attachment.type == AttachmentType.IMAGE) {
+                    val attachmentUrl = post.attachment.url
+                    binding.attachmentPicture.load(attachmentUrl)
                     //attachmentPicture.setOnClickListener { onInteractionListener.onPictureClick(post.attachment.url) }
                     playButton.visibility = View.GONE
                 } else {
@@ -63,12 +76,7 @@ class PostViewHolder(
                         }
                     }
                 }.show()
-            }
-
-            val avatarUrl = "${BuildConfig.BASE_URL}/avatars/${post.authorAvatar}"
-            binding.avatar.load(avatarUrl, true)
-
-             */
+            } */
         }
     }
 

@@ -11,10 +11,10 @@
         android:layout_height="@dimen/avatar_size"
         android:layout_margin="@dimen/margin_default"
         android:contentDescription="@string/description_post_author_avatar"
-        android:src="@drawable/ic_launcher_foreground"
+        android:src="@drawable/baseline_person_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@drawable/ic_baseline_error_outline_48" />
+        />
 
     <TextView
         android:id="@+id/author"

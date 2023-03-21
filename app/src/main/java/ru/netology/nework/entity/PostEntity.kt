@@ -17,8 +17,10 @@ data class PostEntity(
     val published: String,
     val coordinates: String = "no coords for now", //TODO(coordinates)
     val link: String?,
-    val likesAmount: Long = 0,
-    val mentionsAmount: Long = 0,
+    //@TypeConverters(IdListConverter::class)
+    val likeOwnerIds: List<Int>,
+   // @TypeConverters(IdListConverter::class)
+    val mentionIds: List<Int>,
     val mentionedMe: Boolean = false,
     val likedByMe: Boolean = false,
     @Embedded
@@ -37,8 +39,8 @@ data class PostEntity(
         published,
         null,
         link,
-        likesAmount,
-        mentionsAmount,
+        likeOwnerIds,
+        mentionIds,
         mentionedMe,
         likedByMe,
         attachment?.toDto(),
@@ -57,8 +59,8 @@ data class PostEntity(
                 dto.published,
                 "coords here",
                 dto.link,
-                dto.likesAmount,
-                dto.mentionsAmount,
+                dto.likeOwnerIds,
+                dto.mentionIds,
                 dto.mentionedMe,
                 dto.likedByMe,
                 AttachmentEmbedabble.fromDto(dto.attachment),
