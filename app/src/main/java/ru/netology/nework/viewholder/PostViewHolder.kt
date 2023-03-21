@@ -1,6 +1,7 @@
 package ru.netology.nework.viewholder
 
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nework.R
 import ru.netology.nework.databinding.LayoutPostBinding
@@ -14,26 +15,31 @@ class PostViewHolder(
     private val binding: LayoutPostBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(post: Post){
+    fun bind(post: Post) {
         binding.apply {
             //wholePost.setOnClickListener { onInteractionListener.onPostClick(post) }
             author.text = post.author
-            if(post.authorAvatar!= null){
+            if (post.authorAvatar != null) {
                 avatar.load(post.authorAvatar, true)
-            }
-            else{
+            } else {
                 avatar.setImageResource(R.drawable.baseline_person_24)
             }
             val publishedTime = OffsetDateTime.parse(post.published).toLocalDateTime()
             val formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd")
             published.text = publishedTime.format(formatter)
-
             content.text = post.content
+            if(post.link != null){
+                link.isVisible = true
+                link.text = post.link
+            }
+            else{
+                link.isVisible = false
+            }
             like.text = formattingBigNumbers(post.likeOwnerIds.size.toLong())
             like.isChecked = post.likedByMe
             //like.setOnClickListener { onInteractionListener.onLike(post) }
             mention.text = formattingBigNumbers(post.mentionIds.size.toLong())
-           //mention.setOnClickListener { onInteractionListener.onShare(post) }
+            //mention.setOnClickListener { onInteractionListener.onShare(post) }
             //viewsText.text = formattingBigNumbers(post.views)
 
             if (post.attachment != null) {

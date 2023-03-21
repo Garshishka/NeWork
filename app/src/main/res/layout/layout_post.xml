@@ -66,12 +66,26 @@
         app:layout_constraintTop_toTopOf="@id/barrierTop"
         tools:text="Some text here" />
 
+    <TextView
+        android:id="@+id/link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/margin_default"
+        android:textStyle="italic"
+        android:linksClickable="true"
+        android:autoLink="all"
+        app:layout_constraintTop_toBottomOf="@id/content"
+        app:layout_constraintBottom_toTopOf="@id/attachmentPicture"
+        tools:text="link"
+        android:visibility="gone"
+        />
+
     <ImageButton
         android:id="@+id/attachmentPicture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_baseline_video"
-        app:layout_constraintTop_toBottomOf="@id/content"
+        app:layout_constraintTop_toBottomOf="@id/link"
         android:contentDescription="@string/attached_content"
         android:visibility="visible"
         />
