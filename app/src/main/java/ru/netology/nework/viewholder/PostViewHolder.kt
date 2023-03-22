@@ -8,12 +8,14 @@ import ru.netology.nework.R
 import ru.netology.nework.databinding.LayoutPostBinding
 import ru.netology.nework.dto.AttachmentType
 import ru.netology.nework.dto.Post
+import ru.netology.nework.utils.OnInteractionListener
 import ru.netology.nework.utils.load
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 class PostViewHolder(
-    private val binding: LayoutPostBinding
+    private val binding: LayoutPostBinding,
+    private val onInteractionListener: OnInteractionListener,
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(post: Post) {
@@ -40,17 +42,39 @@ class PostViewHolder(
             //viewsText.text = formattingBigNumbers(post.views)
 
             if (post.attachment != null) {
-                attachmentPicture.visibility = View.VISIBLE
-
-                if (post.attachment.type == AttachmentType.IMAGE) {
-                    val attachmentUrl = post.attachment.url
-                    binding.attachmentPicture.load(attachmentUrl)
-                    //attachmentPicture.setOnClickListener { onInteractionListener.onPictureClick(post.attachment.url) }
-                    playButton.visibility = View.GONE
-                } else {
-                    //attachmentPicture.setOnClickListener { onInteractionListener.onVideoClick(post) }
+                val attachmentUrl = post.attachment.url
+                when (post.attachment.type) {
+                    AttachmentType.IMAGE -> {
+                        attachmentPicture.visibility = View.VISIBLE
+                        playAttachment.visibility = View.GONE
+                        attachmentPicture.load(attachmentUrl)
+                        attachmentPicture.setOnClickListener {
+                            onInteractionListener.onPictureClick(attachmentUrl)
+                        }
+                    }
+                    AttachmentType.VIDEO -> {
+                        attachmentPicture.visibility = View.GONE
+                        playAttachment.visibility = View.VISIBLE
+                        playAttachment.setImageResource(R.drawable.baseline_video_48)
+                        playAttachment.setOnClickListener {
+                            onInteractionListener.onAttachmentPlayClick(attachmentUrl, true)
+                        }
+                    }
+                    AttachmentType.AUDIO -> {
+                        attachmentPicture.visibility = View.GONE
+                        playAttachment.visibility = View.VISIBLE
+                        playAttachment.setImageResource(R.drawable.baseline_audio_file_48)
+                        playSound.isVisible = true
+                        playAttachment.setOnClickListener {
+                            onInteractionListener.onAttachmentPlayClick(attachmentUrl, false)
+                        }
+                    }
                 }
-            } else attachmentPicture.visibility = View.GONE
+            } else {
+                attachmentPicture.visibility = View.GONE
+                playAttachment.visibility = View.GONE
+                playSound.visibility = View.GONE
+            }
 
             if (post.author == "Me") {
                 notOnServer.visibility = View.VISIBLE
@@ -84,12 +108,11 @@ class PostViewHolder(
     }
 
 
-    private fun<T> ifHaveTextThenShow(view : TextView, param: T?){
-        if(param != null){
+    private fun <T> ifHaveTextThenShow(view: TextView, param: T?) {
+        if (param != null) {
             view.isVisible = true
             view.text = param.toString()
-        }
-        else{
+        } else {
             view.isVisible = false
         }
     }

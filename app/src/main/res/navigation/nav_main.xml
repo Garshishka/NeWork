@@ -9,7 +9,14 @@
         android:id="@+id/postFeedFragment"
         android:name="ru.netology.nework.fragment.PostFeedFragment"
         android:label="Hilt_PostFeedFragment"
-        tools:layout="@layout/fragment_posts"/>
+        tools:layout="@layout/fragment_posts">
+        <action
+            android:id="@+id/action_postFeedFragment_to_pictureFragment"
+            app:destination="@id/pictureFragment" />
+        <action
+            android:id="@+id/action_postFeedFragment_to_playFragment"
+            app:destination="@id/playFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/fragment_sing_in"
@@ -29,7 +36,16 @@
         android:name="ru.netology.nework.fragment.SignUpFragment"
         android:label="SignUpFragment"
         tools:layout="@layout/fragment_sign_up"/>
-
+    <fragment
+        android:id="@+id/pictureFragment"
+        android:name="ru.netology.nework.fragment.PictureFragment"
+        android:label="fragment_picture"
+        tools:layout="@layout/fragment_picture" />
+    <fragment
+        android:id="@+id/playFragment"
+        android:name="ru.netology.nework.fragment.PlayFragment"
+        android:label="fragment_play"
+        tools:layout="@layout/fragment_play" />
 
 
 </navigation>

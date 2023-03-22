@@ -11,10 +11,8 @@ data class Post (
     val coordinates: Coordinates?,
     val link: String?,
     val likeOwnerIds: List<Int>,
-   // val likesAmount: Long = 0,
     //TODO(like and mention list)
     val mentionIds: List<Int>,
-    //val mentionsAmount: Long = 0,
     val mentionedMe: Boolean = false,
     val likedByMe: Boolean = false,
     val attachment: Attachment? = null,

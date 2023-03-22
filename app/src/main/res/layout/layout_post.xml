@@ -95,24 +95,35 @@
     <ImageButton
         android:id="@+id/attachmentPicture"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_video"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_baseline_downloading_48"
         app:layout_constraintTop_toBottomOf="@id/coordinates"
         android:contentDescription="@string/attached_content"
         android:visibility="visible"
         />
 
-    <ImageView
-        android:id="@+id/playButton"
+    <ImageButton
+        android:id="@+id/playAttachment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_play_circle_80"
-        android:contentDescription="@string/play_video"
+        android:src="@drawable/baseline_video_48"
+        android:contentDescription="@string/play_attachment"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/attachmentPicture"
-        app:layout_constraintEnd_toEndOf="@id/attachmentPicture"
-        app:layout_constraintStart_toStartOf="@id/attachmentPicture"
-        app:layout_constraintTop_toTopOf="@id/attachmentPicture"
+        app:layout_constraintTop_toBottomOf="@id/coordinates"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/barrierBottom"
+        />
+    <ImageButton
+        android:id="@+id/playSound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_play_circle_32"
+        android:background="null"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/playAttachment"
+        app:layout_constraintEnd_toEndOf="@id/playAttachment"
+        app:layout_constraintStart_toStartOf="@id/playAttachment"
+        app:layout_constraintBottom_toTopOf="@id/playAttachment"
         />
 
     <androidx.constraintlayout.widget.Barrier

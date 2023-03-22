@@ -12,7 +12,7 @@
     <string name="description_post_author_avatar">Аватар автора поста</string>
     <string name="description_post_menu">Меню поста</string>
     <string name="attached_content">Прикрепленное</string>
-    <string name="play_video">Показать видео</string>
+    <string name="play_attachment">Проиграть файл</string>
     <string name="description_post_likes">Нравится</string>
     <string name="description_post_mentions">Упоминания</string>
     <string name="description_post_views">Кол-во просмотров</string>
