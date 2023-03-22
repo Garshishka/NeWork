@@ -5,14 +5,13 @@ import ru.netology.nework.dto.AttachmentType
 
 data class AttachmentEmbedabble(
     val url: String,
-    //val description: String,
     val type: AttachmentType
 ) {
-    fun toDto() = Attachment(url, /*description,*/ type)
+    fun toDto() = Attachment(url, type)
 
     companion object {
         fun fromDto(dto: Attachment?) = dto?.let {
-            AttachmentEmbedabble(it.url, /*it.description,*/ it.type)
+            AttachmentEmbedabble(it.url, it.type)
         }
     }
 }

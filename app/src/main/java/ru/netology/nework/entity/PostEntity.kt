@@ -3,6 +3,7 @@ package ru.netology.nework.entity
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import ru.netology.nework.dto.Coordinates
 import ru.netology.nework.dto.Post
 
 @Entity
@@ -15,11 +16,10 @@ data class PostEntity(
     val authorJob: String?,
     val content: String,
     val published: String,
-    val coordinates: String = "no coords for now", //TODO(coordinates)
+    val coordinatesLat: String?,
+    val coordinatesLong: String?,
     val link: String?,
-    //@TypeConverters(IdListConverter::class)
     val likeOwnerIds: List<Int>,
-   // @TypeConverters(IdListConverter::class)
     val mentionIds: List<Int>,
     val mentionedMe: Boolean = false,
     val likedByMe: Boolean = false,
@@ -28,7 +28,7 @@ data class PostEntity(
 
     val notOnServer: Boolean = false,
     val show: Boolean = true,
-){
+) {
     fun toDto() = Post(
         id,
         authorId,
@@ -37,14 +37,17 @@ data class PostEntity(
         authorJob,
         content,
         published,
-        null,
+        if (coordinatesLat == null || coordinatesLong == null) {
+            null
+        } else {
+            Coordinates(coordinatesLat, coordinatesLong)
+        },
         link,
         likeOwnerIds,
         mentionIds,
         mentionedMe,
         likedByMe,
         attachment?.toDto(),
-
     )
 
     companion object {
@@ -57,7 +60,8 @@ data class PostEntity(
                 dto.authorJob,
                 dto.content,
                 dto.published,
-                "coords here",
+                dto.coordinates?.lat,
+                dto.coordinates?.long,
                 dto.link,
                 dto.likeOwnerIds,
                 dto.mentionIds,

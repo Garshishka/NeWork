@@ -1,6 +1,7 @@
 package ru.netology.nework.viewholder
 
 import android.view.View
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nework.R
@@ -28,13 +29,9 @@ class PostViewHolder(
             val formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd")
             published.text = publishedTime.format(formatter)
             content.text = post.content
-            if(post.link != null){
-                link.isVisible = true
-                link.text = post.link
-            }
-            else{
-                link.isVisible = false
-            }
+            ifHaveTextThenShow(link, post.link)
+            ifHaveTextThenShow(coordinates, post.coordinates)
+
             like.text = formattingBigNumbers(post.likeOwnerIds.size.toLong())
             like.isChecked = post.likedByMe
             //like.setOnClickListener { onInteractionListener.onLike(post) }
@@ -86,6 +83,16 @@ class PostViewHolder(
         }
     }
 
+
+    private fun<T> ifHaveTextThenShow(view : TextView, param: T?){
+        if(param != null){
+            view.isVisible = true
+            view.text = param.toString()
+        }
+        else{
+            view.isVisible = false
+        }
+    }
 
     private fun formattingBigNumbers(number: Long): String {
         return when (number) {

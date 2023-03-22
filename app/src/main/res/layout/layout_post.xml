@@ -75,8 +75,20 @@
         android:linksClickable="true"
         android:autoLink="all"
         app:layout_constraintTop_toBottomOf="@id/content"
-        app:layout_constraintBottom_toTopOf="@id/attachmentPicture"
+        app:layout_constraintBottom_toTopOf="@id/coordinates"
         tools:text="link"
+        android:visibility="gone"
+        />
+
+    <TextView
+        android:id="@+id/coordinates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/margin_default"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/link"
+        app:layout_constraintBottom_toTopOf="@id/attachmentPicture"
+        tools:text="12.23123321 | 23.323124"
         android:visibility="gone"
         />
 
@@ -85,7 +97,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_baseline_video"
-        app:layout_constraintTop_toBottomOf="@id/link"
+        app:layout_constraintTop_toBottomOf="@id/coordinates"
         android:contentDescription="@string/attached_content"
         android:visibility="visible"
         />
