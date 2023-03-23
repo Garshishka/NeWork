@@ -14,7 +14,6 @@ import ru.netology.nework.R
 import ru.netology.nework.adapter.PostsAdapter
 import ru.netology.nework.databinding.FragmentPostsBinding
 import ru.netology.nework.fragment.PictureFragment.Companion.urlArg
-import ru.netology.nework.fragment.PlayFragment.Companion.isVideoArg
 import ru.netology.nework.utils.OnInteractionListener
 import ru.netology.nework.viewmodel.PostViewModel
 
@@ -26,14 +25,16 @@ class PostFeedFragment : Fragment() {
     lateinit var binding: FragmentPostsBinding
 
     private val onInteractionListener = object : OnInteractionListener {
-        override fun onAttachmentPlayClick(url: String, isVideo: Boolean) {
-            findNavController().navigate(
-                R.id.action_postFeedFragment_to_playFragment,
+        override fun onAudioClick(url: String) {
+            findNavController().navigate(R.id.action_postFeedFragment_to_audioFragment,
                 Bundle().apply
-                {
-                    urlArg = url
-                    isVideoArg = isVideo
-                })
+                { urlArg = url })
+        }
+
+        override fun onVideoClick(url: String) {
+            findNavController().navigate(R.id.action_postFeedFragment_to_playFragment,
+                Bundle().apply
+                { urlArg = url })
         }
 
         override fun onPictureClick(url: String) {
@@ -68,4 +69,5 @@ class PostFeedFragment : Fragment() {
         }
 
     }
+
 }

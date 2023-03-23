@@ -57,23 +57,21 @@ class PostViewHolder(
                         playAttachment.visibility = View.VISIBLE
                         playAttachment.setImageResource(R.drawable.baseline_video_48)
                         playAttachment.setOnClickListener {
-                            onInteractionListener.onAttachmentPlayClick(attachmentUrl, true)
+                            onInteractionListener.onVideoClick(attachmentUrl)
                         }
                     }
                     AttachmentType.AUDIO -> {
                         attachmentPicture.visibility = View.GONE
                         playAttachment.visibility = View.VISIBLE
                         playAttachment.setImageResource(R.drawable.baseline_audio_file_48)
-                        playSound.isVisible = true
                         playAttachment.setOnClickListener {
-                            onInteractionListener.onAttachmentPlayClick(attachmentUrl, false)
+                            onInteractionListener.onAudioClick(attachmentUrl)
                         }
                     }
                 }
             } else {
                 attachmentPicture.visibility = View.GONE
                 playAttachment.visibility = View.GONE
-                playSound.visibility = View.GONE
             }
 
             if (post.author == "Me") {

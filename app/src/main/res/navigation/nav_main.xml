@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_postFeedFragment_to_playFragment"
             app:destination="@id/playFragment" />
+        <action
+            android:id="@+id/action_postFeedFragment_to_audioFragment"
+            app:destination="@id/audioFragment" />
     </fragment>
 
     <fragment
@@ -43,9 +46,14 @@
         tools:layout="@layout/fragment_picture" />
     <fragment
         android:id="@+id/playFragment"
-        android:name="ru.netology.nework.fragment.PlayFragment"
+        android:name="ru.netology.nework.fragment.VideoFragment"
         android:label="fragment_play"
-        tools:layout="@layout/fragment_play" />
+        tools:layout="@layout/fragment_video" />
+    <fragment
+        android:id="@+id/audioFragment"
+        android:name="ru.netology.nework.fragment.AudioFragment"
+        android:label="AudioFragment"
+        tools:layout="@layout/fragment_audio"/>
 
 
 </navigation>

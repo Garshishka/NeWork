@@ -6,39 +6,30 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.MediaController
+import android.widget.ImageView
 import android.widget.VideoView
 import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import ru.netology.nework.databinding.FragmentPlayBinding
-import ru.netology.nework.utils.BooleanArg
+import ru.netology.nework.R
+import ru.netology.nework.databinding.FragmentVideoBinding
 import ru.netology.nework.utils.MediaLifecycleObserver
 import ru.netology.nework.utils.StringArg
 
 
-class PlayFragment : Fragment() {
+class VideoFragment : Fragment() {
     private val mediaObserver = MediaLifecycleObserver()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentPlayBinding.inflate(inflater,container,false)
-
+        val binding = FragmentVideoBinding.inflate(inflater, container, false)
         val player = mediaObserver.mediaPlayer
         val videoPlayer = binding.video
-        if (arguments?.isVideoArg == true){
-            binding.picture.isVisible = false
-            binding.video.isVisible = true
-            arguments?.urlArg?.let { playerPlayVideo(videoPlayer, it) }
-        } else{
-            binding.picture.isVisible = true
-            binding.video.isVisible = false
-            arguments?.urlArg?.let { playerPlaySound(player, it) }
-        }
 
+        arguments?.urlArg?.let { playerPlayVideo(videoPlayer, it, binding.infoIcon) }
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             player?.stop()
@@ -50,20 +41,34 @@ class PlayFragment : Fragment() {
         return binding.root
     }
 
-    fun playerPlayVideo(video: VideoView, url: String){
+    private fun playerPlayVideo(video: VideoView, url: String, infoIcon: ImageView) {
+
         video.apply {
-            setMediaController(MediaController(requireContext()))
             setVideoURI(Uri.parse(url))
             setOnPreparedListener {
+                infoIcon.setImageResource(R.drawable.ic_baseline_play_circle_32)
+
+                //A little hack to show a first frame of a video instead of a black nothing
                 start()
+                pause()
             }
             setOnCompletionListener {
-                stopPlayback()
+                infoIcon.isVisible = true
+                resume()
+            }
+
+            setOnClickListener {
+                if (isPlaying) {
+                    pause()
+                } else {
+                    start()
+                }
+                infoIcon.isVisible = !isPlaying
             }
         }
     }
 
-    fun playerPlaySound(player: MediaPlayer?, url: String){
+    fun playerPlaySound(player: MediaPlayer?, url: String) {
         player?.apply {
             setDataSource(url)
 
@@ -80,6 +85,5 @@ class PlayFragment : Fragment() {
 
     companion object {
         var Bundle.urlArg by StringArg
-        var Bundle.isVideoArg by BooleanArg
     }
 }

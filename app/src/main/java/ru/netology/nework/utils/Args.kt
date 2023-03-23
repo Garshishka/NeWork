@@ -13,13 +13,3 @@ object StringArg : ReadWriteProperty<Bundle, String?> {
         thisRef.putString(property.name, value)
     }
 }
-
-object BooleanArg : ReadWriteProperty<Bundle, Boolean?> {
-    override fun getValue(thisRef: Bundle, property: KProperty<*>) =
-        thisRef.getBoolean(property.name)
-
-    override fun setValue(thisRef: Bundle, property: KProperty<*>, value: Boolean?) {
-        value?.let { thisRef.putBoolean(property.name, it) }
-    }
-
-}

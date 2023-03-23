@@ -3,25 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.PlayFragment">
+    tools:context=".fragment.VideoFragment">
 
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/black" />
 
-    <ImageView
-        android:id="@+id/picture"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/baseline_audio_file_48"
-        />
-
     <VideoView
         android:id="@+id/video"
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        />
+
+
+    <ImageView
+        android:id="@+id/infoIcon"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/video_height"
+        android:src="@drawable/ic_baseline_downloading_48"
         />
 
 </FrameLayout>

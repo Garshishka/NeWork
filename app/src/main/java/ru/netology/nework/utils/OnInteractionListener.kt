@@ -7,6 +7,7 @@ interface OnInteractionListener {
 //    fun onRemove(post: Post) {}
 //    fun onVideoClick(post: Post) {}
 //    fun onPostClick(post: Post) {}
-    fun onAttachmentPlayClick(url: String, isVideo: Boolean)
-    fun onPictureClick(url: String) {}
+    fun onAudioClick(url: String)
+    fun onVideoClick(url: String)
+    fun onPictureClick(url: String)
 }
