@@ -32,7 +32,8 @@ class PostViewHolder(
             published.text = publishedTime.format(formatter)
             content.text = post.content
             ifHaveTextThenShow(link, post.link)
-            ifHaveTextThenShow(coordinates, post.coordinates)
+            println("post ${post.id} est coor? ${post.coords?.lat} | ${post.coords?.long}")
+            ifHaveTextThenShow(coordinates, post.coords)
 
             like.text = formattingBigNumbers(post.likeOwnerIds.size.toLong())
             like.isChecked = post.likedByMe

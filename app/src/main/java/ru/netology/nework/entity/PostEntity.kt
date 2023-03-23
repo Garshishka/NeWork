@@ -3,8 +3,8 @@ package ru.netology.nework.entity
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.netology.nework.dto.Coordinates
 import ru.netology.nework.dto.Post
+import ru.netology.nework.dto.Сoords
 
 @Entity
 data class PostEntity(
@@ -40,7 +40,7 @@ data class PostEntity(
         if (coordinatesLat == null || coordinatesLong == null) {
             null
         } else {
-            Coordinates(coordinatesLat, coordinatesLong)
+            Сoords(coordinatesLat, coordinatesLong)
         },
         link,
         likeOwnerIds,
@@ -60,8 +60,8 @@ data class PostEntity(
                 dto.authorJob,
                 dto.content,
                 dto.published,
-                dto.coordinates?.lat,
-                dto.coordinates?.long,
+                dto.coords?.lat,
+                dto.coords?.long,
                 dto.link,
                 dto.likeOwnerIds,
                 dto.mentionIds,

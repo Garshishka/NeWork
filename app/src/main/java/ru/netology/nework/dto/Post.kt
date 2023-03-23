@@ -8,7 +8,7 @@ data class Post (
     val authorJob: String?,
     val content: String,
     val published: String,
-    val coordinates: Coordinates?,
+    val coords: Сoords?,
     val link: String?,
     val likeOwnerIds: List<Int>,
     //TODO(like and mention list)

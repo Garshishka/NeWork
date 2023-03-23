@@ -28,7 +28,6 @@ class PostRepositoryImpl @Inject constructor(
             throw RuntimeException(response.code().toString())
         }
         val posts = response.body() ?: throw RuntimeException("body is null")
-        println("peep")
         postDao.insert(posts.map(PostEntity.Companion::fromDto))
 
        // postDao.getAllUnsent().forEach { save(it.toDto()) }
