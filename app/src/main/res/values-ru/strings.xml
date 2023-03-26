@@ -17,4 +17,5 @@
     <string name="description_post_mentions">Упоминания</string>
     <string name="description_post_views">Кол-во просмотров</string>
     <string name="not_on_server_yet">Еще не загружено</string>
+    <string name="etc">…</string>
 </resources>

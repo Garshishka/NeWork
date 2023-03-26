@@ -1,6 +1,7 @@
 package ru.netology.nework.viewholder
 
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -8,6 +9,7 @@ import ru.netology.nework.R
 import ru.netology.nework.databinding.LayoutPostBinding
 import ru.netology.nework.dto.AttachmentType
 import ru.netology.nework.dto.Post
+import ru.netology.nework.dto.UserPreview
 import ru.netology.nework.utils.OnInteractionListener
 import ru.netology.nework.utils.load
 import java.time.OffsetDateTime
@@ -32,15 +34,25 @@ class PostViewHolder(
             published.text = publishedTime.format(formatter)
             content.text = post.content
             ifHaveTextThenShow(link, post.link)
-            println("post ${post.id} est coor? ${post.coords?.lat} | ${post.coords?.long}")
             ifHaveTextThenShow(coordinates, post.coords)
 
             like.text = formattingBigNumbers(post.likeOwnerIds.size.toLong())
             like.isChecked = post.likedByMe
             //like.setOnClickListener { onInteractionListener.onLike(post) }
+
+            showAvatarInTrailing(post.likeOwnerIds,0,likeAvatars1,post.users)
+            showAvatarInTrailing(post.likeOwnerIds,1,likeAvatars2,post.users)
+            showAvatarInTrailing(post.likeOwnerIds,2,likeAvatars3,post.users)
+            likeBatchTrail.isVisible = post.likeOwnerIds.size.toLong() > 3
+            println(post.author)
+            post.users.forEach { println("${it.key} | ${it.value.name}|${it.value.avatar}") }
+
             mention.text = formattingBigNumbers(post.mentionIds.size.toLong())
             //mention.setOnClickListener { onInteractionListener.onShare(post) }
-            //viewsText.text = formattingBigNumbers(post.views)
+            showAvatarInTrailing(post.mentionIds,0,mentionAvatars1,post.users)
+            showAvatarInTrailing(post.mentionIds,1,mentionAvatars2,post.users)
+            showAvatarInTrailing(post.mentionIds,2,mentionAvatars3,post.users)
+            mentionBatchTrail.isVisible = post.mentionIds.size.toLong() > 3
 
             if (post.attachment != null) {
                 val attachmentUrl = post.attachment.url
@@ -103,6 +115,26 @@ class PostViewHolder(
                     }
                 }.show()
             } */
+        }
+    }
+
+    private fun showAvatarInTrailing(
+        avatarUserIdList: List<Int>,
+        num: Int,
+        avatar: ImageView,
+        users: Map<Long, UserPreview>
+    ) {
+        if (avatarUserIdList.size > num) {
+            val userId = avatarUserIdList[num].toLong()
+            val user = users[userId]
+            avatar.isVisible = true
+            if (user != null && user.avatar != null) {
+                avatar.load(user.avatar, true)
+            } else {
+                avatar.setImageResource(R.drawable.baseline_avatar_circle_filled_24)
+            }
+        } else {
+            avatar.isVisible = false
         }
     }
 

@@ -6,13 +6,14 @@ import androidx.room.TypeConverters
 import ru.netology.nework.dao.PostDao
 import ru.netology.nework.entity.IdListConverter
 import ru.netology.nework.entity.PostEntity
+import ru.netology.nework.entity.UserMapConverter
 
 @Database(
     entities = [PostEntity::class],
     version = 1,
     exportSchema = false,
 )
-@TypeConverters(IdListConverter::class)
+@TypeConverters(IdListConverter::class, UserMapConverter::class)
 abstract class AppDb : RoomDatabase(){
     abstract fun postDao(): PostDao
 }

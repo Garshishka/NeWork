@@ -4,6 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.netology.nework.dto.Post
+import ru.netology.nework.dto.UserPreview
 import ru.netology.nework.dto.Сoords
 
 @Entity
@@ -25,6 +26,7 @@ data class PostEntity(
     val likedByMe: Boolean = false,
     @Embedded
     val attachment: AttachmentEmbedabble?,
+    val users: Map<Long,UserPreview>,
 
     val notOnServer: Boolean = false,
     val show: Boolean = true,
@@ -48,11 +50,13 @@ data class PostEntity(
         mentionedMe,
         likedByMe,
         attachment?.toDto(),
+        false,
+        users
     )
 
     companion object {
-        fun fromDto(dto: Post, notOnServer: Boolean = false) =
-            PostEntity(
+        fun fromDto(dto: Post, notOnServer: Boolean = false): PostEntity {
+            return PostEntity(
                 dto.id,
                 dto.authorId,
                 dto.author,
@@ -68,6 +72,8 @@ data class PostEntity(
                 dto.mentionedMe,
                 dto.likedByMe,
                 AttachmentEmbedabble.fromDto(dto.attachment),
+                dto.users
             )
+        }
     }
 }

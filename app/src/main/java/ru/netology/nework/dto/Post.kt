@@ -1,5 +1,7 @@
 package ru.netology.nework.dto
 
+import com.google.gson.annotations.SerializedName
+
 data class Post (
     val id: Long,
     val authorId: Long = 0,
@@ -11,11 +13,11 @@ data class Post (
     val coords: Сoords?,
     val link: String?,
     val likeOwnerIds: List<Int>,
-    //TODO(like and mention list)
     val mentionIds: List<Int>,
     val mentionedMe: Boolean = false,
     val likedByMe: Boolean = false,
     val attachment: Attachment? = null,
     val ownedByMe: Boolean = false,
-    //TODO(user list)
+    @SerializedName("users")
+    val users: Map<Long,UserPreview>,
 )

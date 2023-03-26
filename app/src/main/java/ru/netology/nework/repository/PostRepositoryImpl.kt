@@ -23,7 +23,8 @@ class PostRepositoryImpl @Inject constructor(
     ).flow
 
     override suspend fun getAll() {
-        val response = apiService.getAll()
+        //val response = apiService.getAll()
+        val response = apiService.getLatest(2)
         if (!response.isSuccessful) {
             throw RuntimeException(response.code().toString())
         }
