@@ -8,23 +8,34 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nework.R
 import ru.netology.nework.adapter.PostsAdapter
 import ru.netology.nework.databinding.FragmentPostsBinding
+import ru.netology.nework.dto.Post
 import ru.netology.nework.fragment.PictureFragment.Companion.urlArg
 import ru.netology.nework.utils.OnInteractionListener
+import ru.netology.nework.viewmodel.AuthViewModel
 import ru.netology.nework.viewmodel.PostViewModel
 
 @AndroidEntryPoint
 class PostFeedFragment : Fragment() {
     private val viewModel: PostViewModel by activityViewModels()
-
-    //private val authViewModel: AuthViewModel by activityViewModels()
+    private val authViewModel: AuthViewModel by activityViewModels()
     lateinit var binding: FragmentPostsBinding
 
     private val onInteractionListener = object : OnInteractionListener {
+        override fun onEdit(post: Post) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onRemove(post: Post) {
+            viewModel.removeById(post.id)
+        }
+
         override fun onAudioClick(url: String) {
             findNavController().navigate(R.id.action_postFeedFragment_to_audioFragment,
                 Bundle().apply
@@ -68,6 +79,39 @@ class PostFeedFragment : Fragment() {
             }
         }
 
+        lifecycleScope.launchWhenCreated {
+            adapter.loadStateFlow.collectLatest {
+                binding.swiper.isRefreshing =
+                    it.refresh is LoadState.Loading
+            }
+        }
+
+        authViewModel.state.observe(viewLifecycleOwner) {
+            if (it?.id != -1L) {
+                adapter.refresh()
+            }
+        }
+
+        binding.apply {
+            swiper.setOnRefreshListener {
+                adapter.refresh()
+            }
+        }
+
+        viewModel.apply {
+            postsRemoveError.observe(viewLifecycleOwner) {
+                val id = it.second
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.specific_edit_error, it.first),
+                    Snackbar.LENGTH_LONG
+                )
+                    .setAction("Retry") {
+                        viewModel.removeById(id)
+                    }
+                    .show()
+            }
+        }
     }
 
 }
