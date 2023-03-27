@@ -18,4 +18,8 @@
     <string name="description_post_views">Кол-во просмотров</string>
     <string name="not_on_server_yet">Еще не загружено</string>
     <string name="etc">…</string>
+    <string name="edit">Редактировать</string>
+    <string name="remove">Удалить</string>
+    <string name="specific_edit_error">Ошибка:%1$s.\nПопробуйте снова</string>
+    <string name="log_out">Выйти из системы</string>
 </resources>

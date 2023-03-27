@@ -22,15 +22,29 @@ class PostRepositoryImpl @Inject constructor(
         }
     ).flow
 
+    override suspend fun removeById(authToken: String, id: Long) {
+        val removed = postDao.getById(id)
+        postDao.removeById(id)
+        try {
+            val response = apiService.removeById(authToken, id)
+            if (!response.isSuccessful) {
+                postDao.insert(removed)
+                throw RuntimeException(response.code().toString())
+            }
+        } catch (e: Exception) {
+            postDao.insert(removed)
+            throw RuntimeException(e)
+        }
+    }
+
     override suspend fun getAll() {
-        //val response = apiService.getAll()
-        val response = apiService.getLatest(2)
+        val response = apiService.getAll()
         if (!response.isSuccessful) {
             throw RuntimeException(response.code().toString())
         }
         val posts = response.body() ?: throw RuntimeException("body is null")
         postDao.insert(posts.map(PostEntity.Companion::fromDto))
 
-       // postDao.getAllUnsent().forEach { save(it.toDto()) }
+        // postDao.getAllUnsent().forEach { save(it.toDto()) }
     }
 }

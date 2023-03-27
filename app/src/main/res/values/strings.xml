@@ -17,4 +17,8 @@
     <string name="description_post_views">Views</string>
     <string name="not_on_server_yet">Not loaded yet</string>
     <string name="etc">…</string>
+    <string name="edit">Edit</string>
+    <string name="remove">Remove</string>
+    <string name="specific_edit_error">Error:%1$s.\nTry again</string>
+    <string name="log_out">Log out</string>
 </resources>

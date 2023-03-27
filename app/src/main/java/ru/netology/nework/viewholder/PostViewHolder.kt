@@ -3,6 +3,7 @@ package ru.netology.nework.viewholder
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nework.R
@@ -44,8 +45,6 @@ class PostViewHolder(
             showAvatarInTrailing(post.likeOwnerIds,1,likeAvatars2,post.users)
             showAvatarInTrailing(post.likeOwnerIds,2,likeAvatars3,post.users)
             likeBatchTrail.isVisible = post.likeOwnerIds.size.toLong() > 3
-            println(post.author)
-            post.users.forEach { println("${it.key} | ${it.value.name}|${it.value.avatar}") }
 
             mention.text = formattingBigNumbers(post.mentionIds.size.toLong())
             //mention.setOnClickListener { onInteractionListener.onShare(post) }
@@ -95,7 +94,6 @@ class PostViewHolder(
                 bottomGroup.visibility = View.VISIBLE
             }
 
-            /* TODO(POST MENUS)
             menu.isVisible = post.ownedByMe
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
@@ -114,7 +112,7 @@ class PostViewHolder(
                         }
                     }
                 }.show()
-            } */
+            }
         }
     }
 

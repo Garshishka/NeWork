@@ -19,12 +19,13 @@ import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.dto.Post
 import ru.netology.nework.repository.PostRepository
+import ru.netology.nework.utils.SingleLiveEvent
 import javax.inject.Inject
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
     private val repository: PostRepository,
-    appAuth: AppAuth
+    private val appAuth: AppAuth
 ) : ViewModel() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -44,6 +45,10 @@ class PostViewModel @Inject constructor(
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
+    private val _postsRemoveError = SingleLiveEvent<Pair<String, Long>>()
+    val postsRemoveError: LiveData<Pair<String, Long>>
+        get() = _postsRemoveError
+
     init {
         load()
     }
@@ -55,6 +60,15 @@ class PostViewModel @Inject constructor(
             _dataState.value = FeedModelState.Idle
         } catch (e: Exception) {
             _dataState.value = FeedModelState.Error
+        }
+    }
+
+    fun removeById(id: Long) = viewModelScope.launch {
+        try {
+            appAuth.getToken()?.let { repository.removeById(it, id) }
+        } catch (e: Exception) {
+            println(e.message)
+            _postsRemoveError.postValue(e.message.toString() to id)
         }
     }
 }

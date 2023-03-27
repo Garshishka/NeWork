@@ -13,6 +13,9 @@ interface ApiService {
     @GET("posts/latest")
     suspend fun getLatest(@Query("count") count: Int): Response<List<Post>>
 
+    @DELETE("posts/{id}")
+    suspend fun removeById(@Header("auth") auth: String, @Path("id") id: Long): Response<Unit>
+
     @GET("posts/{post_id}/before")
     suspend fun getBefore(
         @Path("post_id") id: String,
