@@ -3,7 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_main"
-    app:startDestination="@id/fragment_sing_in">
+    app:startDestination="@id/postFeedFragment">
+
+    <fragment
+        android:id="@+id/postFeedFragment"
+        android:name="ru.netology.nework.fragment.PostFeedFragment"
+        android:label="Hilt_PostFeedFragment"
+        tools:layout="@layout/fragment_posts">
+        <action
+            android:id="@+id/action_postFeedFragment_to_pictureFragment"
+            app:destination="@id/pictureFragment" />
+        <action
+            android:id="@+id/action_postFeedFragment_to_playFragment"
+            app:destination="@id/playFragment" />
+        <action
+            android:id="@+id/action_postFeedFragment_to_audioFragment"
+            app:destination="@id/audioFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/fragment_sing_in"
@@ -13,12 +29,31 @@
         <action
             android:id="@+id/action_fragment_sing_in_to_signUpFragment"
             app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_fragment_sing_in_to_hilt_PostFeedFragment"
+            app:destination="@id/postFeedFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/signUpFragment"
         android:name="ru.netology.nework.fragment.SignUpFragment"
         android:label="SignUpFragment"
         tools:layout="@layout/fragment_sign_up"/>
+    <fragment
+        android:id="@+id/pictureFragment"
+        android:name="ru.netology.nework.fragment.PictureFragment"
+        android:label="fragment_picture"
+        tools:layout="@layout/fragment_picture" />
+    <fragment
+        android:id="@+id/playFragment"
+        android:name="ru.netology.nework.fragment.VideoFragment"
+        android:label="fragment_play"
+        tools:layout="@layout/fragment_video" />
+    <fragment
+        android:id="@+id/audioFragment"
+        android:name="ru.netology.nework.fragment.AudioFragment"
+        android:label="AudioFragment"
+        tools:layout="@layout/fragment_audio"/>
 
 
 </navigation>

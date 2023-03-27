@@ -8,4 +8,13 @@
     <string name="repeat_password">REPEAT PASSWORD</string>
     <string name="login_error">Login Error: :%1$s</string>
     <string name="login_wrong">Wrong login or password</string>
+    <string name="description_post_author_avatar">Post author avatar</string>
+    <string name="description_post_menu">Post menu</string>
+    <string name="attached_content">Attached</string>
+    <string name="play_attachment">Play attachment</string>
+    <string name="description_post_likes">Like</string>
+    <string name="description_post_mentions">Mentions</string>
+    <string name="description_post_views">Views</string>
+    <string name="not_on_server_yet">Not loaded yet</string>
+    <string name="etc">…</string>
 </resources>

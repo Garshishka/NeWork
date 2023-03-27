@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="margin_default">16dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
     <dimen name="text_width">250dp</dimen>
+    <dimen name="avatar_size">56dp</dimen>
+    <dimen name="picture_size">36dp</dimen>
+    <dimen name="video_height">200dp</dimen>
 </resources>
