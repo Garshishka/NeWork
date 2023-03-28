@@ -4,7 +4,7 @@
     <string name="login">ЛОГИН</string>
     <string name="password">ПАРОЛЬ</string>
     <string name="sign_in">Авторизоваться</string>
-    <string name="sign_up">Зарегестрироваться</string>
+    <string name="sign_up">Зарегистрироваться</string>
     <string name="username">ИМЯ ПОЛЬЗОВАТЕЛЯ</string>
     <string name="repeat_password">ПОВТОРИТЕ ПАРОЛЬ</string>
     <string name="login_error">Ошибка авторизации: :%1$s</string>
@@ -22,4 +22,9 @@
     <string name="remove">Удалить</string>
     <string name="specific_edit_error">Ошибка:%1$s.\nПопробуйте снова</string>
     <string name="log_out">Выйти из системы</string>
+    <string name="add_post">Добавить пост</string>
+    <string name="select_photo">Выбрать фото</string>
+    <string name="take_photo">Сделать фото</string>
+    <string name="removePhoto">Удалить фото</string>
+    <string name="specific_posting_error">Код ошибки:%1$s Попробуйте отправить сообщение снова</string>
 </resources>

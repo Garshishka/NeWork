@@ -6,15 +6,17 @@ import ru.netology.nework.auth.AuthPair
 import ru.netology.nework.dto.Post
 
 interface ApiService {
-
     @GET("posts")
     suspend fun getAll(): Response<List<Post>>
 
-    @GET("posts/latest")
-    suspend fun getLatest(@Query("count") count: Int): Response<List<Post>>
+    @POST("posts")
+    suspend fun save(@Header("auth") auth: String, @Body post: Post): Response<Post>
 
     @DELETE("posts/{id}")
     suspend fun removeById(@Header("auth") auth: String, @Path("id") id: Long): Response<Unit>
+
+    @GET("posts/latest")
+    suspend fun getLatest(@Query("count") count: Int): Response<List<Post>>
 
     @GET("posts/{post_id}/before")
     suspend fun getBefore(

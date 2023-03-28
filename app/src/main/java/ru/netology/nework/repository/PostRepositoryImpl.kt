@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import ru.netology.nework.api.ApiService
 import ru.netology.nework.dao.PostDao
+import ru.netology.nework.dto.Post
 import ru.netology.nework.entity.PostEntity
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -33,6 +34,22 @@ class PostRepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             postDao.insert(removed)
+            throw RuntimeException(e)
+        }
+    }
+
+    override suspend fun save(post: Post, authToken: String) {
+        postDao.save(PostEntity.fromDto(post, true))
+        try {
+            val response = apiService.save(authToken, post)
+            if (!response.isSuccessful) {
+                throw RuntimeException(
+                    response.code().toString()
+                )
+            }
+            val body = response.body() ?: throw RuntimeException("body is null")
+            postDao.insert(PostEntity.fromDto(body))
+        } catch (e: Exception) {
             throw RuntimeException(e)
         }
     }

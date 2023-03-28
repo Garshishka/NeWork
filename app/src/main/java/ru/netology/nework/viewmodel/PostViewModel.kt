@@ -27,6 +27,7 @@ class PostViewModel @Inject constructor(
     private val repository: PostRepository,
     private val appAuth: AppAuth
 ) : ViewModel() {
+    val edited = MutableLiveData(empty)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val data: Flow<PagingData<Post>> = appAuth
@@ -45,9 +46,17 @@ class PostViewModel @Inject constructor(
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
+    private val _postCreated = SingleLiveEvent<Unit>()
+    val postCreated: LiveData<Unit>
+        get() = _postCreated
+    private val _postCreatedError = SingleLiveEvent<Pair<String, Post>>()
+    val postCreatedError: LiveData<Pair<String, Post>>
+        get() = _postCreatedError
     private val _postsRemoveError = SingleLiveEvent<Pair<String, Long>>()
     val postsRemoveError: LiveData<Pair<String, Long>>
         get() = _postsRemoveError
+
+    var draft = ""
 
     init {
         load()
@@ -63,6 +72,42 @@ class PostViewModel @Inject constructor(
         }
     }
 
+    fun changeContent(content: String) {
+        edited.value?.let {
+            val text = content.trim()
+            if (it.content == text) {
+                return
+            }
+            edited.value = it.copy(content = text)
+        }
+    }
+
+    fun save() = viewModelScope.launch {
+        edited.value?.let {
+            try {
+//                when (_photo.value) {
+//                    noPhoto -> repository.save(it)
+//                    else -> _photo.value?.file?.let { file ->
+//                        repository.saveWithAttachment(it, file)
+//                    }
+//                }
+                appAuth.getToken()?.let { it1 -> repository.save(it, it1) }
+                _postCreated.postValue(Unit)
+                empty()
+            } catch (e: Exception) {
+                _postCreatedError.postValue(e.message.toString() to it)
+            }
+        }
+    }
+
+    fun edit(post: Post) {
+        edited.value = post
+    }
+
+    fun empty() {
+        edited.value = empty
+    }
+
     fun removeById(id: Long) = viewModelScope.launch {
         try {
             appAuth.getToken()?.let { repository.removeById(it, id) }
@@ -72,3 +117,11 @@ class PostViewModel @Inject constructor(
         }
     }
 }
+
+private val empty = Post(
+    id = 0,
+    content = "",
+    author = "Me",
+    authorAvatar = null,
+    published = "",
+)

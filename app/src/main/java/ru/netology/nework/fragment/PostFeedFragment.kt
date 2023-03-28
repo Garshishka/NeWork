@@ -1,5 +1,6 @@
 package ru.netology.nework.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import ru.netology.nework.R
 import ru.netology.nework.adapter.PostsAdapter
 import ru.netology.nework.databinding.FragmentPostsBinding
 import ru.netology.nework.dto.Post
+import ru.netology.nework.fragment.NewPostFragment.Companion.textArg
 import ru.netology.nework.fragment.PictureFragment.Companion.urlArg
 import ru.netology.nework.utils.OnInteractionListener
 import ru.netology.nework.viewmodel.AuthViewModel
@@ -29,7 +31,10 @@ class PostFeedFragment : Fragment() {
 
     private val onInteractionListener = object : OnInteractionListener {
         override fun onEdit(post: Post) {
-            TODO("Not yet implemented")
+            findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment,
+                Bundle().apply
+                { textArg = post.content })
+            viewModel.edit(post)
         }
 
         override fun onRemove(post: Post) {
@@ -96,9 +101,31 @@ class PostFeedFragment : Fragment() {
             swiper.setOnRefreshListener {
                 adapter.refresh()
             }
+
+            addPostButton.setOnClickListener {
+                val token = context?.getSharedPreferences("auth", Context.MODE_PRIVATE)
+                    ?.getString("TOKEN_KEY", null)
+                if (token == null) {
+                    //TODO sign in dialog
+                } else {
+                    findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
+                }
+            }
         }
 
         viewModel.apply {
+            postCreatedError.observe(viewLifecycleOwner) {
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.specific_posting_error, it),
+                    Snackbar.LENGTH_LONG
+                )
+                    .setAction("Retry post") {
+                        viewModel.load()
+                    }
+                    .show()
+            }
+
             postsRemoveError.observe(viewLifecycleOwner) {
                 val id = it.second
                 Snackbar.make(

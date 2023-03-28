@@ -47,6 +47,9 @@
         <action
             android:id="@+id/action_postFeedFragment_to_audioFragment"
             app:destination="@id/audioFragment" />
+        <action
+            android:id="@+id/action_postFeedFragment_to_newPostFragment"
+            app:destination="@id/newPostFragment" />
     </fragment>
     <fragment
         android:id="@+id/fragment_sing_in"
@@ -57,6 +60,11 @@
             android:id="@+id/action_fragment_sing_in_to_signUpFragment"
             app:destination="@id/signUpFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/newPostFragment"
+        android:name="ru.netology.nework.fragment.NewPostFragment"
+        android:label="NewPostFragment"
+        tools:layout="@layout/fragment_new_post"/>
 
 
 </navigation>

@@ -9,5 +9,7 @@ interface PostRepository {
 
     suspend fun removeById(authToken: String, id: Long)
 
+    suspend fun save(post: Post, authToken: String)
+
     suspend fun getAll()
 }
