@@ -1,13 +1,16 @@
 package ru.netology.nework.fragment
 
+import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.activity.addCallback
+import androidx.appcompat.app.AlertDialog
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import ru.netology.nework.R
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.databinding.FragmentNewPostBinding
 import ru.netology.nework.utils.AndroidUtils
@@ -40,12 +43,12 @@ class NewPostFragment : Fragment() {
         }
         binding.edit.requestFocus()
 
-        subscribe()
+        subscribe(isEditing)
 
         return binding.root
     }
 
-    private fun subscribe() {
+    private fun subscribe(isEditing: Boolean) {
         binding.apply {
             sendButton.setOnClickListener {
                 viewModel.draft = ""
@@ -58,6 +61,50 @@ class NewPostFragment : Fragment() {
                 AndroidUtils.hideKeyboard(requireView())
             }
         }
+
+        activity?.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.logOut -> {
+                        context?.let { showLogOutDialog(it) }
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner)
+
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            if (!isEditing) {
+                viewModel.draft = binding.edit.text.toString()
+            }
+            findNavController().navigateUp()
+        }
+    }
+
+    private fun showLogOutDialog(context: Context) {
+        val alertDialog: AlertDialog = this.let {
+            val builder = AlertDialog.Builder(context)
+            builder.apply {
+                setTitle(R.string.logging_out)
+                setMessage(getString(R.string.dialog_log_out))
+                setPositiveButton(
+                    getString(R.string.log_out)
+                ) { _, _ ->
+                    appAuth.removeAuth()
+                    findNavController().navigateUp()
+                }
+                setNegativeButton(
+                    getString(R.string.back)
+                ) { _, _ ->
+                }
+            }
+            builder.create()
+        }
+        alertDialog.show()
     }
 
     companion object {

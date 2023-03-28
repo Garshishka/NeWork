@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -106,7 +107,7 @@ class PostFeedFragment : Fragment() {
                 val token = context?.getSharedPreferences("auth", Context.MODE_PRIVATE)
                     ?.getString("TOKEN_KEY", null)
                 if (token == null) {
-                    //TODO sign in dialog
+                    context?.let { it1 -> showSignInDialog(it1) }
                 } else {
                     findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
                 }
@@ -139,6 +140,32 @@ class PostFeedFragment : Fragment() {
                     .show()
             }
         }
+    }
+
+    private fun showSignInDialog(context: Context) {
+        val alertDialog: AlertDialog = this.let {
+            val builder = AlertDialog.Builder(context)
+            builder.apply {
+                setTitle(R.string.authorization_required)
+                setMessage(getString(R.string.dialog_sign_in))
+                setPositiveButton(
+                    getString(R.string.sign_in)
+                ) { _, _ ->
+                    findNavController().navigate(R.id.action_global_fragment_sing_in)
+                }
+                setNeutralButton(
+                    getString(R.string.back)
+                ) {_, _ ->
+                }
+                setNegativeButton(
+                    getString(R.string.sign_up)
+                ) { _, _ ->
+                    findNavController().navigate(R.id.action_global_signUpFragment)
+                }
+            }
+            builder.create()
+        }
+        alertDialog.show()
     }
 
 }

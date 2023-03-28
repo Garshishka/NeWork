@@ -26,4 +26,9 @@
     <string name="take_photo">Take photo</string>
     <string name="removePhoto">Remove photo</string>
     <string name="specific_posting_error">Error code:%1$s Try sending the message again</string>
+    <string name="back">Back</string>
+    <string name="authorization_required">Authorization required</string>
+    <string name="dialog_sign_in">You are not authorized. Please sign in or sign up.</string>
+    <string name="logging_out">Logging out</string>
+    <string name="dialog_log_out">Are you sure you want to log out?</string>
 </resources>
