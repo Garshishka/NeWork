@@ -1,5 +1,6 @@
 package ru.netology.nework.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,9 +18,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.FeedModelState
+import ru.netology.nework.dto.PhotoModel
 import ru.netology.nework.dto.Post
 import ru.netology.nework.repository.PostRepository
 import ru.netology.nework.utils.SingleLiveEvent
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,6 +48,10 @@ class PostViewModel @Inject constructor(
     private val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
     val dataState: LiveData<FeedModelState>
         get() = _dataState
+
+    private val _photo = MutableLiveData(noPhoto)
+    val photo: LiveData<PhotoModel>
+        get() = _photo
 
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
@@ -84,18 +91,21 @@ class PostViewModel @Inject constructor(
 
     fun save() = viewModelScope.launch {
         edited.value?.let {
-            try {
-//                when (_photo.value) {
-//                    noPhoto -> repository.save(it)
-//                    else -> _photo.value?.file?.let { file ->
-//                        repository.saveWithAttachment(it, file)
-//                    }
-//                }
-                appAuth.getToken()?.let { it1 -> repository.save(it, it1) }
-                _postCreated.postValue(Unit)
-                empty()
-            } catch (e: Exception) {
-                _postCreatedError.postValue(e.message.toString() to it)
+            appAuth.getToken()?.let { token ->
+                try {
+                    when (_photo.value) {
+                        noPhoto -> repository.save(it, token)
+                        else -> _photo.value?.file?.let { file ->
+                            repository.saveWithAttachment(it, file, token)
+                        }
+                    }
+                    //appAuth.getToken()?.let { it1 -> repository.save(it, it1) }
+                    _postCreated.postValue(Unit)
+                    empty()
+                } catch (e: Exception) {
+                    println(e.message.toString())
+                    _postCreatedError.postValue(e.message.toString() to it)
+                }
             }
         }
     }
@@ -116,6 +126,14 @@ class PostViewModel @Inject constructor(
             _postsRemoveError.postValue(e.message.toString() to id)
         }
     }
+
+    fun changePhoto(fileUri: Uri?, toFile: File?) {
+        _photo.value = PhotoModel(fileUri, toFile)
+    }
+
+    fun deletePhoto() {
+        _photo.value = noPhoto
+    }
 }
 
 private val empty = Post(
@@ -125,3 +143,5 @@ private val empty = Post(
     authorAvatar = null,
     published = "",
 )
+
+private val noPhoto = PhotoModel(null, null)

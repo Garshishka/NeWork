@@ -1,8 +1,10 @@
 package ru.netology.nework.api
 
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 import ru.netology.nework.auth.AuthPair
+import ru.netology.nework.dto.MediaUpload
 import ru.netology.nework.dto.Post
 
 interface ApiService {
@@ -11,6 +13,10 @@ interface ApiService {
 
     @POST("posts")
     suspend fun save(@Header("auth") auth: String, @Body post: Post): Response<Post>
+
+    @Multipart
+    @POST("media")
+    suspend fun upload(@Header("auth") auth: String, @Part file: MultipartBody.Part): Response<MediaUpload>
 
     @DELETE("posts/{id}")
     suspend fun removeById(@Header("auth") auth: String, @Path("id") id: Long): Response<Unit>

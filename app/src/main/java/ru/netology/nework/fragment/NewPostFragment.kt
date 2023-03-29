@@ -4,8 +4,11 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.activity.addCallback
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.MenuProvider
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -49,6 +52,17 @@ class NewPostFragment : Fragment() {
     }
 
     private fun subscribe(isEditing: Boolean) {
+        val pickMedia =
+            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+
+                if (uri != null) {
+                    viewModel.changePhoto(uri,
+                        context?.let { AndroidUtils.fileFromContentUri(it, uri) }) //File(uri.path))
+                } else {
+                    println("No media selected")
+                }
+            }
+
         binding.apply {
             sendButton.setOnClickListener {
                 viewModel.draft = ""
@@ -59,6 +73,19 @@ class NewPostFragment : Fragment() {
                     findNavController().navigateUp()
                 }
                 AndroidUtils.hideKeyboard(requireView())
+            }
+            pickPhoto.setOnClickListener {
+                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
+            }
+            removePhoto.setOnClickListener {
+                viewModel.deletePhoto()
+            }
+        }
+
+        viewModel.photo.observe(viewLifecycleOwner) {
+            binding.apply {
+                binding.photo.setImageURI(it.uri)
+                binding.photoContainer.isVisible = it.uri != null
             }
         }
 
