@@ -30,16 +30,21 @@ class PostViewHolder(
             } else {
                 avatar.setImageResource(R.drawable.baseline_person_24)
             }
-            val publishedTime = OffsetDateTime.parse(post.published).toLocalDateTime()
-            val formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd")
-            published.text = publishedTime.format(formatter)
+            try {
+                val publishedTime = OffsetDateTime.parse(post.published).toLocalDateTime()
+                val formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd")
+                published.text = publishedTime.format(formatter)
+            } catch (e: Exception){
+                println(e.message)
+                published.text = "now"
+            }
             content.text = post.content
             ifHaveTextThenShow(link, post.link)
             ifHaveTextThenShow(coordinates, post.coords)
 
             like.text = formattingBigNumbers(post.likeOwnerIds.size.toLong())
             like.isChecked = post.likedByMe
-            //like.setOnClickListener { onInteractionListener.onLike(post) }
+            like.setOnClickListener { onInteractionListener.onLike(post) }
 
             showAvatarInTrailing(post.likeOwnerIds,0,likeAvatars1,post.users)
             showAvatarInTrailing(post.likeOwnerIds,1,likeAvatars2,post.users)

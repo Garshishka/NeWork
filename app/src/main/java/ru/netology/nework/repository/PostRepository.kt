@@ -13,7 +13,9 @@ interface PostRepository {
 
     suspend fun save(post: Post, authToken: String)
 
-    suspend fun getAll()
+    suspend fun likeById(id: Long, willLike: Boolean, authToken: String): Post
+
+    suspend fun getAll(authToken: String?)
 
     suspend fun saveWithAttachment(post: Post, file: File, authToken: String, attachmentType: AttachmentType)
 }

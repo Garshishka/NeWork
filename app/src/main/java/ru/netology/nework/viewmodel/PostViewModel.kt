@@ -63,6 +63,9 @@ class PostViewModel @Inject constructor(
     private val _postsRemoveError = SingleLiveEvent<Pair<String, Long>>()
     val postsRemoveError: LiveData<Pair<String, Long>>
         get() = _postsRemoveError
+    private val _postsLikeError = SingleLiveEvent<Pair<String, Pair<Long, Boolean>>>()
+    val postsLikeError: LiveData<Pair<String, Pair<Long, Boolean>>>
+        get() = _postsLikeError
 
     var draft = ""
 
@@ -73,10 +76,18 @@ class PostViewModel @Inject constructor(
     fun load(isRefreshing: Boolean = false) = viewModelScope.launch {
         _dataState.value = if (isRefreshing) FeedModelState.Refreshing else FeedModelState.Loading
         try {
-            repository.getAll()
+            repository.getAll(appAuth.getToken())
             _dataState.value = FeedModelState.Idle
         } catch (e: Exception) {
             _dataState.value = FeedModelState.Error
+        }
+    }
+
+    fun likeById(id: Long, likedByMe: Boolean) = viewModelScope.launch {
+        try {
+            appAuth.getToken()?.let { repository.likeById(id, !likedByMe, it) }
+        } catch (e: Exception) {
+            _postsLikeError.postValue(e.toString() to (id to likedByMe))
         }
     }
 
@@ -97,7 +108,12 @@ class PostViewModel @Inject constructor(
                     when (_attachmnet.value) {
                         noMedia -> repository.save(it, token)
                         else -> _attachmnet.value?.file?.let { file ->
-                            repository.saveWithAttachment(it, file, token, _attachmnet.value!!.attachmentType)
+                            repository.saveWithAttachment(
+                                it,
+                                file,
+                                token,
+                                _attachmnet.value!!.attachmentType
+                            )
                         }
                     }
                     //appAuth.getToken()?.let { it1 -> repository.save(it, it1) }

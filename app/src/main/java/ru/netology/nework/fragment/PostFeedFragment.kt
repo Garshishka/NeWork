@@ -31,6 +31,16 @@ class PostFeedFragment : Fragment() {
     lateinit var binding: FragmentPostsBinding
 
     private val onInteractionListener = object : OnInteractionListener {
+        override fun onLike(post: Post) {
+            val token = context?.getSharedPreferences("auth", Context.MODE_PRIVATE)
+                ?.getString("TOKEN_KEY", null)
+            if (token == null) {
+                context?.let { showSignInDialog(it) }
+            } else {
+                viewModel.likeById(post.id, post.likedByMe)
+            }
+        }
+
         override fun onEdit(post: Post) {
             findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment,
                 Bundle().apply
@@ -107,7 +117,7 @@ class PostFeedFragment : Fragment() {
                 val token = context?.getSharedPreferences("auth", Context.MODE_PRIVATE)
                     ?.getString("TOKEN_KEY", null)
                 if (token == null) {
-                    context?.let { it1 -> showSignInDialog(it1) }
+                    context?.let { context -> showSignInDialog(context) }
                 } else {
                     findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
                 }
@@ -136,6 +146,20 @@ class PostFeedFragment : Fragment() {
                 )
                     .setAction("Retry") {
                         viewModel.removeById(id)
+                    }
+                    .show()
+            }
+
+            postsLikeError.observe(viewLifecycleOwner) {
+                val id = it.second.first
+                val willLike = it.second.second
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.specific_edit_error, it.first),
+                    Snackbar.LENGTH_LONG
+                )
+                    .setAction("Retry") {
+                        viewModel.likeById(id, willLike)
                     }
                     .show()
             }

@@ -14,15 +14,30 @@ interface ApiService {
     @POST("posts")
     suspend fun save(@Header("auth") auth: String, @Body post: Post): Response<Post>
 
+    @POST("posts/{id}/likes ")
+    suspend fun likeById(@Header("auth") auth: String, @Path("id") id: Long): Response<Post>
+
+    @DELETE("posts/{id}/likes ")
+    suspend fun dislikeById(@Header("auth") auth: String, @Path("id") id: Long): Response<Post>
+
     @Multipart
     @POST("media")
-    suspend fun upload(@Header("auth") auth: String, @Part file: MultipartBody.Part): Response<MediaUpload>
+    suspend fun upload(
+        @Header("auth") auth: String,
+        @Part file: MultipartBody.Part
+    ): Response<MediaUpload>
 
     @DELETE("posts/{id}")
     suspend fun removeById(@Header("auth") auth: String, @Path("id") id: Long): Response<Unit>
 
     @GET("posts/latest")
     suspend fun getLatest(@Query("count") count: Int): Response<List<Post>>
+
+    @GET("posts/{id}/after")
+    suspend fun getAfter(
+        @Path("post_id") id: String,
+        @Query("count") count: Int,
+    ): Response<List<Post>>
 
     @GET("posts/{post_id}/before")
     suspend fun getBefore(
