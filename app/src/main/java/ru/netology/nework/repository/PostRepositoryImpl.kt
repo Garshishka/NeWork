@@ -71,11 +71,11 @@ class PostRepositoryImpl @Inject constructor(
         // postDao.getAllUnsent().forEach { save(it.toDto()) }
     }
 
-    override suspend fun saveWithAttachment(post: Post, file: File, authToken: String) {
+    override suspend fun saveWithAttachment(post: Post, file: File, authToken: String, attachmentType: AttachmentType) {
         try {
             val upload = upload(file, authToken)
             val postWithAttachment =
-                post.copy(attachment = Attachment(upload.url, AttachmentType.IMAGE))
+                post.copy(attachment = Attachment(upload.url, attachmentType))
             save(postWithAttachment, authToken)
         } catch (e: Exception) {
             throw RuntimeException(e)

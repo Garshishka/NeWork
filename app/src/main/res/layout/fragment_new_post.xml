@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:id="@+id/buttonPanel"
@@ -23,13 +24,13 @@
             app:icon="@drawable/baseline_image_24" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/takePhoto"
+            android:id="@+id/pickVideo"
             style="@style/Widget.AppTheme.GrayButtons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/take_photo"
+            android:contentDescription="@string/select_video"
             android:padding="@dimen/margin_default"
-            app:icon="@drawable/baseline_camera_24" />
+            app:icon="@drawable/baseline_video_24" />
 
     </LinearLayout>
 
@@ -55,25 +56,27 @@
                 android:gravity="start|top"
                 android:inputType="textMultiLine" />
 
-            <FrameLayout
+            <LinearLayout
                 android:id="@+id/photoContainer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/removeAttachment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:text="@string/removePhoto" />
 
                 <ImageView
                     android:id="@+id/photo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
+                    tools:src ="@drawable/baseline_video_48"
                     />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/removePhoto"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|bottom"
-                    android:text="@string/removePhoto" />
-            </FrameLayout>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

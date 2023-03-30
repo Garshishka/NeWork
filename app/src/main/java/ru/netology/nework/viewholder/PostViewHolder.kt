@@ -80,6 +80,7 @@ class PostViewHolder(
                             onInteractionListener.onAudioClick(attachmentUrl)
                         }
                     }
+                    else -> {}
                 }
             } else {
                 attachmentPicture.visibility = View.GONE

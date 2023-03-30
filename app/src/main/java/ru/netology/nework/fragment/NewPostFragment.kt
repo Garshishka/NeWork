@@ -16,6 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nework.R
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.databinding.FragmentNewPostBinding
+import ru.netology.nework.dto.AttachmentType
 import ru.netology.nework.utils.AndroidUtils
 import ru.netology.nework.utils.StringArg
 import ru.netology.nework.viewmodel.PostViewModel
@@ -52,12 +53,25 @@ class NewPostFragment : Fragment() {
     }
 
     private fun subscribe(isEditing: Boolean) {
-        val pickMedia =
+        val pickImageContract =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-
                 if (uri != null) {
-                    viewModel.changePhoto(uri,
-                        context?.let { AndroidUtils.fileFromContentUri(it, uri) }) //File(uri.path))
+                    viewModel.changeMedia(uri,
+                        context?.let { AndroidUtils.fileFromContentUri(it, uri) },
+                        AttachmentType.IMAGE
+                    )
+                } else {
+                    println("No media selected")
+                }
+            }
+
+        val pickVideoContract =
+            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                if (uri != null) {
+                    viewModel.changeMedia(uri,
+                        context?.let { AndroidUtils.fileFromContentUri(it, uri) },
+                        AttachmentType.VIDEO
+                    )
                 } else {
                     println("No media selected")
                 }
@@ -75,17 +89,25 @@ class NewPostFragment : Fragment() {
                 AndroidUtils.hideKeyboard(requireView())
             }
             pickPhoto.setOnClickListener {
-                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
+                pickImageContract.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             }
-            removePhoto.setOnClickListener {
-                viewModel.deletePhoto()
+            pickVideo.setOnClickListener {
+                pickVideoContract.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
+            }
+            removeAttachment.setOnClickListener {
+                viewModel.deleteMedia()
             }
         }
 
-        viewModel.photo.observe(viewLifecycleOwner) {
+        viewModel.attachment.observe(viewLifecycleOwner) {
             binding.apply {
-                binding.photo.setImageURI(it.uri)
-                binding.photoContainer.isVisible = it.uri != null
+                when (it.attachmentType) {
+                    AttachmentType.IMAGE -> photo.setImageURI(it.uri)
+                    AttachmentType.VIDEO -> photo.setImageResource(R.drawable.baseline_video_48)
+                    AttachmentType.AUDIO -> photo.setImageResource(R.drawable.baseline_audio_file_48)
+                    else -> {}
+                }
+                photoContainer.isVisible = it.uri != null
             }
         }
 

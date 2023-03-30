@@ -2,6 +2,7 @@ package ru.netology.nework.repository
 
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
+import ru.netology.nework.dto.AttachmentType
 import ru.netology.nework.dto.Post
 import java.io.File
 
@@ -14,5 +15,5 @@ interface PostRepository {
 
     suspend fun getAll()
 
-    suspend fun saveWithAttachment(post: Post, file: File, authToken: String)
+    suspend fun saveWithAttachment(post: Post, file: File, authToken: String, attachmentType: AttachmentType)
 }

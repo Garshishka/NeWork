@@ -17,8 +17,9 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nework.auth.AppAuth
+import ru.netology.nework.dto.AttachmentType
 import ru.netology.nework.dto.FeedModelState
-import ru.netology.nework.dto.PhotoModel
+import ru.netology.nework.dto.MediaModel
 import ru.netology.nework.dto.Post
 import ru.netology.nework.repository.PostRepository
 import ru.netology.nework.utils.SingleLiveEvent
@@ -49,9 +50,9 @@ class PostViewModel @Inject constructor(
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
-    private val _photo = MutableLiveData(noPhoto)
-    val photo: LiveData<PhotoModel>
-        get() = _photo
+    private val _attachmnet = MutableLiveData(noMedia)
+    val attachment: LiveData<MediaModel>
+        get() = _attachmnet
 
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
@@ -93,10 +94,10 @@ class PostViewModel @Inject constructor(
         edited.value?.let {
             appAuth.getToken()?.let { token ->
                 try {
-                    when (_photo.value) {
-                        noPhoto -> repository.save(it, token)
-                        else -> _photo.value?.file?.let { file ->
-                            repository.saveWithAttachment(it, file, token)
+                    when (_attachmnet.value) {
+                        noMedia -> repository.save(it, token)
+                        else -> _attachmnet.value?.file?.let { file ->
+                            repository.saveWithAttachment(it, file, token, _attachmnet.value!!.attachmentType)
                         }
                     }
                     //appAuth.getToken()?.let { it1 -> repository.save(it, it1) }
@@ -116,6 +117,7 @@ class PostViewModel @Inject constructor(
 
     fun empty() {
         edited.value = empty
+        deleteMedia()
     }
 
     fun removeById(id: Long) = viewModelScope.launch {
@@ -127,12 +129,12 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun changePhoto(fileUri: Uri?, toFile: File?) {
-        _photo.value = PhotoModel(fileUri, toFile)
+    fun changeMedia(fileUri: Uri?, toFile: File?, attachmentType: AttachmentType) {
+        _attachmnet.value = MediaModel(fileUri, toFile, attachmentType)
     }
 
-    fun deletePhoto() {
-        _photo.value = noPhoto
+    fun deleteMedia() {
+        _attachmnet.value = noMedia
     }
 }
 
@@ -144,4 +146,4 @@ private val empty = Post(
     published = "",
 )
 
-private val noPhoto = PhotoModel(null, null)
+private val noMedia = MediaModel(null, null, AttachmentType.NONE)
