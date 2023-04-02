@@ -60,11 +60,11 @@ class PostViewModel @Inject constructor(
     private val _postCreatedError = SingleLiveEvent<Pair<String, Post>>()
     val postCreatedError: LiveData<Pair<String, Post>>
         get() = _postCreatedError
-    private val _postsRemoveError = SingleLiveEvent<Pair<String, Long>>()
-    val postsRemoveError: LiveData<Pair<String, Long>>
+    private val _postsRemoveError = SingleLiveEvent<Pair<String, Int>>()
+    val postsRemoveError: LiveData<Pair<String, Int>>
         get() = _postsRemoveError
-    private val _postsLikeError = SingleLiveEvent<Pair<String, Pair<Long, Boolean>>>()
-    val postsLikeError: LiveData<Pair<String, Pair<Long, Boolean>>>
+    private val _postsLikeError = SingleLiveEvent<Pair<String, Pair<Int, Boolean>>>()
+    val postsLikeError: LiveData<Pair<String, Pair<Int, Boolean>>>
         get() = _postsLikeError
 
     var draft = ""
@@ -83,9 +83,9 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun likeById(id: Long, likedByMe: Boolean) = viewModelScope.launch {
+    fun likeById(id: Int, likedByMe: Boolean) = viewModelScope.launch {
         try {
-            appAuth.getToken()?.let { repository.likeById(id, !likedByMe, it) }
+            appAuth.getToken()?.let { repository.likeById(id, !likedByMe, it, appAuth.getId()) }
         } catch (e: Exception) {
             _postsLikeError.postValue(e.toString() to (id to likedByMe))
         }
@@ -136,7 +136,7 @@ class PostViewModel @Inject constructor(
         deleteMedia()
     }
 
-    fun removeById(id: Long) = viewModelScope.launch {
+    fun removeById(id: Int) = viewModelScope.launch {
         try {
             appAuth.getToken()?.let { repository.removeById(it, id) }
         } catch (e: Exception) {

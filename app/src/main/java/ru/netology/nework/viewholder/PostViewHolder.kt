@@ -36,27 +36,27 @@ class PostViewHolder(
                 published.text = publishedTime.format(formatter)
             } catch (e: Exception){
                 println(e.message)
-                published.text = "now"
+                published.setText(R.string.posted_now)
             }
             content.text = post.content
             ifHaveTextThenShow(link, post.link)
             ifHaveTextThenShow(coordinates, post.coords)
 
-            like.text = formattingBigNumbers(post.likeOwnerIds.size.toLong())
+            like.text = formattingBigNumbers(post.likeOwnerIds.size)
             like.isChecked = post.likedByMe
             like.setOnClickListener { onInteractionListener.onLike(post) }
 
             showAvatarInTrailing(post.likeOwnerIds,0,likeAvatars1,post.users)
             showAvatarInTrailing(post.likeOwnerIds,1,likeAvatars2,post.users)
             showAvatarInTrailing(post.likeOwnerIds,2,likeAvatars3,post.users)
-            likeBatchTrail.isVisible = post.likeOwnerIds.size.toLong() > 3
+            likeBatchTrail.isVisible = post.likeOwnerIds.size > 3
 
-            mention.text = formattingBigNumbers(post.mentionIds.size.toLong())
+            mention.text = formattingBigNumbers(post.mentionIds.size)
             //mention.setOnClickListener { onInteractionListener.onShare(post) }
             showAvatarInTrailing(post.mentionIds,0,mentionAvatars1,post.users)
             showAvatarInTrailing(post.mentionIds,1,mentionAvatars2,post.users)
             showAvatarInTrailing(post.mentionIds,2,mentionAvatars3,post.users)
-            mentionBatchTrail.isVisible = post.mentionIds.size.toLong() > 3
+            mentionBatchTrail.isVisible = post.mentionIds.size > 3
 
             if (post.attachment != null) {
                 val attachmentUrl = post.attachment.url
@@ -126,10 +126,10 @@ class PostViewHolder(
         avatarUserIdList: List<Int>,
         num: Int,
         avatar: ImageView,
-        users: Map<Long, UserPreview>
+        users: Map<Int, UserPreview>
     ) {
         if (avatarUserIdList.size > num) {
-            val userId = avatarUserIdList[num].toLong()
+            val userId = avatarUserIdList[num]
             val user = users[userId]
             avatar.isVisible = true
             if (user != null && user.avatar != null) {
@@ -152,7 +152,7 @@ class PostViewHolder(
         }
     }
 
-    private fun formattingBigNumbers(number: Long): String {
+    private fun formattingBigNumbers(number: Int): String {
         return when (number) {
             in 0..999 -> number.toString()
             in 1000..1099 -> "1k"

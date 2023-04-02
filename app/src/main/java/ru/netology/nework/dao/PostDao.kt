@@ -26,29 +26,31 @@ interface PostDao {
     suspend fun insert(posts: List<PostEntity>)
 
     @Query("UPDATE PostEntity SET content = :content WHERE id = :id")
-    suspend fun updateContentByID(id: Long, content: String)
+    suspend fun updateContentByID(id: Int, content: String)
 
     suspend fun save(post: PostEntity) =
-        if (post.id == 0L) insert(post) else updateContentByID(
+        if (post.id == 0) insert(post) else updateContentByID(
             post.id,
             post.content
         )
 
     @Query("SELECT * FROM PostEntity WHERE id = :id")
-    suspend fun getById(id: Long): PostEntity
+    suspend fun getById(id: Int): PostEntity
 
     @Query("DELETE FROM PostEntity WHERE id = :id")
-    suspend fun removeById(id: Long)
+    suspend fun removeById(id: Int)
 
-    @Query(
-        """
-        UPDATE PostEntity SET
-        likeOwnerIds = likeOwnerIds + CASE WHEN likedByMe THEN -id ELSE id END,
-        likedByMe = CASE WHEN likedByMe THEN 0 ELSE 1 END
-        WHERE id = :id
-    """
-    )
-    suspend fun likeById(id: Long)
+    suspend fun likeById(id: Int, userId: Int) {
+        val post = getById(id)
+        val likesList = post.likeOwnerIds as MutableList<Int>
+        if (post.likedByMe) {
+            likesList.remove(userId)
+        } else {
+            likesList.add(userId)
+        }
+        insert(post.copy(likeOwnerIds = likesList, likedByMe = !post.likedByMe))
+
+    }
 
     @Query("DELETE FROM PostEntity")
     suspend fun clear()

@@ -3,8 +3,8 @@ package ru.netology.nework.dto
 import com.google.gson.annotations.SerializedName
 
 data class Post (
-    val id: Long,
-    val authorId: Long = 0,
+    val id: Int,
+    val authorId: Int = 0,
     val author: String,
     val authorAvatar: String? = null,
     val authorJob: String? = null,
@@ -19,5 +19,5 @@ data class Post (
     val attachment: Attachment? = null,
     val ownedByMe: Boolean = false,
     @SerializedName("users")
-    val users: Map<Long,UserPreview> = emptyMap(),
+    val users: Map<Int,UserPreview> = emptyMap(),
 )

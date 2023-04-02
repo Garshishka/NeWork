@@ -103,7 +103,7 @@ class PostFeedFragment : Fragment() {
         }
 
         authViewModel.state.observe(viewLifecycleOwner) {
-            if (it?.id != -1L) {
+            if (it?.id != -1) {
                 adapter.refresh()
             }
         }

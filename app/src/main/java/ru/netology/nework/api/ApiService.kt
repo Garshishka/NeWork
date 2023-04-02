@@ -15,10 +15,10 @@ interface ApiService {
     suspend fun save(@Header("auth") auth: String, @Body post: Post): Response<Post>
 
     @POST("posts/{id}/likes ")
-    suspend fun likeById(@Header("auth") auth: String, @Path("id") id: Long): Response<Post>
+    suspend fun likeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Post>
 
     @DELETE("posts/{id}/likes ")
-    suspend fun dislikeById(@Header("auth") auth: String, @Path("id") id: Long): Response<Post>
+    suspend fun dislikeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Post>
 
     @Multipart
     @POST("media")
@@ -28,7 +28,7 @@ interface ApiService {
     ): Response<MediaUpload>
 
     @DELETE("posts/{id}")
-    suspend fun removeById(@Header("auth") auth: String, @Path("id") id: Long): Response<Unit>
+    suspend fun removeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Unit>
 
     @GET("posts/latest")
     suspend fun getLatest(@Query("count") count: Int): Response<List<Post>>

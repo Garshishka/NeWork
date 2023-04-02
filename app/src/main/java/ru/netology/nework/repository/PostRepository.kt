@@ -9,11 +9,11 @@ import java.io.File
 interface PostRepository {
     val data: Flow<PagingData<Post>>
 
-    suspend fun removeById(authToken: String, id: Long)
+    suspend fun removeById(authToken: String, id: Int)
 
     suspend fun save(post: Post, authToken: String)
 
-    suspend fun likeById(id: Long, willLike: Boolean, authToken: String): Post
+    suspend fun likeById(id: Int, willLike: Boolean, authToken: String, userId: Int): Post
 
     suspend fun getAll(authToken: String?)
 

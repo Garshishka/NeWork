@@ -40,7 +40,7 @@ class PostRepositoryImpl @Inject constructor(
     ).flow
         .map { it.map(PostEntity::toDto) }
 
-    override suspend fun removeById(authToken: String, id: Long) {
+    override suspend fun removeById(authToken: String, id: Int) {
         val removed = postDao.getById(id)
         postDao.removeById(id)
         try {
@@ -71,20 +71,25 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun likeById(id: Long, willLike: Boolean, authToken: String): Post {
-        postDao.likeById(id)
+    override suspend fun likeById(
+        id: Int,
+        willLike: Boolean,
+        authToken: String,
+        userId: Int
+    ): Post {
+        postDao.likeById(id, userId)
         try {
             val response = if (willLike)
                 apiService.likeById(authToken, id)
             else
                 apiService.dislikeById(authToken, id)
             if (!response.isSuccessful) {
-                postDao.likeById(id)
+                postDao.likeById(id, userId)
                 throw RuntimeException(response.code().toString())
             }
             return response.body() ?: throw RuntimeException("body is null")
         } catch (e: Exception) {
-            postDao.likeById(id)
+            postDao.likeById(id, userId)
             throw RuntimeException(e)
         }
     }

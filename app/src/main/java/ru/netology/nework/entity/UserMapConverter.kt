@@ -7,13 +7,13 @@ import ru.netology.nework.dto.UserPreview
 
 class UserMapConverter {
     @TypeConverter
-    fun fromUsers(users: Map<Long,UserPreview>): String {
+    fun fromUsers(users: Map<Int,UserPreview>): String {
         return Gson().toJson(users)
     }
 
     @TypeConverter
-    fun toUsers(data: String):Map<Long,UserPreview> {
-        val mapType = object : TypeToken<Map<Long, UserPreview>>() {
+    fun toUsers(data: String):Map<Int,UserPreview> {
+        val mapType = object : TypeToken<Map<Int, UserPreview>>() {
         }.type
         return Gson().fromJson(data, mapType)
     }
