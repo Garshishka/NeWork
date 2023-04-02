@@ -33,4 +33,6 @@
     <string name="dialog_log_out">Are you sure you want to log out?</string>
     <string name="select_video">Select video</string>
     <string name="posted_now">Now</string>
+    <string name="plus">+</string>
+    <string name="description_choose_avatar">Choose your avatar</string>
 </resources>

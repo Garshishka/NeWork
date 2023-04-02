@@ -34,4 +34,6 @@
     <string name="dialog_log_out">Вы уверены что хотите выйти из системы?</string>
     <string name="select_video">Выберите видео</string>
     <string name="posted_now">Сейчас</string>
+    <string name="plus">+</string>
+    <string name="description_choose_avatar">Выберите ваш аватар</string>
 </resources>
