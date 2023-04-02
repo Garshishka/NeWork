@@ -235,27 +235,6 @@
         app:layout_constraintTop_toTopOf="@id/mention"
         />
 
-
-    <TextView
-        android:id="@+id/viewsText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin_default"
-        app:layout_constraintBottom_toBottomOf="@id/viewsIcon"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/viewsIcon"
-        tools:text="500" />
-
-    <ImageButton
-        android:id="@+id/viewsIcon"
-        android:layout_width="@dimen/picture_size"
-        android:layout_height="@dimen/picture_size"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/description_post_views"
-        android:src="@drawable/ic_baseline_eye_24"
-        app:layout_constraintEnd_toStartOf="@id/viewsText"
-        app:layout_constraintTop_toBottomOf="@id/barrierBottom" />
-
     <ImageView
         android:id="@+id/notOnServer"
         android:layout_width="@dimen/picture_size"
@@ -273,7 +252,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        app:constraint_referenced_ids="viewsIcon, viewsText, like, mention"
+        app:constraint_referenced_ids="like, mention"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,10 +7,10 @@ import ru.netology.nework.api.ApiService
 import ru.netology.nework.dto.Post
 import java.io.IOException
 
-class PostPagingSource(private val apiService: ApiService) : PagingSource<Long, Post>(){
-    override fun getRefreshKey(state: PagingState<Long, Post>): Long? = null
+class PostPagingSource(private val apiService: ApiService) : PagingSource<Int, Post>(){
+    override fun getRefreshKey(state: PagingState<Int, Post>): Int? = null
 
-    override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Post> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Post> {
         try {
             val result = when (params) {
                 is LoadParams.Refresh -> {

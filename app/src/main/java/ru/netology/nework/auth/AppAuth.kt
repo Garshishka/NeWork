@@ -12,7 +12,7 @@ import ru.netology.nework.api.ApiService
 import javax.inject.Inject
 import javax.inject.Singleton
 
-data class AuthPair(val id: Long, val token: String)
+data class AuthPair(val id: Int, val token: String)
 
 @Singleton
 class AppAuth @Inject constructor(
@@ -26,7 +26,7 @@ class AppAuth @Inject constructor(
 
     init {
         val token = prefs.getString(tokenKey, null)
-        val id = prefs.getLong(idKey, 0L)
+        val id = prefs.getInt(idKey, 0)
 
         if (token == null || !prefs.contains(idKey)) {
             prefs.edit { clear() }
@@ -39,10 +39,18 @@ class AppAuth @Inject constructor(
 
     val state = _state.asStateFlow()
 
+    fun getToken(): String?{
+        return prefs.getString(tokenKey,"")
+    }
+
+    fun getId(): Int{
+        return prefs.getInt(idKey,0)
+    }
+
     @Synchronized
-    fun setAuth(id: Long, token: String) {
+    fun setAuth(id: Int, token: String) {
         prefs.edit {
-            putLong(idKey, id)
+            putInt(idKey, id)
             putString(tokenKey, token)
         }
         _state.value = AuthState(id, token)

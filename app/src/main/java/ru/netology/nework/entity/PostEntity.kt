@@ -10,8 +10,8 @@ import ru.netology.nework.dto.Сoords
 @Entity
 data class PostEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
-    val authorId: Long,
+    val id: Int,
+    val authorId: Int,
     val author: String,
     val authorAvatar: String?,
     val authorJob: String?,
@@ -26,7 +26,7 @@ data class PostEntity(
     val likedByMe: Boolean = false,
     @Embedded
     val attachment: AttachmentEmbedabble?,
-    val users: Map<Long,UserPreview>,
+    val users: Map<Int,UserPreview>,
 
     val notOnServer: Boolean = false,
     val show: Boolean = true,
