@@ -34,4 +34,10 @@
     <string name="dialog_log_out">Вы уверены что хотите выйти из системы?</string>
     <string name="select_video">Выберите видео</string>
     <string name="posted_now">Сейчас</string>
+    <string name="post_content_hint">Текст сообщения</string>
+    <string name="link_hint">Добавить ссылку к посту</string>
+    <string name="coordinates_hint">Добавить координаты к посту</string>
+    <string name="coordinates_hint_lat">Добавить широту</string>
+    <string name="coordinates_hint_long">Добавить долготу</string>
+    <string name="coords_not_both_filled">Обе координаты должны быть заполнены!</string>
 </resources>

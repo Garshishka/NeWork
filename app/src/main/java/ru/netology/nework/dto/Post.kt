@@ -10,7 +10,7 @@ data class Post (
     val authorJob: String? = null,
     val content: String,
     val published: String,
-    val coords: Сoords? = null,
+    val coords: Coords? = null,
     val link: String? = null,
     val likeOwnerIds: List<Int> = emptyList(),
     val mentionIds: List<Int> = emptyList(),

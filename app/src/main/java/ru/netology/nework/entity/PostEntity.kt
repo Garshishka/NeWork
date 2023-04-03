@@ -3,9 +3,9 @@ package ru.netology.nework.entity
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import ru.netology.nework.dto.Coords
 import ru.netology.nework.dto.Post
 import ru.netology.nework.dto.UserPreview
-import ru.netology.nework.dto.Сoords
 
 @Entity
 data class PostEntity(
@@ -42,7 +42,7 @@ data class PostEntity(
         if (coordinatesLat == null || coordinatesLong == null) {
             null
         } else {
-            Сoords(coordinatesLat, coordinatesLong)
+            Coords(coordinatesLat, coordinatesLong)
         },
         link,
         likeOwnerIds,

@@ -1,6 +1,6 @@
 package ru.netology.nework.dto
 
-data class Сoords(
+data class Coords(
     val lat: String,
     val long: String,
 ){

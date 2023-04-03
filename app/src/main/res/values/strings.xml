@@ -33,4 +33,10 @@
     <string name="dialog_log_out">Are you sure you want to log out?</string>
     <string name="select_video">Select video</string>
     <string name="posted_now">Now</string>
+    <string name="post_content_hint">Post content</string>
+    <string name="link_hint">Add link to your post</string>
+    <string name="coordinates_hint">Add coordinates to your post</string>
+    <string name="coordinates_hint_lat">Add latitude</string>
+    <string name="coordinates_hint_long">Add longitude</string>
+    <string name="coords_not_both_filled">Both coordinates fields must be filled!</string>
 </resources>
