@@ -154,6 +154,9 @@ class NewPostFragment : Fragment() {
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
                 resultLauncher.launch(intent)
             }
+            addMention.setOnClickListener {
+                findNavController().navigate(R.id.action_newPostFragment_to_usersFragment)
+            }
             removeAttachment.setOnClickListener {
                 viewModel.deleteMedia()
             }

@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/select_photo"
-            android:padding="@dimen/margin_default"
+            android:padding="@dimen/margin_small"
             app:icon="@drawable/baseline_image_28" />
 
         <com.google.android.material.button.MaterialButton
@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/select_video"
-            android:padding="@dimen/margin_default"
+            android:padding="@dimen/margin_small"
             app:icon="@drawable/baseline_video_28" />
 
 
@@ -39,8 +39,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/select_audio"
-            android:padding="@dimen/margin_default"
+            android:padding="@dimen/margin_small"
             app:icon="@drawable/baseline_audio_file_28" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/addMention"
+            style="@style/Widget.AppTheme.GrayButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/select_audio"
+            android:padding="@dimen/margin_small"
+            app:icon="@drawable/baseline_mention_add_28" />
 
     </LinearLayout>
 
@@ -187,6 +196,57 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mention_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/divider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/margin_default">
+        <TextView
+            android:id="@+id/mention_batch_trail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/etc"
+            app:layout_constraintStart_toEndOf="@id/mention_avatars3"
+            app:layout_constraintBottom_toBottomOf="@id/mention_avatars3"
+            app:layout_constraintTop_toTopOf="@id/mention_avatars3"
+            />
+        <ImageView
+            android:id="@+id/mention_avatars3"
+            android:layout_width="@dimen/picture_size"
+            android:layout_height="@dimen/picture_size"
+            android:layout_marginStart="@dimen/margin_default"
+            android:src="@drawable/baseline_avatar_circle_filled_24"
+            app:layout_constraintStart_toStartOf="@id/mention_avatars2"
+            app:layout_constraintEnd_toEndOf="@id/mention_avatars2"
+            app:layout_constraintBottom_toBottomOf="@id/mention_avatars2"
+            app:layout_constraintTop_toTopOf="@id/mention_avatars2"
+            />
+        <ImageView
+            android:id="@+id/mention_avatars2"
+            android:layout_width="@dimen/picture_size"
+            android:layout_height="@dimen/picture_size"
+            android:layout_marginStart="@dimen/margin_default"
+            android:src="@drawable/baseline_avatar_circle_filled_24"
+            app:layout_constraintStart_toStartOf="@id/mention_avatars1"
+            app:layout_constraintEnd_toEndOf="@id/mention_avatars1"
+            app:layout_constraintBottom_toBottomOf="@id/mention_avatars1"
+            app:layout_constraintTop_toTopOf="@id/mention_avatars1"
+            />
+        <ImageView
+            android:id="@+id/mention_avatars1"
+            android:layout_width="@dimen/picture_size"
+            android:layout_height="@dimen/picture_size"
+            android:src="@drawable/baseline_avatar_circle_filled_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/mention_container"
+            app:layout_constraintBottom_toBottomOf="@id/mention_container"
+
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/send_button"
