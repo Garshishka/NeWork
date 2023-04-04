@@ -42,10 +42,6 @@ class SignInFragment : Fragment() {
         }
 
         binding.apply {
-            //DEBUG
-            showAuth()
-           //DEBUG
-
             signUpButton.setOnClickListener {
                 findNavController().navigate(R.id.action_fragment_sing_in_to_signUpFragment)
             }
@@ -66,11 +62,6 @@ class SignInFragment : Fragment() {
         viewModel.apply {
             signInRight.observe(viewLifecycleOwner) {
                 appAuth.setAuth(it.id, it.token)
-                //DEBUG
-                Toast.makeText(context, "LOGIN SUCCESSFUL", Toast.LENGTH_LONG)
-                    .show()
-                showAuth()
-                //DEBUG
                 goBack()
             }
 
@@ -90,9 +81,4 @@ class SignInFragment : Fragment() {
         findNavController().navigateUp()
     }
 
-    //DEBUG
-    private fun showAuth(){
-        binding.debugId.text = appAuth.state.value?.id.toString()
-        binding.debugToken.text = appAuth.state.value?.token.toString()
-    }
 }
