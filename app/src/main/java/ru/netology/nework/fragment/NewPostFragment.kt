@@ -1,8 +1,12 @@
 package ru.netology.nework.fragment
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,6 +35,22 @@ class NewPostFragment : Fragment() {
 
     lateinit var binding: FragmentNewPostBinding
 
+    val resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri: Uri? = result.data?.data
+                if (uri != null) {
+                    viewModel.changeMedia(
+                        uri,
+                        context?.let { AndroidUtils.fileFromContentUri(it, uri) },
+                        AttachmentType.AUDIO
+                    )
+                } else {
+                    println("No media selected")
+                }
+            }
+        }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,10 +60,25 @@ class NewPostFragment : Fragment() {
         val isEditing = arguments?.textArg != null
 
         if (isEditing) {
-            arguments?.textArg.let(binding.edit::setText)
-            viewModel.draft = ""
+            arguments?.apply {
+                textArg.let(binding.edit::setText)
+                linkArg.let(binding.link::setText)
+                latArg.let(binding.coordinatesLat::setText)
+                longArg.let(binding.coordinatesLong::setText)
+            }
+            viewModel.apply {
+                draft = ""
+                draftCoordsLat = ""
+                draftCoordsLong = ""
+                draftLink = ""
+            }
         } else {
-            binding.edit.setText(viewModel.draft)
+            binding.apply {
+                edit.setText(viewModel.draft)
+                coordinatesLat.setText(viewModel.draftCoordsLat)
+                coordinatesLong.setText(viewModel.draftCoordsLong)
+                link.setText(viewModel.draftLink)
+            }
         }
         binding.edit.requestFocus()
 
@@ -56,7 +91,8 @@ class NewPostFragment : Fragment() {
         val pickImageContract =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
-                    viewModel.changeMedia(uri,
+                    viewModel.changeMedia(
+                        uri,
                         context?.let { AndroidUtils.fileFromContentUri(it, uri) },
                         AttachmentType.IMAGE
                     )
@@ -68,7 +104,8 @@ class NewPostFragment : Fragment() {
         val pickVideoContract =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
-                    viewModel.changeMedia(uri,
+                    viewModel.changeMedia(
+                        uri,
                         context?.let { AndroidUtils.fileFromContentUri(it, uri) },
                         AttachmentType.VIDEO
                     )
@@ -79,12 +116,29 @@ class NewPostFragment : Fragment() {
 
         binding.apply {
             sendButton.setOnClickListener {
-                viewModel.draft = ""
+                viewModel.apply {
+                    draft = ""
+                    draftCoordsLat = ""
+                    draftCoordsLong = ""
+                    draftLink = ""
+                }
                 val text = binding.edit.text.toString()
-                if (text.isNotBlank()) {
-                    viewModel.changeContent(text)
-                    viewModel.save()
-                    findNavController().navigateUp()
+                val link = binding.link.text.toString()
+                val coordsLat = binding.coordinatesLat.text.toString()
+                val coordsLong = binding.coordinatesLong.text.toString()
+                if ((coordsLat.isBlank() && coordsLong.isNotBlank()) || (coordsLat.isNotBlank() && coordsLong.isBlank())) {
+                    Toast.makeText(
+                        context,
+                        getString(R.string.coords_not_both_filled),
+                        Toast.LENGTH_LONG
+                    )
+                        .show()
+                } else {
+                    if (text.isNotBlank()) {
+                        viewModel.changeContent(text, link, coordsLat, coordsLong)
+                        viewModel.save()
+                        findNavController().navigateUp()
+                    }
                 }
                 AndroidUtils.hideKeyboard(requireView())
             }
@@ -93,6 +147,15 @@ class NewPostFragment : Fragment() {
             }
             pickVideo.setOnClickListener {
                 pickVideoContract.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
+            }
+            pickAudio.setOnClickListener {
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+                intent.type = "audio/*"
+                intent.addCategory(Intent.CATEGORY_OPENABLE)
+                resultLauncher.launch(intent)
+            }
+            addMention.setOnClickListener {
+                findNavController().navigate(R.id.action_newPostFragment_to_usersFragment)
             }
             removeAttachment.setOnClickListener {
                 viewModel.deleteMedia()
@@ -128,7 +191,12 @@ class NewPostFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             if (!isEditing) {
-                viewModel.draft = binding.edit.text.toString()
+                viewModel.apply {
+                    draft = binding.edit.text.toString()
+                    draftLink = binding.link.text.toString()
+                    draftCoordsLat = binding.coordinatesLat.text.toString()
+                    draftCoordsLong = binding.coordinatesLong.text.toString()
+                }
             }
             findNavController().navigateUp()
         }
@@ -158,5 +226,8 @@ class NewPostFragment : Fragment() {
 
     companion object {
         var Bundle.textArg by StringArg
+        var Bundle.linkArg by StringArg
+        var Bundle.latArg by StringArg
+        var Bundle.longArg by StringArg
     }
 }

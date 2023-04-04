@@ -20,8 +20,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/select_photo"
-            android:padding="@dimen/margin_default"
-            app:icon="@drawable/baseline_image_24" />
+            android:padding="@dimen/margin_small"
+            app:icon="@drawable/baseline_image_28" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/pickVideo"
@@ -29,8 +29,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/select_video"
-            android:padding="@dimen/margin_default"
-            app:icon="@drawable/baseline_video_24" />
+            android:padding="@dimen/margin_small"
+            app:icon="@drawable/baseline_video_28" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/pickAudio"
+            style="@style/Widget.AppTheme.GrayButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/select_audio"
+            android:padding="@dimen/margin_small"
+            app:icon="@drawable/baseline_audio_file_28" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/addMention"
+            style="@style/Widget.AppTheme.GrayButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/select_audio"
+            android:padding="@dimen/margin_small"
+            app:icon="@drawable/baseline_mention_add_28" />
 
     </LinearLayout>
 
@@ -52,9 +71,107 @@
                 android:id="@+id/edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/margin_default"
+                android:layout_marginHorizontal="@dimen/margin_small"
                 android:background="@android:color/transparent"
                 android:gravity="start|top"
-                android:inputType="textMultiLine" />
+                android:inputType="textMultiLine"
+                android:hint="@string/post_content_hint"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/margin_default"
+                android:layout_marginEnd="@dimen/margin_default"
+                android:background="@color/cardview_dark_background" />
+
+            <EditText
+                android:id="@+id/link"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/margin_default"
+                android:layout_marginHorizontal="@dimen/margin_small"
+                android:background="@android:color/transparent"
+                android:textStyle="italic"
+                android:textColor="@color/link_blue"
+                android:gravity="start|top"
+                android:inputType="textUri"
+                android:hint="@string/link_hint"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/margin_default"
+                android:layout_marginEnd="@dimen/margin_default"
+                android:background="@color/cardview_dark_background" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                android:gravity="center"
+                android:text="@string/coordinates_hint"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <EditText
+                    android:id="@+id/coordinatesLat"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/margin_default"
+                    android:layout_marginHorizontal="@dimen/margin_small"
+                    android:background="@android:color/transparent"
+                    android:textStyle="italic"
+                    android:textColor="@color/teal_700"
+                    android:inputType="text"
+                    android:gravity="center"
+                    android:hint="@string/coordinates_hint_lat"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/coordsDivider"/>
+
+                <View
+                    android:id="@+id/coordsDivider"
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/cardview_dark_background"
+                    app:layout_constraintStart_toEndOf="@id/coordinatesLat"
+                    app:layout_constraintEnd_toStartOf="@id/coordinatesLong"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    />
+
+                <EditText
+                    android:id="@+id/coordinatesLong"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/margin_default"
+                    android:layout_marginHorizontal="@dimen/margin_small"
+                    android:background="@android:color/transparent"
+                    android:textStyle="italic"
+                    android:textColor="@color/teal_700"
+                    android:inputType="text"
+                    android:gravity="center"
+                    android:hint="@string/coordinates_hint_long"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/coordsDivider"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/margin_default"
+                android:layout_marginEnd="@dimen/margin_default"
+                android:background="@color/cardview_dark_background" />
 
             <LinearLayout
                 android:id="@+id/photoContainer"
@@ -79,6 +196,57 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mention_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/divider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/margin_default">
+        <TextView
+            android:id="@+id/mention_batch_trail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/etc"
+            app:layout_constraintStart_toEndOf="@id/mention_avatars3"
+            app:layout_constraintBottom_toBottomOf="@id/mention_avatars3"
+            app:layout_constraintTop_toTopOf="@id/mention_avatars3"
+            />
+        <ImageView
+            android:id="@+id/mention_avatars3"
+            android:layout_width="@dimen/picture_size"
+            android:layout_height="@dimen/picture_size"
+            android:layout_marginStart="@dimen/margin_default"
+            android:src="@drawable/baseline_avatar_circle_filled_24"
+            app:layout_constraintStart_toStartOf="@id/mention_avatars2"
+            app:layout_constraintEnd_toEndOf="@id/mention_avatars2"
+            app:layout_constraintBottom_toBottomOf="@id/mention_avatars2"
+            app:layout_constraintTop_toTopOf="@id/mention_avatars2"
+            />
+        <ImageView
+            android:id="@+id/mention_avatars2"
+            android:layout_width="@dimen/picture_size"
+            android:layout_height="@dimen/picture_size"
+            android:layout_marginStart="@dimen/margin_default"
+            android:src="@drawable/baseline_avatar_circle_filled_24"
+            app:layout_constraintStart_toStartOf="@id/mention_avatars1"
+            app:layout_constraintEnd_toEndOf="@id/mention_avatars1"
+            app:layout_constraintBottom_toBottomOf="@id/mention_avatars1"
+            app:layout_constraintTop_toTopOf="@id/mention_avatars1"
+            />
+        <ImageView
+            android:id="@+id/mention_avatars1"
+            android:layout_width="@dimen/picture_size"
+            android:layout_height="@dimen/picture_size"
+            android:src="@drawable/baseline_avatar_circle_filled_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/mention_container"
+            app:layout_constraintBottom_toBottomOf="@id/mention_container"
+
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/send_button"

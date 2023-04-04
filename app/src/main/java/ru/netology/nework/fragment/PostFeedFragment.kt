@@ -18,6 +18,9 @@ import ru.netology.nework.R
 import ru.netology.nework.adapter.PostsAdapter
 import ru.netology.nework.databinding.FragmentPostsBinding
 import ru.netology.nework.dto.Post
+import ru.netology.nework.fragment.NewPostFragment.Companion.latArg
+import ru.netology.nework.fragment.NewPostFragment.Companion.linkArg
+import ru.netology.nework.fragment.NewPostFragment.Companion.longArg
 import ru.netology.nework.fragment.NewPostFragment.Companion.textArg
 import ru.netology.nework.fragment.PictureFragment.Companion.urlArg
 import ru.netology.nework.utils.OnInteractionListener
@@ -44,7 +47,12 @@ class PostFeedFragment : Fragment() {
         override fun onEdit(post: Post) {
             findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment,
                 Bundle().apply
-                { textArg = post.content })
+                {
+                    textArg = post.content
+                    linkArg = post.link
+                    latArg = post.coords?.lat
+                    longArg = post.coords?.long
+                })
             viewModel.edit(post)
         }
 
@@ -179,7 +187,7 @@ class PostFeedFragment : Fragment() {
                 }
                 setNeutralButton(
                     getString(R.string.back)
-                ) {_, _ ->
+                ) { _, _ ->
                 }
                 setNegativeButton(
                     getString(R.string.sign_up)

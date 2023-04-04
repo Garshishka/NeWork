@@ -21,6 +21,11 @@
         <item name="android:minWidth">@dimen/picture_size</item>
     </style>
 
+    <style name="Widget.AppTheme.UserCheckBox"
+        parent="Widget.AppCompat.Button">
+        <item name="backgroundTint">@color/user_checkbox_tint</item>
+    </style>
+
     <style name="Widget.AppTheme.GrayButtons"
         parent="Widget.MaterialComponents.Button.TextButton">
         <item name="iconTint">?attr/colorControlNormal</item>

@@ -17,10 +17,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nework.auth.AppAuth
-import ru.netology.nework.dto.AttachmentType
-import ru.netology.nework.dto.FeedModelState
-import ru.netology.nework.dto.MediaModel
-import ru.netology.nework.dto.Post
+import ru.netology.nework.dto.*
 import ru.netology.nework.repository.PostRepository
 import ru.netology.nework.utils.SingleLiveEvent
 import java.io.File
@@ -32,6 +29,8 @@ class PostViewModel @Inject constructor(
     private val appAuth: AppAuth
 ) : ViewModel() {
     val edited = MutableLiveData(empty)
+//    val editedLink = MutableLiveData(empty)
+//    val editedCoords = MutableLiveData(empty)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val data: Flow<PagingData<Post>> = appAuth
@@ -68,6 +67,9 @@ class PostViewModel @Inject constructor(
         get() = _postsLikeError
 
     var draft = ""
+    var draftLink = ""
+    var draftCoordsLat = ""
+    var draftCoordsLong = ""
 
     init {
         load()
@@ -91,13 +93,25 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun changeContent(content: String) {
+    fun changeContent(content: String, link: String, coordsLat: String, coordsLong: String) {
         edited.value?.let {
             val text = content.trim()
-            if (it.content == text) {
-                return
-            }
-            edited.value = it.copy(content = text)
+            val textLink = link.trim()
+            val textCoordsLat = coordsLat.trim()
+            val textCoordsLong = coordsLong.trim()
+            val coords = if (textCoordsLat.isNotBlank() && textCoordsLong.isNotBlank()) Coords(
+                textCoordsLat,
+                textCoordsLong
+            ) else null
+//            if (it.content == text) {
+//                return
+//            }
+            edited.value =
+                it.copy(
+                    content = text,
+                    link = if (textLink.isNotBlank()) textLink else null,
+                    coords = coords,
+                )
         }
     }
 
@@ -116,7 +130,6 @@ class PostViewModel @Inject constructor(
                             )
                         }
                     }
-                    //appAuth.getToken()?.let { it1 -> repository.save(it, it1) }
                     _postCreated.postValue(Unit)
                     empty()
                 } catch (e: Exception) {
