@@ -40,4 +40,5 @@
     <string name="coordinates_hint_lat">Добавить широту</string>
     <string name="coordinates_hint_long">Добавить долготу</string>
     <string name="coords_not_both_filled">Обе координаты должны быть заполнены!</string>
+    <string name="select_audio">Выбрать аудио</string>
 </resources>

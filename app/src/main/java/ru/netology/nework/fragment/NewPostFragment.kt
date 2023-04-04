@@ -1,6 +1,9 @@
 package ru.netology.nework.fragment
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -31,6 +34,22 @@ class NewPostFragment : Fragment() {
     private val viewModel: PostViewModel by activityViewModels()
 
     lateinit var binding: FragmentNewPostBinding
+
+    val resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri: Uri? = result.data?.data
+                if (uri != null) {
+                    viewModel.changeMedia(
+                        uri,
+                        context?.let { AndroidUtils.fileFromContentUri(it, uri) },
+                        AttachmentType.AUDIO
+                    )
+                } else {
+                    println("No media selected")
+                }
+            }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -128,6 +147,12 @@ class NewPostFragment : Fragment() {
             }
             pickVideo.setOnClickListener {
                 pickVideoContract.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly))
+            }
+            pickAudio.setOnClickListener {
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+                intent.type = "audio/*"
+                intent.addCategory(Intent.CATEGORY_OPENABLE)
+                resultLauncher.launch(intent)
             }
             removeAttachment.setOnClickListener {
                 viewModel.deleteMedia()

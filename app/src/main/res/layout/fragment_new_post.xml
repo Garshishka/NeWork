@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/select_photo"
             android:padding="@dimen/margin_default"
-            app:icon="@drawable/baseline_image_24" />
+            app:icon="@drawable/baseline_image_28" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/pickVideo"
@@ -30,7 +30,17 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/select_video"
             android:padding="@dimen/margin_default"
-            app:icon="@drawable/baseline_video_24" />
+            app:icon="@drawable/baseline_video_28" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/pickAudio"
+            style="@style/Widget.AppTheme.GrayButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/select_audio"
+            android:padding="@dimen/margin_default"
+            app:icon="@drawable/baseline_audio_file_28" />
 
     </LinearLayout>
 
