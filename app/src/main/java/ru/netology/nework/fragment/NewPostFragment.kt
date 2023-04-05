@@ -16,6 +16,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nework.R
 import ru.netology.nework.auth.AppAuth
@@ -65,6 +67,12 @@ class NewPostFragment : Fragment() {
                 linkArg.let(binding.link::setText)
                 latArg.let(binding.coordinatesLat::setText)
                 longArg.let(binding.coordinatesLong::setText)
+                if (mentionedArg != null) {
+                    viewModel.userList =
+                        Gson().fromJson(mentionedArg, object : TypeToken<List<Int>>() {}.type)
+                } else {
+                    viewModel.userList.clear()
+                }
             }
             viewModel.apply {
                 draft = ""
@@ -154,6 +162,7 @@ class NewPostFragment : Fragment() {
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
                 resultLauncher.launch(intent)
             }
+            addMention.text = if(viewModel.userList.isNotEmpty()) viewModel.userList.size.toString() else ""
             addMention.setOnClickListener {
                 findNavController().navigate(R.id.action_newPostFragment_to_usersFragment)
             }
@@ -229,5 +238,6 @@ class NewPostFragment : Fragment() {
         var Bundle.linkArg by StringArg
         var Bundle.latArg by StringArg
         var Bundle.longArg by StringArg
+        var Bundle.mentionedArg by StringArg
     }
 }

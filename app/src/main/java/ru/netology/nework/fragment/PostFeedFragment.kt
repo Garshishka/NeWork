@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nework.R
@@ -21,6 +22,7 @@ import ru.netology.nework.dto.Post
 import ru.netology.nework.fragment.NewPostFragment.Companion.latArg
 import ru.netology.nework.fragment.NewPostFragment.Companion.linkArg
 import ru.netology.nework.fragment.NewPostFragment.Companion.longArg
+import ru.netology.nework.fragment.NewPostFragment.Companion.mentionedArg
 import ru.netology.nework.fragment.NewPostFragment.Companion.textArg
 import ru.netology.nework.fragment.PictureFragment.Companion.urlArg
 import ru.netology.nework.utils.OnInteractionListener
@@ -52,6 +54,7 @@ class PostFeedFragment : Fragment() {
                     linkArg = post.link
                     latArg = post.coords?.lat
                     longArg = post.coords?.long
+                    mentionedArg = if (post.mentionIds.isNotEmpty()) Gson().toJson(post.mentionIds) else null
                 })
             viewModel.edit(post)
         }

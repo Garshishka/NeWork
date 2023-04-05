@@ -6,10 +6,14 @@ import retrofit2.http.*
 import ru.netology.nework.auth.AuthPair
 import ru.netology.nework.dto.MediaUpload
 import ru.netology.nework.dto.Post
+import ru.netology.nework.dto.User
 
 interface ApiService {
     @GET("posts")
     suspend fun getAll(): Response<List<Post>>
+
+    @GET("users")
+    suspend fun getUsers(): Response<List<User>>
 
     @POST("posts")
     suspend fun save(@Header("auth") auth: String, @Body post: Post): Response<Post>

@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import ru.netology.nework.api.ApiService
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.*
 import ru.netology.nework.repository.PostRepository
@@ -26,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PostViewModel @Inject constructor(
     private val repository: PostRepository,
+    private val apiService: ApiService,
     private val appAuth: AppAuth
 ) : ViewModel() {
     val edited = MutableLiveData(empty)
@@ -44,6 +46,9 @@ class PostViewModel @Inject constructor(
                     }
                 }
         }.flowOn(Dispatchers.Default)
+    private val _usersData = MutableLiveData(emptyUsers)
+    val usersData: LiveData<List<User>>
+        get() = _usersData
 
     private val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
     val dataState: LiveData<FeedModelState>
@@ -65,7 +70,11 @@ class PostViewModel @Inject constructor(
     private val _postsLikeError = SingleLiveEvent<Pair<String, Pair<Int, Boolean>>>()
     val postsLikeError: LiveData<Pair<String, Pair<Int, Boolean>>>
         get() = _postsLikeError
+    private val _usersLoadError = SingleLiveEvent<String>()
+    val usersLoadError: LiveData<String>
+        get() = _usersLoadError
 
+    var userList = mutableListOf<Int>()
     var draft = ""
     var draftLink = ""
     var draftCoordsLat = ""
@@ -165,6 +174,20 @@ class PostViewModel @Inject constructor(
     fun deleteMedia() {
         _attachmnet.value = noMedia
     }
+
+    fun loadUsers() = viewModelScope.launch {
+        try {
+            val response = apiService.getUsers()
+            if (!response.isSuccessful) {
+                throw RuntimeException(response.code().toString())
+            }
+            val users = response.body() ?: throw RuntimeException("body is null")
+            _usersData.postValue(users)
+
+        } catch (e: Exception) {
+            _usersLoadError.postValue(e.toString())
+        }
+    }
 }
 
 private val empty = Post(
@@ -174,5 +197,5 @@ private val empty = Post(
     authorAvatar = null,
     published = "",
 )
-
+private val emptyUsers : List<User> = emptyList()
 private val noMedia = MediaModel(null, null, AttachmentType.NONE)

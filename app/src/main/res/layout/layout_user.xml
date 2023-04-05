@@ -7,7 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/user"
+        android:id="@+id/user_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/user_size"
         app:icon="@drawable/baseline_avatar_circle_filled_24"
@@ -18,8 +18,8 @@
         android:textColor="@color/purple_500"
         android:textAllCaps="false"
         tools:text="Username"
+        android:checkable="true"
         style="@style/Widget.AppTheme.UserCheckBox"
-
     />
 
 
