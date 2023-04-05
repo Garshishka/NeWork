@@ -20,7 +20,7 @@ class UserViewHolder(
             userButton.setOnClickListener {
                 val checked = userButton.isChecked
                 userButton.isChecked = checked
-                userListInteractionListener.onClick(user.id)
+                userListInteractionListener.onClick(user)
             }
         }
     }

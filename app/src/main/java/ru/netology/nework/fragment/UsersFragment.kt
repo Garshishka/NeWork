@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nework.adapter.UsersAdapter
 import ru.netology.nework.databinding.FragmentUsersBinding
+import ru.netology.nework.dto.User
 import ru.netology.nework.utils.UserListInteractionListener
 import ru.netology.nework.viewmodel.PostViewModel
 
@@ -17,14 +18,14 @@ class UsersFragment : Fragment() {
     private val viewModel: PostViewModel by  activityViewModels()
 
     private val userListInteractionListener = object : UserListInteractionListener{
-        override fun onClick(id: Int) {
-            if (viewModel.userList.contains(id)){
-                viewModel.userList.remove(id)
+        override fun onClick(user: User) {
+            if (viewModel.userList.contains(user.id)){
+                viewModel.userList.remove(user.id)
             }
-            else
-            {
-                viewModel.userList.add(id)
+            else{
+                viewModel.userList.add(user.id)
             }
+            viewModel.changeCheckedUsers(user.id)
         }
 
     }
@@ -37,14 +38,15 @@ class UsersFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentUsersBinding.inflate(inflater, container, false)
-
         binding.usersList.adapter = adapter
+
+        binding.addUsersButton.setOnClickListener {
+            findNavController().navigateUp()
+        }
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             findNavController().navigateUp()
         }
-
-        viewModel.loadUsers()
 
         viewModel.usersData.observe(viewLifecycleOwner){
             adapter.submitList(it)

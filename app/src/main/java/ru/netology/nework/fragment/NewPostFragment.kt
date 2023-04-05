@@ -53,6 +53,8 @@ class NewPostFragment : Fragment() {
             }
         }
 
+    var firstTimeOpen = true //For mention list open and closing
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -67,11 +69,17 @@ class NewPostFragment : Fragment() {
                 linkArg.let(binding.link::setText)
                 latArg.let(binding.coordinatesLat::setText)
                 longArg.let(binding.coordinatesLong::setText)
-                if (mentionedArg != null) {
-                    viewModel.userList =
-                        Gson().fromJson(mentionedArg, object : TypeToken<List<Int>>() {}.type)
-                } else {
-                    viewModel.userList.clear()
+                if (firstTimeOpen) {
+                    if (mentionedArg != null) {
+                        viewModel.userList =
+                            Gson().fromJson(mentionedArg, object : TypeToken<List<Int>>() {}.type)
+                        viewModel.userList.forEach {
+                            viewModel.checkUsers(it)
+                        }
+                    } else {
+                        viewModel.userList.clear()
+                    }
+                    firstTimeOpen = false
                 }
             }
             viewModel.apply {
@@ -143,11 +151,18 @@ class NewPostFragment : Fragment() {
                         .show()
                 } else {
                     if (text.isNotBlank()) {
-                        viewModel.changeContent(text, link, coordsLat, coordsLong)
+                        viewModel.changeContent(
+                            text,
+                            link,
+                            coordsLat,
+                            coordsLong,
+                            viewModel.userList
+                        )
                         viewModel.save()
                         findNavController().navigateUp()
                     }
                 }
+                viewModel.userList.clear()
                 AndroidUtils.hideKeyboard(requireView())
             }
             pickPhoto.setOnClickListener {
@@ -162,7 +177,8 @@ class NewPostFragment : Fragment() {
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
                 resultLauncher.launch(intent)
             }
-            addMention.text = if(viewModel.userList.isNotEmpty()) viewModel.userList.size.toString() else ""
+            addMention.text =
+                if (viewModel.userList.isNotEmpty()) viewModel.userList.size.toString() else ""
             addMention.setOnClickListener {
                 findNavController().navigate(R.id.action_newPostFragment_to_usersFragment)
             }

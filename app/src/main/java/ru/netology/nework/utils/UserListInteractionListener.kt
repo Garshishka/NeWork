@@ -1,5 +1,7 @@
 package ru.netology.nework.utils
 
+import ru.netology.nework.dto.User
+
 interface UserListInteractionListener {
-    fun onClick(id: Int)
+    fun onClick(user: User)
 }

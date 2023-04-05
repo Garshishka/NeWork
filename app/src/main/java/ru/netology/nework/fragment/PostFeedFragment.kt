@@ -136,6 +136,8 @@ class PostFeedFragment : Fragment() {
         }
 
         viewModel.apply {
+            loadUsers()
+
             postCreatedError.observe(viewLifecycleOwner) {
                 Snackbar.make(
                     binding.root,

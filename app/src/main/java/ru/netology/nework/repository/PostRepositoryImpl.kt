@@ -56,9 +56,10 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun save(post: Post, authToken: String) {
+        val mentionList = post.mentionIds.toList() //Hacky method, but for some reason ID conversion eats list
         postDao.save(PostEntity.fromDto(post, true))
         try {
-            val response = apiService.save(authToken, post)
+            val response = apiService.save(authToken, post.copy(mentionIds = mentionList))
             if (!response.isSuccessful) {
                 throw RuntimeException(
                     response.code().toString()

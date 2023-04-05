@@ -102,7 +102,13 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun changeContent(content: String, link: String, coordsLat: String, coordsLong: String) {
+    fun changeContent(
+        content: String,
+        link: String,
+        coordsLat: String,
+        coordsLong: String,
+        mentionList: List<Int>
+    ) {
         edited.value?.let {
             val text = content.trim()
             val textLink = link.trim()
@@ -112,15 +118,15 @@ class PostViewModel @Inject constructor(
                 textCoordsLat,
                 textCoordsLong
             ) else null
-//            if (it.content == text) {
-//                return
-//            }
             edited.value =
                 it.copy(
                     content = text,
                     link = if (textLink.isNotBlank()) textLink else null,
                     coords = coords,
+                    mentionIds = mentionList,
+                    mentionedMe = mentionList.contains(appAuth.getId())
                 )
+            println(edited.value)
         }
     }
 
@@ -128,6 +134,7 @@ class PostViewModel @Inject constructor(
         edited.value?.let {
             appAuth.getToken()?.let { token ->
                 try {
+                    println(it)
                     when (_attachmnet.value) {
                         noMedia -> repository.save(it, token)
                         else -> _attachmnet.value?.file?.let { file ->
@@ -183,10 +190,22 @@ class PostViewModel @Inject constructor(
             }
             val users = response.body() ?: throw RuntimeException("body is null")
             _usersData.postValue(users)
-
         } catch (e: Exception) {
             _usersLoadError.postValue(e.toString())
         }
+    }
+
+    fun checkUsers(id:Int){
+        val data = _usersData.value
+        val foundUser = data?.find{it.id == id}
+        foundUser?.let { it.checkedNow = true }
+        _usersData.postValue(data)
+    }
+    fun changeCheckedUsers(id: Int) {
+        val data = _usersData.value
+        val foundUser = data?.find{it.id == id}
+        foundUser?.let { it.checkedNow = !it.checkedNow }
+        _usersData.postValue(data)
     }
 }
 
@@ -197,5 +216,5 @@ private val empty = Post(
     authorAvatar = null,
     published = "",
 )
-private val emptyUsers : List<User> = emptyList()
+private val emptyUsers: List<User> = emptyList()
 private val noMedia = MediaModel(null, null, AttachmentType.NONE)
