@@ -61,6 +61,12 @@ interface ApiService {
     suspend fun registerUser(
         @Field("login") login: String,
         @Field("password") password: String,
-        @Field("name") name: String
+        @Field("name") name: String,
+    ): Response<AuthPair>
+
+
+    @POST("users/registration/")
+    suspend fun registerUserWithAvatar(
+        @Body body: MultipartBody
     ): Response<AuthPair>
 }
