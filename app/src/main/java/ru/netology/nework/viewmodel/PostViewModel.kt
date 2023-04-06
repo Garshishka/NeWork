@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import ru.netology.nework.api.ApiService
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.*
 import ru.netology.nework.repository.PostRepository
@@ -26,11 +27,10 @@ import javax.inject.Inject
 @HiltViewModel
 class PostViewModel @Inject constructor(
     private val repository: PostRepository,
+    private val apiService: ApiService,
     private val appAuth: AppAuth
 ) : ViewModel() {
     val edited = MutableLiveData(empty)
-//    val editedLink = MutableLiveData(empty)
-//    val editedCoords = MutableLiveData(empty)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val data: Flow<PagingData<Post>> = appAuth
@@ -44,14 +44,17 @@ class PostViewModel @Inject constructor(
                     }
                 }
         }.flowOn(Dispatchers.Default)
+    private val _usersData = MutableLiveData(emptyUsers)
+    val usersData: LiveData<List<User>>
+        get() = _usersData
 
     private val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
-    private val _attachmnet = MutableLiveData(noMedia)
+    private val _attachment = MutableLiveData(noMedia)
     val attachment: LiveData<MediaModel>
-        get() = _attachmnet
+        get() = _attachment
 
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
@@ -65,11 +68,9 @@ class PostViewModel @Inject constructor(
     private val _postsLikeError = SingleLiveEvent<Pair<String, Pair<Int, Boolean>>>()
     val postsLikeError: LiveData<Pair<String, Pair<Int, Boolean>>>
         get() = _postsLikeError
-
-    var draft = ""
-    var draftLink = ""
-    var draftCoordsLat = ""
-    var draftCoordsLong = ""
+    private val _usersLoadError = SingleLiveEvent<String>()
+    val usersLoadError: LiveData<String>
+        get() = _usersLoadError
 
     init {
         load()
@@ -93,7 +94,12 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun changeContent(content: String, link: String, coordsLat: String, coordsLong: String) {
+    fun changeContent(
+        content: String,
+        link: String,
+        coordsLat: String,
+        coordsLong: String,
+    ) {
         edited.value?.let {
             val text = content.trim()
             val textLink = link.trim()
@@ -103,9 +109,6 @@ class PostViewModel @Inject constructor(
                 textCoordsLat,
                 textCoordsLong
             ) else null
-//            if (it.content == text) {
-//                return
-//            }
             edited.value =
                 it.copy(
                     content = text,
@@ -115,18 +118,28 @@ class PostViewModel @Inject constructor(
         }
     }
 
+    fun changeMentionedList(mentionedList: List<Int>) {
+        edited.value?.let {
+            edited.value = it.copy(
+                mentionIds = mentionedList,
+                mentionedMe = mentionedList.contains(appAuth.getId())
+            )
+        }
+    }
+
     fun save() = viewModelScope.launch {
         edited.value?.let {
             appAuth.getToken()?.let { token ->
                 try {
-                    when (_attachmnet.value) {
+                    println(it)
+                    when (_attachment.value) {
                         noMedia -> repository.save(it, token)
-                        else -> _attachmnet.value?.file?.let { file ->
+                        else -> _attachment.value?.file?.let { file ->
                             repository.saveWithAttachment(
                                 it,
                                 file,
                                 token,
-                                _attachmnet.value!!.attachmentType
+                                _attachment.value!!.attachmentType
                             )
                         }
                     }
@@ -159,11 +172,42 @@ class PostViewModel @Inject constructor(
     }
 
     fun changeMedia(fileUri: Uri?, toFile: File?, attachmentType: AttachmentType) {
-        _attachmnet.value = MediaModel(fileUri, toFile, attachmentType)
+        _attachment.value = MediaModel(fileUri, toFile, attachmentType)
     }
 
     fun deleteMedia() {
-        _attachmnet.value = noMedia
+        _attachment.value = noMedia
+    }
+
+    fun loadUsers() = viewModelScope.launch {
+        try {
+            val response = apiService.getUsers()
+            if (!response.isSuccessful) {
+                throw RuntimeException(response.code().toString())
+            }
+            val users = response.body() ?: throw RuntimeException("body is null")
+            _usersData.postValue(users)
+        } catch (e: Exception) {
+            _usersLoadError.postValue(e.toString())
+        }
+    }
+
+    fun getBackOldUsers(oldUsers: List<User>){
+        _usersData.postValue(oldUsers)
+    }
+
+    fun checkUsers(id: Int) {
+        val data = _usersData.value
+        val foundUser = data?.find { it.id == id }
+        foundUser?.let { it.checkedNow = true }
+        _usersData.postValue(data)
+    }
+
+    fun changeCheckedUsers(id: Int) {
+        val data = _usersData.value
+        val foundUser = data?.find { it.id == id }
+        foundUser?.let { it.checkedNow = !it.checkedNow }
+        _usersData.postValue(data)
     }
 }
 
@@ -174,5 +218,5 @@ private val empty = Post(
     authorAvatar = null,
     published = "",
 )
-
+private val emptyUsers: List<User> = emptyList()
 private val noMedia = MediaModel(null, null, AttachmentType.NONE)

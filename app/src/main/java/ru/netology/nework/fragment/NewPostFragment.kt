@@ -21,8 +21,9 @@ import ru.netology.nework.R
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.databinding.FragmentNewPostBinding
 import ru.netology.nework.dto.AttachmentType
+import ru.netology.nework.dto.MediaModel
 import ru.netology.nework.utils.AndroidUtils
-import ru.netology.nework.utils.StringArg
+import ru.netology.nework.utils.load
 import ru.netology.nework.viewmodel.PostViewModel
 import javax.inject.Inject
 
@@ -35,6 +36,7 @@ class NewPostFragment : Fragment() {
 
     lateinit var binding: FragmentNewPostBinding
 
+//For choosing Audio file. There is an standard Image-Video picker but no Audio picker so it on its own
     val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -57,37 +59,42 @@ class NewPostFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentNewPostBinding.inflate(inflater, container, false)
-        val isEditing = arguments?.textArg != null
-
-        if (isEditing) {
-            arguments?.apply {
-                textArg.let(binding.edit::setText)
-                linkArg.let(binding.link::setText)
-                latArg.let(binding.coordinatesLat::setText)
-                longArg.let(binding.coordinatesLong::setText)
-            }
-            viewModel.apply {
-                draft = ""
-                draftCoordsLat = ""
-                draftCoordsLong = ""
-                draftLink = ""
-            }
-        } else {
-            binding.apply {
-                edit.setText(viewModel.draft)
-                coordinatesLat.setText(viewModel.draftCoordsLat)
-                coordinatesLong.setText(viewModel.draftCoordsLong)
-                link.setText(viewModel.draftLink)
-            }
-        }
+        bind()
         binding.edit.requestFocus()
 
-        subscribe(isEditing)
+        subscribe()
 
         return binding.root
     }
 
-    private fun subscribe(isEditing: Boolean) {
+    private fun bind() {
+        //edited is used as container for post info if we editing and as a draft saver for new post
+        val post = viewModel.edited.value
+        binding.apply {
+            edit.setText(post?.content)
+            link.setText(post?.link)
+            coordinatesLat.setText(post?.coords?.lat)
+            coordinatesLong.setText(post?.coords?.long)
+            if (post?.id != 0) { //If post ID is not 0 - we editing so there can be some attachment
+                if (post?.attachment != null) {
+                    when (post.attachment.type) {
+                        AttachmentType.IMAGE -> photo.load(post.attachment.url)
+                        AttachmentType.VIDEO -> photo.setImageResource(R.drawable.baseline_video_48)
+                        AttachmentType.AUDIO -> photo.setImageResource(R.drawable.baseline_audio_file_48)
+                        else -> {}
+                    }
+                    photoContainer.isVisible = true
+                } else{
+                    viewModel.deleteMedia()
+                    photoContainer.isVisible = false
+                }
+            } else { //If post ID is 0 - it's a new post but some attachment can be as a draft
+                viewModel.attachment.value?.let { showAttachment(it) }
+            }
+        }
+    }
+
+    private fun subscribe() {
         val pickImageContract =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
@@ -100,7 +107,6 @@ class NewPostFragment : Fragment() {
                     println("No media selected")
                 }
             }
-
         val pickVideoContract =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
@@ -116,12 +122,6 @@ class NewPostFragment : Fragment() {
 
         binding.apply {
             sendButton.setOnClickListener {
-                viewModel.apply {
-                    draft = ""
-                    draftCoordsLat = ""
-                    draftCoordsLong = ""
-                    draftLink = ""
-                }
                 val text = binding.edit.text.toString()
                 val link = binding.link.text.toString()
                 val coordsLat = binding.coordinatesLat.text.toString()
@@ -135,13 +135,19 @@ class NewPostFragment : Fragment() {
                         .show()
                 } else {
                     if (text.isNotBlank()) {
-                        viewModel.changeContent(text, link, coordsLat, coordsLong)
+                        viewModel.changeContent(
+                            text,
+                            link,
+                            coordsLat,
+                            coordsLong,
+                        )
                         viewModel.save()
                         findNavController().navigateUp()
                     }
                 }
                 AndroidUtils.hideKeyboard(requireView())
             }
+
             pickPhoto.setOnClickListener {
                 pickImageContract.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             }
@@ -154,30 +160,24 @@ class NewPostFragment : Fragment() {
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
                 resultLauncher.launch(intent)
             }
-            addMention.setOnClickListener {
-                findNavController().navigate(R.id.action_newPostFragment_to_usersFragment)
-            }
             removeAttachment.setOnClickListener {
                 viewModel.deleteMedia()
+            }
+
+            addMention.text =
+                if (viewModel.edited.value?.mentionIds?.isNotEmpty() == true) viewModel.edited.value!!.mentionIds.size.toString() else ""
+            addMention.setOnClickListener {
+                findNavController().navigate(R.id.action_newPostFragment_to_usersFragment)
             }
         }
 
         viewModel.attachment.observe(viewLifecycleOwner) {
-            binding.apply {
-                when (it.attachmentType) {
-                    AttachmentType.IMAGE -> photo.setImageURI(it.uri)
-                    AttachmentType.VIDEO -> photo.setImageResource(R.drawable.baseline_video_48)
-                    AttachmentType.AUDIO -> photo.setImageResource(R.drawable.baseline_audio_file_48)
-                    else -> {}
-                }
-                photoContainer.isVisible = it.uri != null
-            }
+            showAttachment(it)
         }
 
         activity?.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             }
-
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.logOut -> {
@@ -190,14 +190,23 @@ class NewPostFragment : Fragment() {
         }, viewLifecycleOwner)
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
-            if (!isEditing) {
-                viewModel.apply {
-                    draft = binding.edit.text.toString()
-                    draftLink = binding.link.text.toString()
-                    draftCoordsLat = binding.coordinatesLat.text.toString()
-                    draftCoordsLong = binding.coordinatesLong.text.toString()
-                }
+            //ID = 0 if new post (even with draft), non-zero will be edited posts
+            if (viewModel.edited.value?.id == 0) {
+                val text = binding.edit.text.toString()
+                val link = binding.link.text.toString()
+                val coordsLat = binding.coordinatesLat.text.toString()
+                val coordsLong = binding.coordinatesLong.text.toString()
+                viewModel.changeContent(
+                    text,
+                    link,
+                    coordsLat,
+                    coordsLong,
+                )
+            } else {
+                viewModel.empty()
+                viewModel.deleteMedia()
             }
+
             findNavController().navigateUp()
         }
     }
@@ -224,10 +233,16 @@ class NewPostFragment : Fragment() {
         alertDialog.show()
     }
 
-    companion object {
-        var Bundle.textArg by StringArg
-        var Bundle.linkArg by StringArg
-        var Bundle.latArg by StringArg
-        var Bundle.longArg by StringArg
+    private fun showAttachment(mediaModel: MediaModel) {
+        binding.apply {
+            when (mediaModel.attachmentType) {
+                AttachmentType.IMAGE -> photo.setImageURI(mediaModel.uri)
+                AttachmentType.VIDEO -> photo.setImageResource(R.drawable.baseline_video_48)
+                AttachmentType.AUDIO -> photo.setImageResource(R.drawable.baseline_audio_file_48)
+                else -> {}
+            }
+            photoContainer.isVisible = mediaModel.uri != null
+        }
     }
+
 }
