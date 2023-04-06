@@ -31,8 +31,6 @@ class PostViewModel @Inject constructor(
     private val appAuth: AppAuth
 ) : ViewModel() {
     val edited = MutableLiveData(empty)
-//    val editedLink = MutableLiveData(empty)
-//    val editedCoords = MutableLiveData(empty)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val data: Flow<PagingData<Post>> = appAuth
@@ -54,9 +52,9 @@ class PostViewModel @Inject constructor(
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
-    private val _attachmnet = MutableLiveData(noMedia)
+    private val _attachment = MutableLiveData(noMedia)
     val attachment: LiveData<MediaModel>
-        get() = _attachmnet
+        get() = _attachment
 
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
@@ -73,12 +71,6 @@ class PostViewModel @Inject constructor(
     private val _usersLoadError = SingleLiveEvent<String>()
     val usersLoadError: LiveData<String>
         get() = _usersLoadError
-
-    var userList = mutableListOf<Int>()
-    var draft = ""
-    var draftLink = ""
-    var draftCoordsLat = ""
-    var draftCoordsLong = ""
 
     init {
         load()
@@ -107,7 +99,6 @@ class PostViewModel @Inject constructor(
         link: String,
         coordsLat: String,
         coordsLong: String,
-        mentionList: List<Int>
     ) {
         edited.value?.let {
             val text = content.trim()
@@ -123,10 +114,16 @@ class PostViewModel @Inject constructor(
                     content = text,
                     link = if (textLink.isNotBlank()) textLink else null,
                     coords = coords,
-                    mentionIds = mentionList,
-                    mentionedMe = mentionList.contains(appAuth.getId())
                 )
-            println(edited.value)
+        }
+    }
+
+    fun changeMentionedList(mentionedList: List<Int>) {
+        edited.value?.let {
+            edited.value = it.copy(
+                mentionIds = mentionedList,
+                mentionedMe = mentionedList.contains(appAuth.getId())
+            )
         }
     }
 
@@ -135,14 +132,14 @@ class PostViewModel @Inject constructor(
             appAuth.getToken()?.let { token ->
                 try {
                     println(it)
-                    when (_attachmnet.value) {
+                    when (_attachment.value) {
                         noMedia -> repository.save(it, token)
-                        else -> _attachmnet.value?.file?.let { file ->
+                        else -> _attachment.value?.file?.let { file ->
                             repository.saveWithAttachment(
                                 it,
                                 file,
                                 token,
-                                _attachmnet.value!!.attachmentType
+                                _attachment.value!!.attachmentType
                             )
                         }
                     }
@@ -175,11 +172,11 @@ class PostViewModel @Inject constructor(
     }
 
     fun changeMedia(fileUri: Uri?, toFile: File?, attachmentType: AttachmentType) {
-        _attachmnet.value = MediaModel(fileUri, toFile, attachmentType)
+        _attachment.value = MediaModel(fileUri, toFile, attachmentType)
     }
 
     fun deleteMedia() {
-        _attachmnet.value = noMedia
+        _attachment.value = noMedia
     }
 
     fun loadUsers() = viewModelScope.launch {
@@ -195,15 +192,20 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun checkUsers(id:Int){
+    fun getBackOldUsers(oldUsers: List<User>){
+        _usersData.postValue(oldUsers)
+    }
+
+    fun checkUsers(id: Int) {
         val data = _usersData.value
-        val foundUser = data?.find{it.id == id}
+        val foundUser = data?.find { it.id == id }
         foundUser?.let { it.checkedNow = true }
         _usersData.postValue(data)
     }
+
     fun changeCheckedUsers(id: Int) {
         val data = _usersData.value
-        val foundUser = data?.find{it.id == id}
+        val foundUser = data?.find { it.id == id }
         foundUser?.let { it.checkedNow = !it.checkedNow }
         _usersData.postValue(data)
     }

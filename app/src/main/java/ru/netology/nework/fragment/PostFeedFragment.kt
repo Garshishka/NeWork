@@ -12,18 +12,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nework.R
 import ru.netology.nework.adapter.PostsAdapter
 import ru.netology.nework.databinding.FragmentPostsBinding
 import ru.netology.nework.dto.Post
-import ru.netology.nework.fragment.NewPostFragment.Companion.latArg
-import ru.netology.nework.fragment.NewPostFragment.Companion.linkArg
-import ru.netology.nework.fragment.NewPostFragment.Companion.longArg
-import ru.netology.nework.fragment.NewPostFragment.Companion.mentionedArg
-import ru.netology.nework.fragment.NewPostFragment.Companion.textArg
 import ru.netology.nework.fragment.PictureFragment.Companion.urlArg
 import ru.netology.nework.utils.OnInteractionListener
 import ru.netology.nework.viewmodel.AuthViewModel
@@ -47,16 +41,8 @@ class PostFeedFragment : Fragment() {
         }
 
         override fun onEdit(post: Post) {
-            findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment,
-                Bundle().apply
-                {
-                    textArg = post.content
-                    linkArg = post.link
-                    latArg = post.coords?.lat
-                    longArg = post.coords?.long
-                    mentionedArg = if (post.mentionIds.isNotEmpty()) Gson().toJson(post.mentionIds) else null
-                })
             viewModel.edit(post)
+            findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
         }
 
         override fun onRemove(post: Post) {
@@ -173,6 +159,18 @@ class PostFeedFragment : Fragment() {
                 )
                     .setAction("Retry") {
                         viewModel.likeById(id, willLike)
+                    }
+                    .show()
+            }
+
+            usersLoadError.observe(viewLifecycleOwner){
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.specific_edit_error, it),
+                    Snackbar.LENGTH_LONG
+                )
+                    .setAction("Retry") {
+                        loadUsers()
                     }
                     .show()
             }
