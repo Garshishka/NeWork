@@ -6,7 +6,7 @@
     <string name="sign_up">Sign Up</string>
     <string name="username">USERNAME</string>
     <string name="repeat_password">REPEAT PASSWORD</string>
-    <string name="login_error">Login Error: :%1$s</string>
+    <string name="login_error">Login Error: %1$s</string>
     <string name="login_wrong">Wrong login or password</string>
     <string name="description_post_author_avatar">Post author avatar</string>
     <string name="description_post_menu">Post menu</string>
@@ -42,4 +42,7 @@
     <string name="select_audio">Select audio</string>
     <string name="plus">+</string>
     <string name="description_choose_avatar">Choose your avatar</string>
+    <string name="load_users_error">Loading users list error: %1$s</string>
+    <string name="load_feed_error">Error loading posts. Try again</string>
+    <string name="posts_empty">There are no posts</string>
 </resources>

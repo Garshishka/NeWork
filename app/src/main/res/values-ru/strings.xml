@@ -7,7 +7,7 @@
     <string name="sign_up">Зарегистрироваться</string>
     <string name="username">ИМЯ ПОЛЬЗОВАТЕЛЯ</string>
     <string name="repeat_password">ПОВТОРИТЕ ПАРОЛЬ</string>
-    <string name="login_error">Ошибка авторизации: :%1$s</string>
+    <string name="login_error">Ошибка авторизации: %1$s</string>
     <string name="login_wrong">Неправильный логин или пароль</string>
     <string name="description_post_author_avatar">Аватар автора поста</string>
     <string name="description_post_menu">Меню поста</string>
@@ -43,4 +43,7 @@
     <string name="select_audio">Выбрать аудио</string>
     <string name="plus">+</string>
     <string name="description_choose_avatar">Выберите ваш аватар</string>
+    <string name="load_users_error">Ошибка загрузки списка пользователей: %1$s</string>
+    <string name="load_feed_error">Ошибка загрузки списка постов. Попробуйте снова</string>
+    <string name="posts_empty">Постов не обнаружено</string>
 </resources>

@@ -76,8 +76,8 @@ class PostViewModel @Inject constructor(
         load()
     }
 
-    fun load(isRefreshing: Boolean = false) = viewModelScope.launch {
-        _dataState.value = if (isRefreshing) FeedModelState.Refreshing else FeedModelState.Loading
+    fun load() = viewModelScope.launch {
+        _dataState.value = FeedModelState.Loading
         try {
             repository.getAll(appAuth.getToken())
             _dataState.value = FeedModelState.Idle

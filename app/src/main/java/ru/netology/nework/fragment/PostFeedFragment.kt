@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nework.R
 import ru.netology.nework.adapter.PostsAdapter
 import ru.netology.nework.databinding.FragmentPostsBinding
+import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.dto.Post
 import ru.netology.nework.fragment.PictureFragment.Companion.urlArg
 import ru.netology.nework.utils.OnInteractionListener
@@ -68,7 +70,7 @@ class PostFeedFragment : Fragment() {
         }
     }
 
-    val adapter = PostsAdapter(onInteractionListener)
+    private val adapter = PostsAdapter(onInteractionListener)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -124,6 +126,24 @@ class PostFeedFragment : Fragment() {
         viewModel.apply {
             loadUsers()
 
+            dataState.observe(viewLifecycleOwner){
+                when(it){
+                    FeedModelState.Error -> {
+                        Snackbar.make(
+                            binding.root,
+                            getString(R.string.load_feed_error),
+                            Snackbar.LENGTH_LONG
+                        )
+                            .setAction("Retry") {
+                                loadUsers()
+                            }
+                            .show()
+                    }
+                    else -> {}
+                }
+                binding.loading.isVisible = it == FeedModelState.Loading
+            }
+
             postCreatedError.observe(viewLifecycleOwner) {
                 Snackbar.make(
                     binding.root,
@@ -166,7 +186,7 @@ class PostFeedFragment : Fragment() {
             usersLoadError.observe(viewLifecycleOwner){
                 Snackbar.make(
                     binding.root,
-                    getString(R.string.specific_edit_error, it),
+                    getString(R.string.load_users_error, it),
                     Snackbar.LENGTH_LONG
                 )
                     .setAction("Retry") {
