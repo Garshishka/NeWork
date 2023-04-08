@@ -39,6 +39,7 @@ class PostViewHolder(
                 published.setText(R.string.posted_now)
             }
             content.text = post.content
+            ifHaveTextThenShow(job,post.authorJob)
             ifHaveTextThenShow(link, post.link)
             ifHaveTextThenShow(coordinates, post.coords)
 
@@ -52,7 +53,6 @@ class PostViewHolder(
             likeBatchTrail.isVisible = post.likeOwnerIds.size > 3
 
             mention.text = formattingBigNumbers(post.mentionIds.size)
-            //mention.setOnClickListener { onInteractionListener.onShare(post) }
             showAvatarInTrailing(post.mentionIds,0,mentionAvatars1,post.users)
             showAvatarInTrailing(post.mentionIds,1,mentionAvatars2,post.users)
             showAvatarInTrailing(post.mentionIds,2,mentionAvatars3,post.users)

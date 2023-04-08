@@ -45,4 +45,15 @@
     <string name="load_users_error">Loading users list error: %1$s</string>
     <string name="load_feed_error">Error loading posts. Try again</string>
     <string name="posts_empty">There are no posts</string>
+    <string name="from_job">From</string>
+    <string name="to_job">To</string>
+    <string name="this_day">this day</string>
+    <string name="jobs">Jobs</string>
+    <string name="load_jobs_error">Loading job list error: %1$s</string>
+    <string name="job_name">Job name</string>
+    <string name="job_position">Job position</string>
+    <string name="add_job">Add job</string>
+    <string name="job_start">Job start</string>
+    <string name="job_finish">Job finish</string>
+    <string name="job_link">Job link</string>
 </resources>

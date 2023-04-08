@@ -112,6 +112,16 @@ class PostFeedFragment : Fragment() {
                 adapter.refresh()
             }
 
+            jobsButton.setOnClickListener {
+                val token = context?.getSharedPreferences("auth", Context.MODE_PRIVATE)
+                    ?.getString("TOKEN_KEY", null)
+                if (token == null) {
+                    context?.let { context -> showSignInDialog(context) }
+                } else {
+                    findNavController().navigate(R.id.action_postFeedFragment_to_jobFragment)
+                }
+            }
+
             addPostButton.setOnClickListener {
                 val token = context?.getSharedPreferences("auth", Context.MODE_PRIVATE)
                     ?.getString("TOKEN_KEY", null)
@@ -135,7 +145,7 @@ class PostFeedFragment : Fragment() {
                             Snackbar.LENGTH_LONG
                         )
                             .setAction("Retry") {
-                                loadUsers()
+                                load()
                             }
                             .show()
                     }

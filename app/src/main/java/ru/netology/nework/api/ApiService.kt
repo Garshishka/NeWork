@@ -4,16 +4,16 @@ import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 import ru.netology.nework.auth.AuthPair
+import ru.netology.nework.dto.Job
 import ru.netology.nework.dto.MediaUpload
 import ru.netology.nework.dto.Post
 import ru.netology.nework.dto.User
 
 interface ApiService {
+
+    //POSTS
     @GET("posts")
     suspend fun getAll(): Response<List<Post>>
-
-    @GET("users")
-    suspend fun getUsers(): Response<List<User>>
 
     @POST("posts")
     suspend fun save(@Header("auth") auth: String, @Body post: Post): Response<Post>
@@ -23,13 +23,6 @@ interface ApiService {
 
     @DELETE("posts/{id}/likes ")
     suspend fun dislikeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Post>
-
-    @Multipart
-    @POST("media")
-    suspend fun upload(
-        @Header("auth") auth: String,
-        @Part file: MultipartBody.Part
-    ): Response<MediaUpload>
 
     @DELETE("posts/{id}")
     suspend fun removeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Unit>
@@ -49,6 +42,28 @@ interface ApiService {
         @Query("count") count: Int,
     ): Response<List<Post>>
 
+    //MEDIA UPLOAD
+    @Multipart
+    @POST("media")
+    suspend fun upload(
+        @Header("auth") auth: String,
+        @Part file: MultipartBody.Part
+    ): Response<MediaUpload>
+
+    //JOBS
+    @GET("my/jobs/")
+    suspend fun getMyJobs(@Header("auth") auth: String): Response<List<Job>>
+
+    @GET("{user_id}/jobs/")
+    suspend fun getPersonJobs(@Path("user_id") id: String): Response<List<Job>>
+
+    @POST("my/jobs/")
+    suspend fun addNewJob(@Header("auth") auth: String, @Body job: Job) :Response<Job>
+
+    //USERS
+    @GET("users")
+    suspend fun getUsers(): Response<List<User>>
+
     @FormUrlEncoded
     @POST("users/authentication/")
     suspend fun updateUser(
@@ -63,7 +78,6 @@ interface ApiService {
         @Field("password") password: String,
         @Field("name") name: String,
     ): Response<AuthPair>
-
 
     @POST("users/registration/")
     suspend fun registerUserWithAvatar(
