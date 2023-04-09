@@ -6,9 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nework.R
 import ru.netology.nework.databinding.LayoutJobBinding
 import ru.netology.nework.dto.Job
+import ru.netology.nework.utils.AndroidUtils.getJobDate
 import ru.netology.nework.utils.JobInteractionListener
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
 
 class JobViewHolder(
     private val binding: LayoutJobBinding,
@@ -19,9 +18,9 @@ class JobViewHolder(
         binding.apply {
             name.text = job.name
             position.text = job.position
-            start.text = getJobDay(job.start)
+            start.text = getJobDate(job.start)
             if (job.finish != null) {
-                finish.text = getJobDay(job.finish)
+                finish.text = getJobDate(job.finish)
             } else {
                 finish.setText(R.string.this_day)
             }
@@ -51,11 +50,5 @@ class JobViewHolder(
                 }.show()
             }
         }
-    }
-
-    private fun getJobDay(time: String): String {
-        val publishedTime = OffsetDateTime.parse(time).toLocalDateTime()
-        val formatter = DateTimeFormatter.ofPattern("dd MM yyyy")
-        return publishedTime.format(formatter)
     }
 }

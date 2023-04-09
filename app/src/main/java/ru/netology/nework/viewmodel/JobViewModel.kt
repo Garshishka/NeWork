@@ -110,6 +110,14 @@ class JobViewModel @Inject constructor(
         }
     }
 
+    fun edit(job: Job) {
+        edited.value = job
+    }
+
+    fun empty() {
+        edited.value = empty
+    }
+
     fun changeContent(
         name: String,
         position: String,
