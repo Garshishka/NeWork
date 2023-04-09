@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
-        android:id="@+id/buttonPanel"
+        android:id="@+id/button_panel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/pickPhoto"
+            android:id="@+id/pick_photo"
             style="@style/Widget.AppTheme.GrayButtons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
             app:icon="@drawable/baseline_image_28" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/pickVideo"
+            android:id="@+id/pick_video"
             style="@style/Widget.AppTheme.GrayButtons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
 
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/pickAudio"
+            android:id="@+id/pick_audio"
             style="@style/Widget.AppTheme.GrayButtons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
             app:icon="@drawable/baseline_audio_file_28" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/addMention"
+            android:id="@+id/add_mention"
             style="@style/Widget.AppTheme.GrayButtons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
     </LinearLayout>
 
     <ScrollView
-        android:id="@+id/scrollView"
+        android:id="@+id/scroll_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/divider"
@@ -84,7 +84,7 @@
                 android:layout_height="1dp"
                 android:layout_marginStart="@dimen/margin_default"
                 android:layout_marginEnd="@dimen/margin_default"
-                android:background="@color/cardview_dark_background" />
+                android:background="@color/dark_grey" />
 
             <EditText
                 android:id="@+id/link"
@@ -104,7 +104,7 @@
                 android:layout_height="1dp"
                 android:layout_marginStart="@dimen/margin_default"
                 android:layout_marginEnd="@dimen/margin_default"
-                android:background="@color/cardview_dark_background" />
+                android:background="@color/dark_grey" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -119,7 +119,7 @@
                 >
 
                 <EditText
-                    android:id="@+id/coordinatesLat"
+                    android:id="@+id/coordinates_lat"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
@@ -134,21 +134,21 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/coordsDivider"/>
+                    app:layout_constraintEnd_toStartOf="@id/coords_divider"/>
 
                 <View
-                    android:id="@+id/coordsDivider"
+                    android:id="@+id/coords_divider"
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="@color/cardview_dark_background"
-                    app:layout_constraintStart_toEndOf="@id/coordinatesLat"
-                    app:layout_constraintEnd_toStartOf="@id/coordinatesLong"
+                    android:background="@color/dark_grey"
+                    app:layout_constraintStart_toEndOf="@id/coordinates_lat"
+                    app:layout_constraintEnd_toStartOf="@id/coordinates_long"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     />
 
                 <EditText
-                    android:id="@+id/coordinatesLong"
+                    android:id="@+id/coordinates_long"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
@@ -162,7 +162,7 @@
                     android:hint="@string/coordinates_hint_long"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/coordsDivider"
+                    app:layout_constraintStart_toEndOf="@id/coords_divider"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
             </LinearLayout>
@@ -172,16 +172,16 @@
                 android:layout_height="1dp"
                 android:layout_marginStart="@dimen/margin_default"
                 android:layout_marginEnd="@dimen/margin_default"
-                android:background="@color/cardview_dark_background" />
+                android:background="@color/dark_grey" />
 
             <LinearLayout
-                android:id="@+id/photoContainer"
+                android:id="@+id/photo_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/removeAttachment"
+                    android:id="@+id/remove_attachment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|bottom"
@@ -214,8 +214,8 @@
         android:layout_height="1dp"
         android:layout_marginStart="@dimen/margin_default"
         android:layout_marginEnd="@dimen/margin_default"
-        android:background="@color/cardview_dark_background"
-        app:layout_constraintBottom_toTopOf="@id/buttonPanel"
+        android:background="@color/dark_grey"
+        app:layout_constraintBottom_toTopOf="@id/button_panel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

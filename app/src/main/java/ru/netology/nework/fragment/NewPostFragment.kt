@@ -143,6 +143,13 @@ class NewPostFragment : Fragment() {
                         )
                         viewModel.save()
                         findNavController().navigateUp()
+                    } else{
+                        Toast.makeText(
+                            context,
+                            getString(R.string.no_context),
+                            Toast.LENGTH_LONG
+                        )
+                            .show()
                     }
                 }
                 AndroidUtils.hideKeyboard(requireView())

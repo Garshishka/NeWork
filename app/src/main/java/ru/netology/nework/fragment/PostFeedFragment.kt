@@ -20,8 +20,9 @@ import ru.netology.nework.adapter.PostsAdapter
 import ru.netology.nework.databinding.FragmentPostsBinding
 import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.dto.Post
+import ru.netology.nework.fragment.JobFragment.Companion.idArg
 import ru.netology.nework.fragment.PictureFragment.Companion.urlArg
-import ru.netology.nework.utils.OnInteractionListener
+import ru.netology.nework.utils.PostInteractionListener
 import ru.netology.nework.viewmodel.AuthViewModel
 import ru.netology.nework.viewmodel.PostViewModel
 
@@ -31,7 +32,7 @@ class PostFeedFragment : Fragment() {
     private val authViewModel: AuthViewModel by activityViewModels()
     lateinit var binding: FragmentPostsBinding
 
-    private val onInteractionListener = object : OnInteractionListener {
+    private val onInteractionListener = object : PostInteractionListener {
         override fun onLike(post: Post) {
             val token = context?.getSharedPreferences("auth", Context.MODE_PRIVATE)
                 ?.getString("TOKEN_KEY", null)
@@ -67,6 +68,12 @@ class PostFeedFragment : Fragment() {
             findNavController().navigate(R.id.action_postFeedFragment_to_pictureFragment,
                 Bundle().apply
                 { urlArg = url })
+        }
+
+        override fun onAvatarClick(authorId: Int) {
+            findNavController().navigate(R.id.action_postFeedFragment_to_jobFragment,
+                Bundle().apply
+                { idArg = authorId.toString() })
         }
     }
 
@@ -112,6 +119,16 @@ class PostFeedFragment : Fragment() {
                 adapter.refresh()
             }
 
+            jobsButton.setOnClickListener {
+                val token = context?.getSharedPreferences("auth", Context.MODE_PRIVATE)
+                    ?.getString("TOKEN_KEY", null)
+                if (token == null) {
+                    context?.let { context -> showSignInDialog(context) }
+                } else {
+                    findNavController().navigate(R.id.action_postFeedFragment_to_jobFragment)
+                }
+            }
+
             addPostButton.setOnClickListener {
                 val token = context?.getSharedPreferences("auth", Context.MODE_PRIVATE)
                     ?.getString("TOKEN_KEY", null)
@@ -135,7 +152,7 @@ class PostFeedFragment : Fragment() {
                             Snackbar.LENGTH_LONG
                         )
                             .setAction("Retry") {
-                                loadUsers()
+                                load()
                             }
                             .show()
                     }

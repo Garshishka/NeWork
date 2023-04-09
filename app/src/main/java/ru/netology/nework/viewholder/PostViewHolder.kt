@@ -11,14 +11,14 @@ import ru.netology.nework.databinding.LayoutPostBinding
 import ru.netology.nework.dto.AttachmentType
 import ru.netology.nework.dto.Post
 import ru.netology.nework.dto.UserPreview
-import ru.netology.nework.utils.OnInteractionListener
+import ru.netology.nework.utils.PostInteractionListener
 import ru.netology.nework.utils.load
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 class PostViewHolder(
     private val binding: LayoutPostBinding,
-    private val onInteractionListener: OnInteractionListener,
+    private val onInteractionListener: PostInteractionListener,
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(post: Post) {
@@ -30,6 +30,9 @@ class PostViewHolder(
             } else {
                 avatar.setImageResource(R.drawable.baseline_person_24)
             }
+            avatar.setOnClickListener {
+                onInteractionListener.onAvatarClick(post.authorId)
+            }
             try {
                 val publishedTime = OffsetDateTime.parse(post.published).toLocalDateTime()
                 val formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd")
@@ -39,6 +42,7 @@ class PostViewHolder(
                 published.setText(R.string.posted_now)
             }
             content.text = post.content
+            ifHaveTextThenShow(job,post.authorJob)
             ifHaveTextThenShow(link, post.link)
             ifHaveTextThenShow(coordinates, post.coords)
 
@@ -52,7 +56,6 @@ class PostViewHolder(
             likeBatchTrail.isVisible = post.likeOwnerIds.size > 3
 
             mention.text = formattingBigNumbers(post.mentionIds.size)
-            //mention.setOnClickListener { onInteractionListener.onShare(post) }
             showAvatarInTrailing(post.mentionIds,0,mentionAvatars1,post.users)
             showAvatarInTrailing(post.mentionIds,1,mentionAvatars2,post.users)
             showAvatarInTrailing(post.mentionIds,2,mentionAvatars3,post.users)

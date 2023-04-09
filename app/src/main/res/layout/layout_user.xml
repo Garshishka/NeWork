@@ -14,10 +14,11 @@
         app:iconTint="@android:color/transparent"
         app:iconTintMode="add"
         app:iconSize="@dimen/avatar_size"
-        android:textSize="23sp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:textColor="@color/purple_500"
         android:textAllCaps="false"
         tools:text="Username"
+        android:ellipsize="end"
         android:checkable="true"
         style="@style/Widget.AppTheme.UserCheckBox"
     />

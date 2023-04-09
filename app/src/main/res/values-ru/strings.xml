@@ -46,4 +46,23 @@
     <string name="load_users_error">Ошибка загрузки списка пользователей: %1$s</string>
     <string name="load_feed_error">Ошибка загрузки списка постов. Попробуйте снова</string>
     <string name="posts_empty">Постов не обнаружено</string>
+    <string name="from_job">С</string>
+    <string name="to_job">По</string>
+    <string name="this_day">настоящий момент</string>
+    <string name="jobs">Работы</string>
+    <string name="load_jobs_error">Ошибка загрузки списка работ: %1$s</string>
+    <string name="job_name">Имя работы</string>
+    <string name="job_position">Должность</string>
+    <string name="add_job">Добавить работу</string>
+    <string name="job_start">Начало работы</string>
+    <string name="job_finish">Окончание работы</string>
+    <string name="job_link">Ссылка на работу</string>
+    <string name="no_context">У поста должен быть текст</string>
+    <string name="job_not_filled">Пожалуйста заполните все обязательные поля</string>
+    <string name="job_finish_date">Дата окончания работы (опционально)</string>
+    <string name="job_start_date">Дата начала работы</string>
+    <string name="job_link_optional">Ссылка на работу (опционально)</string>
+    <string name="new_job_error">Ошибка добавления работы: %1$s</string>
+    <string name="job_delete_error">Ошибка удаления поста:  %1$s</string>
+    <string name="jobs_empty">Работы отсутствуют</string>
 </resources>

@@ -5,12 +5,12 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import ru.netology.nework.databinding.LayoutPostBinding
 import ru.netology.nework.dto.Post
-import ru.netology.nework.utils.OnInteractionListener
+import ru.netology.nework.utils.PostInteractionListener
 import ru.netology.nework.viewholder.PostDiffCallBack
 import ru.netology.nework.viewholder.PostViewHolder
 
 class PostsAdapter(
-    private val onInteractionListener: OnInteractionListener
+    private val onInteractionListener: PostInteractionListener
 ) : PagingDataAdapter<Post, PostViewHolder>(PostDiffCallBack()) {
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = getItem(position) ?: return
