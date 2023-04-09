@@ -30,6 +30,9 @@ class PostViewHolder(
             } else {
                 avatar.setImageResource(R.drawable.baseline_person_24)
             }
+            avatar.setOnClickListener {
+                onInteractionListener.onAvatarClick(post.authorId)
+            }
             try {
                 val publishedTime = OffsetDateTime.parse(post.published).toLocalDateTime()
                 val formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd")

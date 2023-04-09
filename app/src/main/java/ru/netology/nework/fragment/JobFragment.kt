@@ -21,6 +21,7 @@ import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.dto.Job
 import ru.netology.nework.utils.AndroidUtils.getJobDate
 import ru.netology.nework.utils.JobInteractionListener
+import ru.netology.nework.utils.StringArg
 import ru.netology.nework.viewmodel.JobViewModel
 
 class JobFragment : Fragment() {
@@ -52,17 +53,16 @@ class JobFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val userId = arguments?.idArg
         binding = FragmentJobsBinding.inflate(inflater, container, false)
+        viewModel.load(userId)
 
-        //viewModel.loadPersonJobs(155)
-        viewModel.load()
-
-        subscribe()
+        subscribe(userId)
 
         return binding.root
     }
 
-    private fun subscribe() {
+    private fun subscribe(userId: String?) {
         var startString = ""
         var finishString: String? = null
 
@@ -124,6 +124,7 @@ class JobFragment : Fragment() {
         viewModel.apply {
             jobsData.observe(viewLifecycleOwner) {
                 adapter.submitList(it)
+                binding.empty.isVisible = if(adapter.itemCount==0) true else false
             }
 
             dataState.observe(viewLifecycleOwner) {
@@ -151,7 +152,7 @@ class JobFragment : Fragment() {
                     Snackbar.LENGTH_LONG
                 )
                     .setAction("Retry") {
-                        load()
+                        load(userId)
                     }
                     .show()
             }
@@ -162,7 +163,7 @@ class JobFragment : Fragment() {
                     Snackbar.LENGTH_LONG
                 )
                     .setAction("Retry") {
-                        load()
+                        load(userId)
                     }
                     .show()
             }
@@ -221,5 +222,9 @@ class JobFragment : Fragment() {
         val date = "$dString $mString $yString"
         button.text = date
         return "$yString-$mString-${dString}T00:00:01.000Z"
+    }
+
+    companion object {
+        var Bundle.idArg by StringArg
     }
 }

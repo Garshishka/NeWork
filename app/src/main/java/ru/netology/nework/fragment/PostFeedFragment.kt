@@ -20,6 +20,7 @@ import ru.netology.nework.adapter.PostsAdapter
 import ru.netology.nework.databinding.FragmentPostsBinding
 import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.dto.Post
+import ru.netology.nework.fragment.JobFragment.Companion.idArg
 import ru.netology.nework.fragment.PictureFragment.Companion.urlArg
 import ru.netology.nework.utils.PostInteractionListener
 import ru.netology.nework.viewmodel.AuthViewModel
@@ -67,6 +68,12 @@ class PostFeedFragment : Fragment() {
             findNavController().navigate(R.id.action_postFeedFragment_to_pictureFragment,
                 Bundle().apply
                 { urlArg = url })
+        }
+
+        override fun onAvatarClick(authorId: Int) {
+            findNavController().navigate(R.id.action_postFeedFragment_to_jobFragment,
+                Bundle().apply
+                { idArg = authorId.toString() })
         }
     }
 

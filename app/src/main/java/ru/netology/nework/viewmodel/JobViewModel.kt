@@ -35,10 +35,17 @@ class JobViewModel @Inject constructor(
     val jobRemoveError: LiveData<String>
         get() = _jobRemoveError
 
-    fun load() {
+    var userId: String? = "0"
+
+    fun load(id: String?) {
+        userId = id
         _dataState.value = FeedModelState.Loading
         try {
-            loadMyJobs()
+            if (userId != null && userId != "0") {
+                loadPersonJobs(userId!!)
+            } else {
+                loadMyJobs()
+            }
             _dataState.value = FeedModelState.Idle
         } catch (e: Exception) {
             _dataState.value = FeedModelState.Error
@@ -61,9 +68,9 @@ class JobViewModel @Inject constructor(
         }
     }
 
-    fun loadPersonJobs(id: Int) = viewModelScope.launch {
+    fun loadPersonJobs(id: String) = viewModelScope.launch {
         try {
-            val response = apiService.getPersonJobs(id.toString())
+            val response = apiService.getPersonJobs(id)
             if (!response.isSuccessful) {
                 throw RuntimeException(response.code().toString())
             }
@@ -85,7 +92,7 @@ class JobViewModel @Inject constructor(
                     if (!response.isSuccessful) {
                         throw RuntimeException(response.code().toString())
                     } else {
-                        load()
+                        load(userId)
                     }
                 } catch (e: Exception) {
                     _newJobLoadError.postValue(e.toString())
@@ -97,11 +104,11 @@ class JobViewModel @Inject constructor(
     fun removeById(id: Int) = viewModelScope.launch {
         try {
             appAuth.getToken()?.let {
-                val response = apiService.removeJob(it,id.toString())
+                val response = apiService.removeJob(it, id.toString())
                 if (!response.isSuccessful) {
                     throw RuntimeException(response.code().toString())
                 } else {
-                    load()
+                    load(userId)
                 }
             }
         } catch (e: Exception) {
