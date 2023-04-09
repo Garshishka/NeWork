@@ -18,12 +18,25 @@ import ru.netology.nework.R
 import ru.netology.nework.adapter.JobAdapter
 import ru.netology.nework.databinding.FragmentJobsBinding
 import ru.netology.nework.dto.FeedModelState
+import ru.netology.nework.dto.Job
+import ru.netology.nework.utils.JobInteractionListener
 import ru.netology.nework.viewmodel.JobViewModel
 
 class JobFragment : Fragment() {
     private val viewModel: JobViewModel by activityViewModels()
 
-    private val adapter = JobAdapter()
+    private val onInteractionListener = object : JobInteractionListener {
+        override fun onEdit(job: Job) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onRemove(job: Job) {
+           viewModel.removeById(job.id)
+        }
+
+    }
+
+    private val adapter = JobAdapter(onInteractionListener)
     lateinit var binding: FragmentJobsBinding
 
     override fun onCreateView(
@@ -118,11 +131,23 @@ class JobFragment : Fragment() {
                     else -> {}
                 }
                 binding.loading.isVisible = it == FeedModelState.Loading
+                binding.empty.isVisible = it == FeedModelState.Error
             }
             newJobLoadError.observe(viewLifecycleOwner) {
                 Snackbar.make(
                     binding.root,
                     getString(R.string.new_job_error),
+                    Snackbar.LENGTH_LONG
+                )
+                    .setAction("Retry") {
+                        load()
+                    }
+                    .show()
+            }
+            jobRemoveError.observe(viewLifecycleOwner){
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.job_delete_error),
                     Snackbar.LENGTH_LONG
                 )
                     .setAction("Retry") {

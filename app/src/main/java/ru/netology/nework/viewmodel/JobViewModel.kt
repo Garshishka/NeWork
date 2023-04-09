@@ -31,6 +31,10 @@ class JobViewModel @Inject constructor(
     val newJobLoadError: LiveData<String>
         get() = _newJobLoadError
 
+    private val _jobRemoveError = SingleLiveEvent<String>()
+    val jobRemoveError: LiveData<String>
+        get() = _jobRemoveError
+
     fun load() {
         _dataState.value = FeedModelState.Loading
         try {
@@ -49,6 +53,7 @@ class JobViewModel @Inject constructor(
                     throw RuntimeException(response.code().toString())
                 }
                 val jobs = response.body() ?: throw RuntimeException("body is null")
+                jobs.forEach() { it.ownedByMe = true }
                 _jobsData.postValue(jobs)
             } catch (e: Exception) {
                 println(e.message.toString())
@@ -86,6 +91,22 @@ class JobViewModel @Inject constructor(
                     _newJobLoadError.postValue(e.toString())
                 }
             }
+        }
+    }
+
+    fun removeById(id: Int) = viewModelScope.launch {
+        try {
+            appAuth.getToken()?.let {
+                val response = apiService.removeJob(it,id.toString())
+                if (!response.isSuccessful) {
+                    throw RuntimeException(response.code().toString())
+                } else {
+                    load()
+                }
+            }
+        } catch (e: Exception) {
+            println(e.message)
+            _jobRemoveError.postValue(e.message.toString())
         }
     }
 

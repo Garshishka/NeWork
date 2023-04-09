@@ -11,14 +11,14 @@ import ru.netology.nework.databinding.LayoutPostBinding
 import ru.netology.nework.dto.AttachmentType
 import ru.netology.nework.dto.Post
 import ru.netology.nework.dto.UserPreview
-import ru.netology.nework.utils.OnInteractionListener
+import ru.netology.nework.utils.PostInteractionListener
 import ru.netology.nework.utils.load
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 class PostViewHolder(
     private val binding: LayoutPostBinding,
-    private val onInteractionListener: OnInteractionListener,
+    private val onInteractionListener: PostInteractionListener,
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(post: Post) {

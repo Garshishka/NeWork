@@ -63,4 +63,5 @@
     <string name="job_start_date">Дата начала работы</string>
     <string name="job_link_optional">Ссылка на работу (опционально)</string>
     <string name="new_job_error">Ошибка добавления работы: %1$s</string>
+    <string name="job_delete_error">Ошибка удаления поста:  %1$s</string>
 </resources>

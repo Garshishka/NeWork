@@ -60,6 +60,9 @@ interface ApiService {
     @POST("my/jobs/")
     suspend fun addNewJob(@Header("auth") auth: String, @Body job: Job) :Response<Job>
 
+    @DELETE("my/jobs/{job_id}/")
+    suspend fun removeJob(@Header("auth") auth: String, @Path("job_id") id: String) :Response<Unit>
+
     //USERS
     @GET("users")
     suspend fun getUsers(): Response<List<User>>
