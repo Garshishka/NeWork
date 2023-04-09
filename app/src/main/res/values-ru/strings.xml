@@ -57,4 +57,10 @@
     <string name="job_start">Начало работы</string>
     <string name="job_finish">Окончание работы</string>
     <string name="job_link">Ссылка на работу</string>
+    <string name="no_context">У поста должен быть текст</string>
+    <string name="job_not_filled">Пожалуйста заполните все обязательные поля</string>
+    <string name="job_finish_date">Дата окончания работы (опционально)</string>
+    <string name="job_start_date">Дата начала работы</string>
+    <string name="job_link_optional">Ссылка на работу (опционально)</string>
+    <string name="new_job_error">Ошибка добавления работы: %1$s</string>
 </resources>

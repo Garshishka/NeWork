@@ -16,7 +16,7 @@
         android:ellipsize="end"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:textSize="@dimen/job_text_size"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         />
 
     <TextView
@@ -28,7 +28,7 @@
         tools:text = "Job position"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/name"
-        android:textSize="@dimen/job_text_size"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         />
     
     <TextView

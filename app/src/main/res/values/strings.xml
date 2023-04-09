@@ -56,4 +56,10 @@
     <string name="job_start">Job start</string>
     <string name="job_finish">Job finish</string>
     <string name="job_link">Job link</string>
+    <string name="no_context">Please fill the post text</string>
+    <string name="job_not_filled">Please fill all the required fields</string>
+    <string name="job_finish_date">Job finish date (optional)</string>
+    <string name="job_start_date">Job start date</string>
+    <string name="job_link_optional">Job link (optional)</string>
+    <string name="new_job_error">Adding new job error: %1$s</string>
 </resources>

@@ -18,6 +18,8 @@ class JobViewModel @Inject constructor(
     private val apiService: ApiService,
     private val appAuth: AppAuth,
 ) : ViewModel() {
+    val edited = MutableLiveData(empty)
+
     private val _jobsData = MutableLiveData(emptyJobs)
     val jobsData: LiveData<List<Job>>
         get() = _jobsData
@@ -25,9 +27,9 @@ class JobViewModel @Inject constructor(
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
-    private val _jobsLoadError = SingleLiveEvent<String>()
-    val jobsLoadError: LiveData<String>
-        get() = _jobsLoadError
+    private val _newJobLoadError = SingleLiveEvent<String>()
+    val newJobLoadError: LiveData<String>
+        get() = _newJobLoadError
 
     fun load() {
         _dataState.value = FeedModelState.Loading
@@ -49,7 +51,7 @@ class JobViewModel @Inject constructor(
                 val jobs = response.body() ?: throw RuntimeException("body is null")
                 _jobsData.postValue(jobs)
             } catch (e: Exception) {
-                _jobsLoadError.postValue(e.toString())
+                println(e.message.toString())
             }
         }
     }
@@ -63,28 +65,53 @@ class JobViewModel @Inject constructor(
             val jobs = response.body() ?: throw RuntimeException("body is null")
             _jobsData.postValue(jobs)
         } catch (e: Exception) {
-            _jobsLoadError.postValue(e.toString())
+            println(e.message.toString())
         }
     }
 
-    fun saveNewJob(name: String, position: String) = viewModelScope.launch {
-        appAuth.getToken()?.let { token ->
-            try {
-                val response = apiService.addNewJob(
-                    token,
-                    Job(0, name, position, "2023-04-08T15:40:11.996Z", null, null)
-                )
-                if (!response.isSuccessful) {
-                    throw RuntimeException(response.code().toString())
-                } else{
-                    load()
+    fun saveNewJob() = viewModelScope.launch {
+        edited.value?.let {
+            appAuth.getToken()?.let { token ->
+                try {
+                    val response = apiService.addNewJob(
+                        token,
+                        it
+                    )
+                    if (!response.isSuccessful) {
+                        throw RuntimeException(response.code().toString())
+                    } else {
+                        load()
+                    }
+                } catch (e: Exception) {
+                    _newJobLoadError.postValue(e.toString())
                 }
-            } catch (e: Exception) {
-                _jobsLoadError.postValue(e.toString())
             }
+        }
+    }
+
+    fun changeContent(
+        name: String,
+        position: String,
+        start: String,
+        finish: String?,
+        link: String
+    ) {
+        edited.value?.let {
+            val textName = name.trim()
+            val textPosition = position.trim()
+            val textLink = link.trim()
+            edited.value =
+                it.copy(
+                    name = textName,
+                    position = textPosition,
+                    link = if (textLink.isNotBlank()) textLink else null,
+                    start = start,
+                    finish = finish
+                )
         }
     }
 }
 
+private val empty = Job()
 private val emptyJobs: List<Job> = emptyList()
 
