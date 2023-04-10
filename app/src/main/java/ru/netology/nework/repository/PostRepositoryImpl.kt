@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nework.api.ApiService
+import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dao.PostDao
 import ru.netology.nework.dao.PostRemoteKeyDao
 import ru.netology.nework.db.AppDb
@@ -26,19 +27,47 @@ class PostRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     postRemoteKeyDao: PostRemoteKeyDao,
     appDb: AppDb,
+    auth: AppAuth,
 ) : PostRepository {
+//    @OptIn(ExperimentalPagingApi::class)
+//    override val data = Pager(
+//        config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+//        pagingSourceFactory = { postDao.getPagingSource() },
+//        remoteMediator = PostRemoteMediator(apiService, postDao, postRemoteKeyDao, appDb),
+//    ).flow
+//        .map { it.map(PostEntity::toDto) }
+
     @OptIn(ExperimentalPagingApi::class)
-    override val data = Pager(
+    override val dataMyWall = Pager(
         config = PagingConfig(pageSize = 10, enablePlaceholders = false),
         pagingSourceFactory = { postDao.getPagingSource() },
-        remoteMediator = PostRemoteMediator(apiService, postDao, postRemoteKeyDao, appDb),
-//        pagingSourceFactory = {
-//            PostPagingSource(
-//                apiService
-//            )
-//        }
+        remoteMediator = PostRemoteMediatorMyWall(apiService, postDao, postRemoteKeyDao, appDb,auth.getToken()),
     ).flow
         .map { it.map(PostEntity::toDto) }
+
+    override suspend fun getAll(authToken: String?) {
+        val response = apiService.getAll()
+        if (!response.isSuccessful) {
+            throw RuntimeException(response.code().toString())
+        }
+        val posts = response.body() ?: throw RuntimeException("body is null")
+        postDao.insert(posts.map(PostEntity.Companion::fromDto))
+
+        if (authToken != null) {
+            postDao.getAllUnsent().forEach { save(it.toDto(), authToken) }
+        }
+    }
+
+    override suspend fun getMyWall(authToken: String, userId: Int) {
+        val response = apiService.getMyWall(authToken)
+        if (!response.isSuccessful) {
+            throw RuntimeException(response.code().toString())
+        }
+        val posts = response.body() ?: throw RuntimeException("body is null")
+        postDao.insert(posts.map(PostEntity.Companion::fromDto))
+
+        postDao.getAllUnsent().forEach { save(it.toDto(), authToken) }
+    }
 
     override suspend fun removeById(authToken: String, id: Int) {
         val removed = postDao.getById(id)
@@ -56,7 +85,8 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun save(post: Post, authToken: String) {
-        val mentionList = post.mentionIds.toList() //Hacky method, but for some reason ID conversion eats list
+        val mentionList =
+            post.mentionIds.toList() //Hacky method, but for some reason ID conversion eats list
         postDao.save(PostEntity.fromDto(post, true))
         try {
             val response = apiService.save(authToken, post.copy(mentionIds = mentionList))
@@ -95,19 +125,6 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAll(authToken: String?) {
-        val response = apiService.getAll()
-        if (!response.isSuccessful) {
-            throw RuntimeException(response.code().toString())
-        }
-        val posts = response.body() ?: throw RuntimeException("body is null")
-        postDao.insert(posts.map(PostEntity.Companion::fromDto))
-
-        if (authToken != null) {
-            postDao.getAllUnsent().forEach { save(it.toDto(), authToken) }
-        }
-    }
-
     override suspend fun saveWithAttachment(
         post: Post,
         file: File,
@@ -122,6 +139,10 @@ class PostRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
+    }
+
+    override suspend fun clearDb() {
+        postDao.clear()
     }
 
     private suspend fun upload(file: File, authToken: String): MediaUpload {

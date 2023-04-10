@@ -7,15 +7,14 @@ import ru.netology.nework.dto.Post
 import java.io.File
 
 interface PostRepository {
-    val data: Flow<PagingData<Post>>
-
-    suspend fun removeById(authToken: String, id: Int)
-
-    suspend fun save(post: Post, authToken: String)
-
-    suspend fun likeById(id: Int, willLike: Boolean, authToken: String, userId: Int): Post
-
+    //val data: Flow<PagingData<Post>>
+    val dataMyWall: Flow<PagingData<Post>>
     suspend fun getAll(authToken: String?)
-
+    suspend fun getMyWall(authToken: String, userId: Int)
+    suspend fun removeById(authToken: String, id: Int)
+    suspend fun save(post: Post, authToken: String)
+    suspend fun likeById(id: Int, willLike: Boolean, authToken: String, userId: Int): Post
     suspend fun saveWithAttachment(post: Post, file: File, authToken: String, attachmentType: AttachmentType)
+
+    suspend fun clearDb()
 }

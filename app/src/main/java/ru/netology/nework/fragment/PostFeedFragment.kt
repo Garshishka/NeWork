@@ -96,7 +96,7 @@ class PostFeedFragment : Fragment() {
     private fun subscribe() {
 
         lifecycleScope.launchWhenCreated {
-            viewModel.data.collectLatest {
+            viewModel.dataMyWall.collectLatest {
                 adapter.submitData(it)
             }
         }
@@ -136,6 +136,17 @@ class PostFeedFragment : Fragment() {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
                     findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
+                }
+            }
+
+            myWallButton.setOnClickListener {
+                lifecycleScope.launchWhenCreated {
+                    viewModel.clearDB()
+                    viewModel.load(0)
+                    viewModel.dataMyWall.collectLatest {
+                        adapter.submitData(it)
+                        adapter.refresh()
+                    }
                 }
             }
         }

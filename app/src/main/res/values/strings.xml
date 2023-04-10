@@ -64,4 +64,5 @@
     <string name="new_job_error">Adding new job error: %1$s</string>
     <string name="job_delete_error">Error deleteing post: %1$s</string>
     <string name="jobs_empty">There are no jobs</string>
+    <string name="my_wall">My wall</string>
 </resources>

@@ -15,18 +15,6 @@ interface ApiService {
     @GET("posts")
     suspend fun getAll(): Response<List<Post>>
 
-    @POST("posts")
-    suspend fun save(@Header("auth") auth: String, @Body post: Post): Response<Post>
-
-    @POST("posts/{id}/likes ")
-    suspend fun likeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Post>
-
-    @DELETE("posts/{id}/likes ")
-    suspend fun dislikeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Post>
-
-    @DELETE("posts/{id}")
-    suspend fun removeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Unit>
-
     @GET("posts/latest")
     suspend fun getLatest(@Query("count") count: Int): Response<List<Post>>
 
@@ -41,6 +29,40 @@ interface ApiService {
         @Path("post_id") id: String,
         @Query("count") count: Int,
     ): Response<List<Post>>
+
+    @POST("posts")
+    suspend fun save(@Header("auth") auth: String, @Body post: Post): Response<Post>
+
+    @POST("posts/{id}/likes ")
+    suspend fun likeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Post>
+
+    @DELETE("posts/{id}/likes ")
+    suspend fun dislikeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Post>
+
+    @DELETE("posts/{id}")
+    suspend fun removeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Unit>
+
+    //MY WALL
+    @GET("my/wall")
+    suspend fun getMyWall(@Header("auth") auth: String): Response<List<Post>>
+
+    @GET("my/wall/latest")
+    suspend fun getMyWallLatest(@Header("auth") auth: String, @Query("count") count: Int): Response<List<Post>>
+
+    @GET("my/wall/{post_id}/after")
+    suspend fun getMyWallAfter(
+        @Header("auth") auth: String,
+        @Path("post_id") id: String,
+        @Query("count") count: Int,
+    ): Response<List<Post>>
+
+    @GET("my/wall/{post_id}/before")
+    suspend fun getMyWallBefore(
+        @Header("auth") auth: String,
+        @Path("post_id") id: String,
+        @Query("count") count: Int,
+    ): Response<List<Post>>
+
 
     //MEDIA UPLOAD
     @Multipart

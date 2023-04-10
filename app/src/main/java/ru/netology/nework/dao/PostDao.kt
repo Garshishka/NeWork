@@ -13,6 +13,9 @@ interface PostDao {
     @Query("SELECT * FROM PostEntity WHERE show = 1 ORDER BY id DESC")
     fun getAll(): Flow<List<PostEntity>>
 
+    @Query("SELECT * FROM PostEntity WHERE authorId = :id ORDER BY id DESC")
+    fun getUserPosts(id:Int): Flow<List<PostEntity>>
+
     @Query("SELECT * FROM PostEntity WHERE notOnServer = 1")
     suspend fun getAllUnsent(): List<PostEntity>
 

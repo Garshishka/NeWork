@@ -32,18 +32,32 @@ class PostViewModel @Inject constructor(
 ) : ViewModel() {
     val edited = MutableLiveData(empty)
 
+//    @OptIn(ExperimentalCoroutinesApi::class)
+//    val data: Flow<PagingData<Post>> = appAuth
+//        .state
+//        .map { it?.id }
+//        .flatMapLatest { id ->
+//            repository.data.cachedIn(viewModelScope)
+//                .map { posts ->
+//                    posts.map { post ->
+//                        post.copy(ownedByMe = post.authorId == id)
+//                    }
+//                }
+//        }.flowOn(Dispatchers.Default)
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    val data: Flow<PagingData<Post>> = appAuth
+    val dataMyWall: Flow<PagingData<Post>> = appAuth
         .state
         .map { it?.id }
         .flatMapLatest { id ->
-            repository.data.cachedIn(viewModelScope)
+            repository.dataMyWall.cachedIn(viewModelScope)
                 .map { posts ->
                     posts.map { post ->
                         post.copy(ownedByMe = post.authorId == id)
                     }
                 }
         }.flowOn(Dispatchers.Default)
+
     private val _usersData = MutableLiveData(emptyUsers)
     val usersData: LiveData<List<User>>
         get() = _usersData
@@ -76,10 +90,14 @@ class PostViewModel @Inject constructor(
         load()
     }
 
-    fun load() = viewModelScope.launch {
+    fun load(userId: Int? = null) = viewModelScope.launch {
         _dataState.value = FeedModelState.Loading
         try {
-            repository.getAll(appAuth.getToken())
+            when (userId) {
+                null -> repository.getAll(appAuth.getToken())
+                0 -> appAuth.getToken()?.let { repository.getMyWall(it, appAuth.getId()) }
+                else -> println("id = $userId")
+            }
             _dataState.value = FeedModelState.Idle
         } catch (e: Exception) {
             _dataState.value = FeedModelState.Error
@@ -157,6 +175,10 @@ class PostViewModel @Inject constructor(
         edited.value = post
     }
 
+    fun clearDB() = viewModelScope.launch {
+        repository.clearDb()
+    }
+
     fun empty() {
         edited.value = empty
         deleteMedia()
@@ -192,7 +214,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun getBackOldUsers(oldUsers: List<User>){
+    fun getBackOldUsers(oldUsers: List<User>) {
         _usersData.postValue(oldUsers)
     }
 
