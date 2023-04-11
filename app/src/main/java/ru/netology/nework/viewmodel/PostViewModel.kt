@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.filter
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -31,30 +32,19 @@ class PostViewModel @Inject constructor(
     private val appAuth: AppAuth
 ) : ViewModel() {
     val edited = MutableLiveData(empty)
-
-//    @OptIn(ExperimentalCoroutinesApi::class)
-//    val data: Flow<PagingData<Post>> = appAuth
-//        .state
-//        .map { it?.id }
-//        .flatMapLatest { id ->
-//            repository.data.cachedIn(viewModelScope)
-//                .map { posts ->
-//                    posts.map { post ->
-//                        post.copy(ownedByMe = post.authorId == id)
-//                    }
-//                }
-//        }.flowOn(Dispatchers.Default)
+    var filterId = 0 //For filtering post based on user
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val dataMyWall: Flow<PagingData<Post>> = appAuth
+    val data: Flow<PagingData<Post>> = appAuth
         .state
         .map { it?.id }
         .flatMapLatest { id ->
-            repository.dataMyWall.cachedIn(viewModelScope)
+            repository.data.cachedIn(viewModelScope)
                 .map { posts ->
-                    posts.map { post ->
-                        post.copy(ownedByMe = post.authorId == id)
-                    }
+                    posts.filter { if (filterId != 0) it.authorId == filterId else true }
+                        .map { post ->
+                            post.copy(ownedByMe = post.authorId == id)
+                        }
                 }
         }.flowOn(Dispatchers.Default)
 
@@ -90,14 +80,10 @@ class PostViewModel @Inject constructor(
         load()
     }
 
-    fun load(userId: Int? = null) = viewModelScope.launch {
+    fun load() = viewModelScope.launch {
         _dataState.value = FeedModelState.Loading
         try {
-            when (userId) {
-                null -> repository.getAll(appAuth.getToken())
-                0 -> appAuth.getToken()?.let { repository.getMyWall(it, appAuth.getId()) }
-                else -> println("id = $userId")
-            }
+            repository.getAll(appAuth.getToken())
             _dataState.value = FeedModelState.Idle
         } catch (e: Exception) {
             _dataState.value = FeedModelState.Error
@@ -175,9 +161,6 @@ class PostViewModel @Inject constructor(
         edited.value = post
     }
 
-    fun clearDB() = viewModelScope.launch {
-        repository.clearDb()
-    }
 
     fun empty() {
         edited.value = empty

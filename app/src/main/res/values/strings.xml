@@ -65,4 +65,5 @@
     <string name="job_delete_error">Error deleteing post: %1$s</string>
     <string name="jobs_empty">There are no jobs</string>
     <string name="my_wall">My wall</string>
+    <string name="feed_wall">All posts</string>
 </resources>

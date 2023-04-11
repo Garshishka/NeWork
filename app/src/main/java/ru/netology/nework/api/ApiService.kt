@@ -43,7 +43,7 @@ interface ApiService {
     suspend fun removeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Unit>
 
     //MY WALL
-    @GET("my/wall")
+   /* @GET("my/wall")
     suspend fun getMyWall(@Header("auth") auth: String): Response<List<Post>>
 
     @GET("my/wall/latest")
@@ -61,7 +61,7 @@ interface ApiService {
         @Header("auth") auth: String,
         @Path("post_id") id: String,
         @Query("count") count: Int,
-    ): Response<List<Post>>
+    ): Response<List<Post>>*/
 
 
     //MEDIA UPLOAD

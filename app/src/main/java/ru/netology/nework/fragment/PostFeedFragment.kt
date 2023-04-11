@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -20,11 +21,11 @@ import ru.netology.nework.adapter.PostsAdapter
 import ru.netology.nework.databinding.FragmentPostsBinding
 import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.dto.Post
-import ru.netology.nework.fragment.JobFragment.Companion.idArg
 import ru.netology.nework.fragment.PictureFragment.Companion.urlArg
 import ru.netology.nework.utils.PostInteractionListener
 import ru.netology.nework.viewmodel.AuthViewModel
 import ru.netology.nework.viewmodel.PostViewModel
+
 
 @AndroidEntryPoint
 class PostFeedFragment : Fragment() {
@@ -71,9 +72,10 @@ class PostFeedFragment : Fragment() {
         }
 
         override fun onAvatarClick(authorId: Int) {
-            findNavController().navigate(R.id.action_postFeedFragment_to_jobFragment,
+            /*findNavController().navigate(R.id.action_postFeedFragment_to_jobFragment,
                 Bundle().apply
-                { idArg = authorId.toString() })
+                { idArg = authorId.toString() })*/
+            filterFeed(authorId)
         }
     }
 
@@ -96,7 +98,7 @@ class PostFeedFragment : Fragment() {
     private fun subscribe() {
 
         lifecycleScope.launchWhenCreated {
-            viewModel.dataMyWall.collectLatest {
+            viewModel.data.collectLatest {
                 adapter.submitData(it)
             }
         }
@@ -139,23 +141,22 @@ class PostFeedFragment : Fragment() {
                 }
             }
 
+            feedButton.setOnClickListener {
+                filterFeed(0)
+            }
+
             myWallButton.setOnClickListener {
-                lifecycleScope.launchWhenCreated {
-                    viewModel.clearDB()
-                    viewModel.load(0)
-                    viewModel.dataMyWall.collectLatest {
-                        adapter.submitData(it)
-                        adapter.refresh()
-                    }
-                }
+                filterFeed(authViewModel.id)
             }
         }
+
+        showBottomMenuButtons()
 
         viewModel.apply {
             loadUsers()
 
-            dataState.observe(viewLifecycleOwner){
-                when(it){
+            dataState.observe(viewLifecycleOwner) {
+                when (it) {
                     FeedModelState.Error -> {
                         Snackbar.make(
                             binding.root,
@@ -211,7 +212,7 @@ class PostFeedFragment : Fragment() {
                     .show()
             }
 
-            usersLoadError.observe(viewLifecycleOwner){
+            usersLoadError.observe(viewLifecycleOwner) {
                 Snackbar.make(
                     binding.root,
                     getString(R.string.load_users_error, it),
@@ -222,6 +223,10 @@ class PostFeedFragment : Fragment() {
                     }
                     .show()
             }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            filterFeed(0)
         }
     }
 
@@ -251,4 +256,26 @@ class PostFeedFragment : Fragment() {
         alertDialog.show()
     }
 
+    private fun filterFeed(authorIdToFilter: Int) {
+        lifecycleScope.launchWhenCreated {
+            viewModel.filterId = authorIdToFilter
+            adapter.refresh()
+            showBottomMenuButtons()
+
+            if(authorIdToFilter==0){
+                viewModel.load()
+            }
+            binding.listPosts.scrollToPosition(0)
+
+        }
+    }
+
+    private fun showBottomMenuButtons() {
+        binding.apply {
+            feedButton.isVisible = viewModel.filterId != 0
+            myWallButton.isVisible = viewModel.filterId != authViewModel.id
+        }
+    }
 }
+
+

@@ -26,7 +26,7 @@ import ru.netology.nework.viewmodel.JobViewModel
 
 class JobFragment : Fragment() {
     private val viewModel: JobViewModel by activityViewModels()
-    var isEditing = false //For saving fradt for new job
+    var isEditing = false //For saving draft for new job
 
     private val onInteractionListener = object : JobInteractionListener {
         override fun onEdit(job: Job) {
@@ -78,7 +78,7 @@ class JobFragment : Fragment() {
             }
             jobStartDate.setOnClickListener {
                 val dateDialog = DatePickerDialog(requireContext())
-                dateDialog.setOnDateSetListener { datePicker, y, m, d ->
+                dateDialog.setOnDateSetListener { _, y, m, d ->
                     startString = setDate(y, m, d, jobStartDate)
                 }
                 dateDialog.show()
@@ -86,7 +86,7 @@ class JobFragment : Fragment() {
             jobFinishDate.setOnClickListener {
                 val dateDialog = DatePickerDialog(requireContext())
                 dateDialog.apply {
-                    setOnDateSetListener { datePicker, y, m, d ->
+                    setOnDateSetListener { _, y, m, d ->
                         finishString = setDate(y, m, d, jobFinishDate)
                     }
                     setButton(Dialog.BUTTON_NEUTRAL, getString(R.string.remove)) { _, _ ->
@@ -124,7 +124,7 @@ class JobFragment : Fragment() {
         viewModel.apply {
             jobsData.observe(viewLifecycleOwner) {
                 adapter.submitList(it)
-                binding.empty.isVisible = if(adapter.itemCount==0) true else false
+                binding.empty.isVisible = adapter.itemCount==0
             }
 
             dataState.observe(viewLifecycleOwner) {
@@ -171,7 +171,7 @@ class JobFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             binding.apply {
-                if (addJobContainer.isVisible == true) {
+                if (addJobContainer.isVisible) {
                     addJobContainer.isVisible = false
                     addJobButton.isVisible = true
                     if (isEditing) {
@@ -201,12 +201,12 @@ class JobFragment : Fragment() {
                 jobPosition.setText(it.position)
                 jobLink.setText(it.link)
                 if (it.start != "") {
-                    jobStartDate.setText(getJobDate(it.start))
+                    jobStartDate.text = getJobDate(it.start)
                 } else {
                     jobStartDate.setText(R.string.job_start_date)
                 }
                 if (it.finish != null) {
-                    jobFinishDate.setText(getJobDate(it.finish))
+                    jobFinishDate.text = getJobDate(it.finish)
                 } else {
                     jobFinishDate.setText(R.string.job_finish_date)
                 }
