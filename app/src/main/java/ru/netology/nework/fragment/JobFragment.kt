@@ -26,7 +26,7 @@ import ru.netology.nework.viewmodel.JobViewModel
 
 class JobFragment : Fragment() {
     private val viewModel: JobViewModel by activityViewModels()
-    var isEditing = false //For saving fradt for new job
+    var isEditing = false //For saving draft for new job
 
     private val onInteractionListener = object : JobInteractionListener {
         override fun onEdit(job: Job) {
@@ -124,7 +124,7 @@ class JobFragment : Fragment() {
         viewModel.apply {
             jobsData.observe(viewLifecycleOwner) {
                 adapter.submitList(it)
-                binding.empty.isVisible = if(adapter.itemCount==0) true else false
+                binding.empty.isVisible = it.isEmpty()
             }
 
             dataState.observe(viewLifecycleOwner) {

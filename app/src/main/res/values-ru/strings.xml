@@ -65,4 +65,6 @@
     <string name="new_job_error">Ошибка добавления работы: %1$s</string>
     <string name="job_delete_error">Ошибка удаления поста:  %1$s</string>
     <string name="jobs_empty">Работы отсутствуют</string>
+    <string name="my_wall">Мои посты</string>
+    <string name="feed_wall">Стена постов</string>
 </resources>

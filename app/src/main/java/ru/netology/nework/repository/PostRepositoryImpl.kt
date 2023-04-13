@@ -29,18 +29,18 @@ class PostRepositoryImpl @Inject constructor(
     appDb: AppDb,
     auth: AppAuth,
 ) : PostRepository {
-//    @OptIn(ExperimentalPagingApi::class)
-//    override val data = Pager(
-//        config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-//        pagingSourceFactory = { postDao.getPagingSource() },
-//        remoteMediator = PostRemoteMediator(apiService, postDao, postRemoteKeyDao, appDb),
-//    ).flow
-//        .map { it.map(PostEntity::toDto) }
+    @OptIn(ExperimentalPagingApi::class)
+    override val data = Pager(
+        config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+        pagingSourceFactory = { postDao.getPagingSource() },
+        remoteMediator = PostRemoteMediator(apiService, postDao, postRemoteKeyDao, appDb),
+    ).flow
+        .map { it.map(PostEntity::toDto) }
 
     @OptIn(ExperimentalPagingApi::class)
     override val dataMyWall = Pager(
         config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-        pagingSourceFactory = { postDao.getPagingSource() },
+        pagingSourceFactory = { postDao.getMyWalLPagingSource(auth.getId()) },
         remoteMediator = PostRemoteMediatorMyWall(apiService, postDao, postRemoteKeyDao, appDb,auth.getToken()),
     ).flow
         .map { it.map(PostEntity::toDto) }

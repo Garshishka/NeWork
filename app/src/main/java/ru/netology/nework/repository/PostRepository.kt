@@ -7,7 +7,7 @@ import ru.netology.nework.dto.Post
 import java.io.File
 
 interface PostRepository {
-    //val data: Flow<PagingData<Post>>
+    val data: Flow<PagingData<Post>>
     val dataMyWall: Flow<PagingData<Post>>
     suspend fun getAll(authToken: String?)
     suspend fun getMyWall(authToken: String, userId: Int)

@@ -12,8 +12,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nework.R
 import ru.netology.nework.adapter.PostsAdapter
@@ -27,12 +29,13 @@ import ru.netology.nework.viewmodel.AuthViewModel
 import ru.netology.nework.viewmodel.PostViewModel
 
 @AndroidEntryPoint
-class PostFeedFragment : Fragment() {
-    private val viewModel: PostViewModel by activityViewModels()
-    private val authViewModel: AuthViewModel by activityViewModels()
-    lateinit var binding: FragmentPostsBinding
+open class PostFeedFragment : Fragment() {
+    protected open val viewModel: PostViewModel by activityViewModels()
+    protected val authViewModel: AuthViewModel by activityViewModels()
+    protected lateinit var binding: FragmentPostsBinding
+    protected lateinit var postData: Flow<PagingData<Post>>
 
-    private val onInteractionListener = object : PostInteractionListener {
+    protected val onInteractionListener = object : PostInteractionListener {
         override fun onLike(post: Post) {
             val token = context?.getSharedPreferences("auth", Context.MODE_PRIVATE)
                 ?.getString("TOKEN_KEY", null)
@@ -45,7 +48,7 @@ class PostFeedFragment : Fragment() {
 
         override fun onEdit(post: Post) {
             viewModel.edit(post)
-            findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
+            findNavController().navigate(R.id.action_global_newPostFragment)
         }
 
         override fun onRemove(post: Post) {
@@ -53,31 +56,31 @@ class PostFeedFragment : Fragment() {
         }
 
         override fun onAudioClick(url: String) {
-            findNavController().navigate(R.id.action_postFeedFragment_to_audioFragment,
+            findNavController().navigate(R.id.action_global_audioFragment,
                 Bundle().apply
                 { urlArg = url })
         }
 
         override fun onVideoClick(url: String) {
-            findNavController().navigate(R.id.action_postFeedFragment_to_playFragment,
+            findNavController().navigate(R.id.action_global_playFragment,
                 Bundle().apply
                 { urlArg = url })
         }
 
         override fun onPictureClick(url: String) {
-            findNavController().navigate(R.id.action_postFeedFragment_to_pictureFragment,
+            findNavController().navigate(R.id.action_global_pictureFragment,
                 Bundle().apply
                 { urlArg = url })
         }
 
         override fun onAvatarClick(authorId: Int) {
-            findNavController().navigate(R.id.action_postFeedFragment_to_jobFragment,
+            findNavController().navigate(R.id.action_global_jobFragment,
                 Bundle().apply
                 { idArg = authorId.toString() })
         }
     }
 
-    private val adapter = PostsAdapter(onInteractionListener)
+    protected val adapter = PostsAdapter(onInteractionListener)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -87,16 +90,18 @@ class PostFeedFragment : Fragment() {
         binding = FragmentPostsBinding.inflate(inflater, container, false)
 
         binding.listPosts.adapter = adapter
+        postData = viewModel.data
 
         subscribe()
+        subscribeForFeedWall()
 
         return binding.root
     }
 
-    private fun subscribe() {
 
+    protected fun subscribe() {
         lifecycleScope.launchWhenCreated {
-            viewModel.dataMyWall.collectLatest {
+            postData.collectLatest {
                 adapter.submitData(it)
             }
         }
@@ -109,6 +114,7 @@ class PostFeedFragment : Fragment() {
         }
 
         authViewModel.state.observe(viewLifecycleOwner) {
+            viewModel.load()
             if (it?.id != -1) {
                 adapter.refresh()
             }
@@ -125,7 +131,7 @@ class PostFeedFragment : Fragment() {
                 if (token == null) {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
-                    findNavController().navigate(R.id.action_postFeedFragment_to_jobFragment)
+                    findNavController().navigate(R.id.action_global_jobFragment)
                 }
             }
 
@@ -135,18 +141,7 @@ class PostFeedFragment : Fragment() {
                 if (token == null) {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
-                    findNavController().navigate(R.id.action_postFeedFragment_to_newPostFragment)
-                }
-            }
-
-            myWallButton.setOnClickListener {
-                lifecycleScope.launchWhenCreated {
-                    viewModel.clearDB()
-                    viewModel.load(0)
-                    viewModel.dataMyWall.collectLatest {
-                        adapter.submitData(it)
-                        adapter.refresh()
-                    }
+                    findNavController().navigate(R.id.action_global_newPostFragment)
                 }
             }
         }
@@ -225,7 +220,15 @@ class PostFeedFragment : Fragment() {
         }
     }
 
-    private fun showSignInDialog(context: Context) {
+    private fun subscribeForFeedWall() {
+        binding.apply {
+            myWallButton.setOnClickListener {
+                findNavController().navigate(R.id.action_postFeedFragment_to_userWallFragment)
+            }
+        }
+    }
+
+    protected fun showSignInDialog(context: Context) {
         val alertDialog: AlertDialog = this.let {
             val builder = AlertDialog.Builder(context)
             builder.apply {
@@ -250,5 +253,4 @@ class PostFeedFragment : Fragment() {
         }
         alertDialog.show()
     }
-
 }

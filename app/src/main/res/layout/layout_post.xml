@@ -87,7 +87,7 @@
     <ImageButton
         android:id="@+id/attachmentPicture"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:contentDescription="@string/attached_content"
         android:src="@drawable/ic_baseline_downloading_48"
         android:visibility="gone"

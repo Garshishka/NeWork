@@ -62,8 +62,6 @@ interface ApiService {
         @Path("post_id") id: String,
         @Query("count") count: Int,
     ): Response<List<Post>>
-
-
     //MEDIA UPLOAD
     @Multipart
     @POST("media")

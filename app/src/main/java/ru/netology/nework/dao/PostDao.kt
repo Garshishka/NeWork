@@ -13,14 +13,14 @@ interface PostDao {
     @Query("SELECT * FROM PostEntity WHERE show = 1 ORDER BY id DESC")
     fun getAll(): Flow<List<PostEntity>>
 
-    @Query("SELECT * FROM PostEntity WHERE authorId = :id ORDER BY id DESC")
-    fun getUserPosts(id:Int): Flow<List<PostEntity>>
-
     @Query("SELECT * FROM PostEntity WHERE notOnServer = 1")
     suspend fun getAllUnsent(): List<PostEntity>
 
     @Query("SELECT * FROM PostEntity ORDER BY id DESC")
     fun getPagingSource(): PagingSource<Int, PostEntity>
+
+    @Query("SELECT * FROM PostEntity WHERE authorId = :id ORDER BY id DESC")
+    fun getMyWalLPagingSource(id:Int): PagingSource<Int, PostEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(post: PostEntity)
@@ -52,7 +52,6 @@ interface PostDao {
             likesList.add(userId)
         }
         insert(post.copy(likeOwnerIds = likesList, likedByMe = !post.likedByMe))
-
     }
 
     @Query("DELETE FROM PostEntity")
