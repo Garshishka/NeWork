@@ -26,7 +26,7 @@ class PostRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     postRemoteKeyDao: PostRemoteKeyDao,
     appDb: AppDb,
-    auth: AppAuth,
+    private val auth: AppAuth,
 ) : PostRepository {
     @OptIn(ExperimentalPagingApi::class)
     override val data = Pager(
@@ -37,15 +37,15 @@ class PostRepositoryImpl @Inject constructor(
         .map { it.map(PostEntity::toDto) }
 
     @OptIn(ExperimentalPagingApi::class)
-    override val dataMyWall = Pager(
+    override val dataUserWall = Pager(
         config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-        pagingSourceFactory = { postDao.getMyWalLPagingSource(auth.getId()) },
-        remoteMediator = PostRemoteMediatorMyWall(
+        pagingSourceFactory = { postDao.getMyWalLPagingSource(auth.userId) },
+        remoteMediator = PostRemoteMediatorUserWall(
             apiService,
             postDao,
             postRemoteKeyDao,
             appDb,
-            auth.getToken()
+            auth
         ),
     ).flow
         .map { it.map(PostEntity::toDto) }
@@ -142,16 +142,18 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    //MY WALL
-    override suspend fun getMyWall(authToken: String, userId: Int) {
-        val response = apiService.getMyWall(authToken)
+    //USER WALL
+    override suspend fun getUserWall(authToken: String?, userId: Int) {
+        val response = apiService.getUserWall(userId)
         if (!response.isSuccessful) {
             throw RuntimeException(response.code().toString())
         }
         val posts = response.body() ?: throw RuntimeException("body is null")
         postDao.insert(posts.map(PostEntity.Companion::fromDto))
 
-        postDao.getAllUnsent().forEach { save(it.toDto(), authToken) }
+        authToken?.let {
+            postDao.getAllUnsent().forEach { save(it.toDto(), authToken) }
+        }
     }
 
     //MEDIA

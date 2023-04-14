@@ -10,10 +10,10 @@ import java.io.File
 
 interface PostRepository {
     val data: Flow<PagingData<Post>>
-    val dataMyWall: Flow<PagingData<Post>>
+    val dataUserWall: Flow<PagingData<Post>>
     val usersData: LiveData<List<User>>
     suspend fun getAll(authToken: String?)
-    suspend fun getMyWall(authToken: String, userId: Int)
+    suspend fun getUserWall(authToken: String?, userId: Int)
     suspend fun removeById(authToken: String, id: Int)
     suspend fun save(post: Post, authToken: String)
     suspend fun likeById(id: Int, willLike: Boolean, authToken: String, userId: Int): Post

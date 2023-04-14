@@ -44,7 +44,6 @@ class UserWallFragment : PostFeedFragment() {
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             findNavController().navigateUp()
         }
-        println(viewModel.usersData)
 
         binding.apply {
             feedButton.isVisible = true
@@ -68,11 +67,11 @@ class UserWallFragment : PostFeedFragment() {
                     viewModel.getMyJob()
                     viewModel.myJob.observe(viewLifecycleOwner) {
                         userJob.text = it
-                        userJob.isVisible = it != ""
+                        userJob.isVisible = it != "" && it !="null"
                     }
                 } else {
                     userJob.text = job
-                    userJob.isVisible = job != ""
+                    userJob.isVisible = job != "" && job !="null"
                 }
                 userJob.setOnClickListener {
                     findNavController().navigate(R.id.action_global_jobFragment,

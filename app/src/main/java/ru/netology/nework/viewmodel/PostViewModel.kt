@@ -141,7 +141,6 @@ open class PostViewModel @Inject constructor(
         edited.value?.let {
             appAuth.getToken()?.let { token ->
                 try {
-                    println(it)
                     when (_attachment.value) {
                         noMedia -> repository.save(it, token)
                         else -> _attachment.value?.file?.let { file ->
@@ -195,6 +194,10 @@ open class PostViewModel @Inject constructor(
 
     fun changeCheckedUsers(id: Int, changeToOtherState: Boolean) = viewModelScope.launch {
         repository.changeCheckedUsers(id, changeToOtherState)
+    }
+
+    fun changeUserId(userId: Int){
+        appAuth.userId = userId
     }
 }
 

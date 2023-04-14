@@ -22,11 +22,9 @@ import ru.netology.nework.adapter.PostsAdapter
 import ru.netology.nework.databinding.FragmentPostsBinding
 import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.dto.Post
-import ru.netology.nework.fragment.JobFragment.Companion.idArg
 import ru.netology.nework.fragment.PictureFragment.Companion.urlArg
 import ru.netology.nework.fragment.UserWallFragment.Companion.userIdArg
 import ru.netology.nework.fragment.UserWallFragment.Companion.userJobArg
-
 import ru.netology.nework.utils.PostInteractionListener
 import ru.netology.nework.viewmodel.AuthViewModel
 import ru.netology.nework.viewmodel.PostViewModel
@@ -76,10 +74,14 @@ open class PostFeedFragment : Fragment() {
                 { urlArg = url })
         }
 
-        override fun onAvatarClick(authorId: Int) {
-            findNavController().navigate(R.id.action_global_jobFragment,
+        override fun onAvatarClick(post: Post) {
+            viewModel.changeUserId(post.authorId)
+            findNavController().navigate(R.id.action_postFeedFragment_to_userWallFragment,
                 Bundle().apply
-                { idArg = authorId.toString() })
+                {
+                    userIdArg = post.authorId.toString()
+                    userJobArg = post.authorJob
+                })
         }
     }
 
@@ -224,9 +226,6 @@ open class PostFeedFragment : Fragment() {
     private fun subscribeForFeedWall() {
         viewModel.apply {
             loadUsers()
-            usersData.observe(viewLifecycleOwner) {
-                println(it)
-            }
         }
 
         binding.apply {
@@ -237,6 +236,7 @@ open class PostFeedFragment : Fragment() {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
                     val id = authViewModel.state.value!!.id
+                    viewModel.changeUserId(id)
                     findNavController().navigate(R.id.action_postFeedFragment_to_userWallFragment,
                         Bundle().apply
                         {

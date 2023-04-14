@@ -34,7 +34,7 @@ class UserWallViewModel @Inject constructor(
         .state
         .map { it?.id }
         .flatMapLatest { id ->
-            repository.dataMyWall.cachedIn(viewModelScope)
+            repository.dataUserWall.cachedIn(viewModelScope)
                 .map { posts ->
                     posts.map { post ->
                         post.copy(ownedByMe = post.authorId == id)
@@ -49,8 +49,7 @@ class UserWallViewModel @Inject constructor(
     override fun load() = viewModelScope.launch {
         _dataState.value = FeedModelState.Loading
         try {
-            appAuth.getToken()?.let { repository.getMyWall(it, appAuth.getId()) }
-                ?: throw RuntimeException("Can't get auth token")
+            repository.getUserWall(appAuth.getToken(), appAuth.userId )
             _dataState.value = FeedModelState.Idle
         } catch (e: Exception) {
             _dataState.value = FeedModelState.Error

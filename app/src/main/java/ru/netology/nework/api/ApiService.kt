@@ -10,7 +10,6 @@ import ru.netology.nework.dto.Post
 import ru.netology.nework.dto.User
 
 interface ApiService {
-
     //POSTS
     @GET("posts")
     suspend fun getAll(): Response<List<Post>>
@@ -43,25 +42,55 @@ interface ApiService {
     suspend fun removeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Unit>
 
     //MY WALL
-    @GET("my/wall")
-    suspend fun getMyWall(@Header("auth") auth: String): Response<List<Post>>
+//    @GET("my/wall")
+//    suspend fun getUserWall(@Header("auth") auth: String): Response<List<Post>>
+//
+//    @GET("my/wall/latest")
+//    suspend fun getMyWallLatest(
+//        @Header("auth") auth: String,
+//        @Query("count") count: Int
+//    ): Response<List<Post>>
+//
+//    @GET("my/wall/{post_id}/after")
+//    suspend fun getMyWallAfter(
+//        @Header("auth") auth: String,
+//        @Path("post_id") id: String,
+//        @Query("count") count: Int,
+//    ): Response<List<Post>>
+//
+//    @GET("my/wall/{post_id}/before")
+//    suspend fun getMyWallBefore(
+//        @Header("auth") auth: String,
+//        @Path("post_id") id: String,
+//        @Query("count") count: Int,
+//    ): Response<List<Post>>
 
-    @GET("my/wall/latest")
-    suspend fun getMyWallLatest(@Header("auth") auth: String, @Query("count") count: Int): Response<List<Post>>
+    //USER WALL
+    @GET("{author_id}/wall")
+    suspend fun getUserWall(
+        @Path("author_id") id: Int
+    ): Response<List<Post>>
 
-    @GET("my/wall/{post_id}/after")
-    suspend fun getMyWallAfter(
-        @Header("auth") auth: String,
-        @Path("post_id") id: String,
+    @GET("{author_id}/wall/latest")
+    suspend fun getUserWallLatest(
+        @Query("count") count: Int,
+        @Path("author_id") id: Int
+    ): Response<List<Post>>
+
+    @GET("{author_id}/wall/{post_id}/after")
+    suspend fun getUserWallAfter(
+        @Path("author_id") userId: Int,
+        @Path("post_id") postId: Int,
         @Query("count") count: Int,
     ): Response<List<Post>>
 
-    @GET("my/wall/{post_id}/before")
-    suspend fun getMyWallBefore(
-        @Header("auth") auth: String,
-        @Path("post_id") id: String,
+    @GET("{author_id}/wall/{post_id}/before")
+    suspend fun getUserWallBefore(
+        @Path("author_id") userId: Int,
+        @Path("post_id") postId: Int,
         @Query("count") count: Int,
     ): Response<List<Post>>
+
     //MEDIA UPLOAD
     @Multipart
     @POST("media")
@@ -78,10 +107,10 @@ interface ApiService {
     suspend fun getPersonJobs(@Path("user_id") id: String): Response<List<Job>>
 
     @POST("my/jobs/")
-    suspend fun addNewJob(@Header("auth") auth: String, @Body job: Job) :Response<Job>
+    suspend fun addNewJob(@Header("auth") auth: String, @Body job: Job): Response<Job>
 
     @DELETE("my/jobs/{job_id}/")
-    suspend fun removeJob(@Header("auth") auth: String, @Path("job_id") id: String) :Response<Unit>
+    suspend fun removeJob(@Header("auth") auth: String, @Path("job_id") id: String): Response<Unit>
 
     //USERS
     @GET("users")

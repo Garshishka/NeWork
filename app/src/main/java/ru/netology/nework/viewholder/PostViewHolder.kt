@@ -31,7 +31,7 @@ class PostViewHolder(
                 avatar.setImageResource(R.drawable.baseline_person_24)
             }
             avatar.setOnClickListener {
-                onInteractionListener.onAvatarClick(post.authorId)
+                onInteractionListener.onAvatarClick(post)
             }
             try {
                 val publishedTime = OffsetDateTime.parse(post.published).toLocalDateTime()
