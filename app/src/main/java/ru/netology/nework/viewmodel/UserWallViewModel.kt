@@ -1,5 +1,7 @@
 package ru.netology.nework.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -40,7 +42,9 @@ class UserWallViewModel @Inject constructor(
                 }
         }.flowOn(Dispatchers.Default)
 
-    var myJob: String? = null //for showing on user info card when only your posts are shown
+    private val _myJob = MutableLiveData<String>("")
+    val myJob: LiveData<String>
+        get() = _myJob//for showing on user info card when only your posts are shown
 
     override fun load() = viewModelScope.launch {
         _dataState.value = FeedModelState.Loading
@@ -61,12 +65,17 @@ class UserWallViewModel @Inject constructor(
                     throw RuntimeException(response.code().toString())
                 }
                 val jobs = response.body() ?: throw RuntimeException("body is null")
-                val pack = mutableMapOf<LocalDateTime,String>()
-                jobs.forEach() { pack.put(OffsetDateTime.parse(it.start).toLocalDateTime(),it.name) }
-                myJob = pack.maxBy { it.key }.value
+                val pack = mutableMapOf<LocalDateTime, String>()
+                jobs.forEach() {
+                    pack.put(
+                        OffsetDateTime.parse(it.start).toLocalDateTime(),
+                        it.name
+                    )
+                }
+                _myJob.postValue(pack.maxBy { it.key }.value)
             } catch (e: Exception) {
                 println(e.message)
-                myJob = null
+                _myJob.postValue("")
             }
         }
     }

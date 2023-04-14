@@ -24,6 +24,9 @@ import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.dto.Post
 import ru.netology.nework.fragment.JobFragment.Companion.idArg
 import ru.netology.nework.fragment.PictureFragment.Companion.urlArg
+import ru.netology.nework.fragment.UserWallFragment.Companion.userIdArg
+import ru.netology.nework.fragment.UserWallFragment.Companion.userJobArg
+
 import ru.netology.nework.utils.PostInteractionListener
 import ru.netology.nework.viewmodel.AuthViewModel
 import ru.netology.nework.viewmodel.PostViewModel
@@ -147,10 +150,8 @@ open class PostFeedFragment : Fragment() {
         }
 
         viewModel.apply {
-            loadUsers()
-
-            dataState.observe(viewLifecycleOwner){
-                when(it){
+            dataState.observe(viewLifecycleOwner) {
+                when (it) {
                     FeedModelState.Error -> {
                         Snackbar.make(
                             binding.root,
@@ -206,7 +207,7 @@ open class PostFeedFragment : Fragment() {
                     .show()
             }
 
-            usersLoadError.observe(viewLifecycleOwner){
+            usersLoadError.observe(viewLifecycleOwner) {
                 Snackbar.make(
                     binding.root,
                     getString(R.string.load_users_error, it),
@@ -221,9 +222,28 @@ open class PostFeedFragment : Fragment() {
     }
 
     private fun subscribeForFeedWall() {
+        viewModel.apply {
+            loadUsers()
+            usersData.observe(viewLifecycleOwner) {
+                println(it)
+            }
+        }
+
         binding.apply {
             myWallButton.setOnClickListener {
-                findNavController().navigate(R.id.action_postFeedFragment_to_userWallFragment)
+                val token = context?.getSharedPreferences("auth", Context.MODE_PRIVATE)
+                    ?.getString("TOKEN_KEY", null)
+                if (token == null) {
+                    context?.let { context -> showSignInDialog(context) }
+                } else {
+                    val id = authViewModel.state.value!!.id
+                    findNavController().navigate(R.id.action_postFeedFragment_to_userWallFragment,
+                        Bundle().apply
+                        {
+                            userIdArg = id.toString()
+                            userJobArg = ""
+                        })
+                }
             }
         }
     }

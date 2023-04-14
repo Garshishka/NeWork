@@ -45,22 +45,7 @@ open class PostViewModel @Inject constructor(
                 }
         }.flowOn(Dispatchers.Default)
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val dataMyWall: Flow<PagingData<Post>> = appAuth
-        .state
-        .map { it?.id }
-        .flatMapLatest { id ->
-            repository.dataMyWall.cachedIn(viewModelScope)
-                .map { posts ->
-                    posts.map { post ->
-                        post.copy(ownedByMe = post.authorId == id)
-                    }
-                }
-        }.flowOn(Dispatchers.Default)
-
-    protected val _usersData = MutableLiveData(emptyUsers)
-    val usersData: LiveData<List<User>>
-        get() = _usersData
+    val usersData = repository.usersData
 
     protected val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
     val dataState: LiveData<FeedModelState>
@@ -88,6 +73,7 @@ open class PostViewModel @Inject constructor(
 
     init {
         load()
+        loadUsers()
     }
 
     open fun load() = viewModelScope.launch {
@@ -97,6 +83,16 @@ open class PostViewModel @Inject constructor(
             _dataState.value = FeedModelState.Idle
         } catch (e: Exception) {
             _dataState.value = FeedModelState.Error
+        }
+    }
+
+    fun loadUsers() = viewModelScope.launch {
+        _dataState.value = FeedModelState.Loading
+        try {
+            repository.getUsers()
+            _dataState.value = FeedModelState.Idle
+        } catch (e: Exception) {
+            _usersLoadError.postValue(e.toString())
         }
     }
 
@@ -193,35 +189,12 @@ open class PostViewModel @Inject constructor(
         _attachment.value = noMedia
     }
 
-    fun loadUsers() = viewModelScope.launch {
-        try {
-            val response = apiService.getUsers()
-            if (!response.isSuccessful) {
-                throw RuntimeException(response.code().toString())
-            }
-            val users = response.body() ?: throw RuntimeException("body is null")
-            _usersData.postValue(users)
-        } catch (e: Exception) {
-            _usersLoadError.postValue(e.toString())
-        }
+    fun getBackOldUsers(oldUserList: List<User>) = viewModelScope.launch {
+        repository.getBackOldUsers(oldUserList)
     }
 
-    fun getBackOldUsers(oldUsers: List<User>) {
-        _usersData.postValue(oldUsers)
-    }
-
-    fun checkUsers(id: Int) {
-        val data = _usersData.value
-        val foundUser = data?.find { it.id == id }
-        foundUser?.let { it.checkedNow = true }
-        _usersData.postValue(data)
-    }
-
-    fun changeCheckedUsers(id: Int) {
-        val data = _usersData.value
-        val foundUser = data?.find { it.id == id }
-        foundUser?.let { it.checkedNow = !it.checkedNow }
-        _usersData.postValue(data)
+    fun changeCheckedUsers(id: Int, changeToOtherState: Boolean) = viewModelScope.launch {
+        repository.changeCheckedUsers(id, changeToOtherState)
     }
 }
 
@@ -232,7 +205,6 @@ private val emptyPost = Post(
     authorAvatar = null,
     published = "",
 )
-private val emptyUsers: List<User> = emptyList()
 private val noMedia = MediaModel(null, null, AttachmentType.NONE)
 
 

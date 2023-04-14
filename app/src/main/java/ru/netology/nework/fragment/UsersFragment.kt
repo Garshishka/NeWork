@@ -15,17 +15,17 @@ import ru.netology.nework.utils.UserListInteractionListener
 import ru.netology.nework.viewmodel.PostViewModel
 
 class UsersFragment : Fragment() {
-    private val viewModel: PostViewModel by  activityViewModels()
+    private val viewModel: PostViewModel by activityViewModels()
 
     val mentionedList = mutableListOf<Int>()
 
-    private val userListInteractionListener = object : UserListInteractionListener{
+    private val userListInteractionListener = object : UserListInteractionListener {
         override fun onClick(user: User) {
             if (mentionedList.contains(user.id))
                 mentionedList.remove(user.id)
             else
                 mentionedList.add(user.id)
-            viewModel.changeCheckedUsers(user.id)
+            viewModel.changeCheckedUsers(user.id, true)
         }
     }
 
@@ -40,7 +40,7 @@ class UsersFragment : Fragment() {
         val binding = FragmentUsersBinding.inflate(inflater, container, false)
         //For users already in mention list we check them
         viewModel.edited.value?.mentionIds?.forEach {
-            viewModel.checkUsers(it)
+            viewModel.changeCheckedUsers(it, false)
             mentionedList.add(it)
         }
         binding.usersList.adapter = adapter
@@ -57,7 +57,7 @@ class UsersFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        viewModel.usersData.observe(viewLifecycleOwner){
+        viewModel.usersData.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
 

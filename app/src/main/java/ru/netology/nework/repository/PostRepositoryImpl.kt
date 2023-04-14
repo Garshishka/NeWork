@@ -1,5 +1,7 @@
 package ru.netology.nework.repository
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -12,10 +14,7 @@ import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dao.PostDao
 import ru.netology.nework.dao.PostRemoteKeyDao
 import ru.netology.nework.db.AppDb
-import ru.netology.nework.dto.Attachment
-import ru.netology.nework.dto.AttachmentType
-import ru.netology.nework.dto.MediaUpload
-import ru.netology.nework.dto.Post
+import ru.netology.nework.dto.*
 import ru.netology.nework.entity.PostEntity
 import java.io.File
 import javax.inject.Inject
@@ -41,10 +40,23 @@ class PostRepositoryImpl @Inject constructor(
     override val dataMyWall = Pager(
         config = PagingConfig(pageSize = 10, enablePlaceholders = false),
         pagingSourceFactory = { postDao.getMyWalLPagingSource(auth.getId()) },
-        remoteMediator = PostRemoteMediatorMyWall(apiService, postDao, postRemoteKeyDao, appDb,auth.getToken()),
+        remoteMediator = PostRemoteMediatorMyWall(
+            apiService,
+            postDao,
+            postRemoteKeyDao,
+            appDb,
+            auth.getToken()
+        ),
     ).flow
         .map { it.map(PostEntity::toDto) }
 
+    private val emptyUsers: List<User> = emptyList()
+
+    private val _usersData = MutableLiveData(emptyUsers)
+    override val usersData: LiveData<List<User>>
+        get() = _usersData
+
+    //POSTS
     override suspend fun getAll(authToken: String?) {
         val response = apiService.getAll()
         if (!response.isSuccessful) {
@@ -56,17 +68,6 @@ class PostRepositoryImpl @Inject constructor(
         if (authToken != null) {
             postDao.getAllUnsent().forEach { save(it.toDto(), authToken) }
         }
-    }
-
-    override suspend fun getMyWall(authToken: String, userId: Int) {
-        val response = apiService.getMyWall(authToken)
-        if (!response.isSuccessful) {
-            throw RuntimeException(response.code().toString())
-        }
-        val posts = response.body() ?: throw RuntimeException("body is null")
-        postDao.insert(posts.map(PostEntity.Companion::fromDto))
-
-        postDao.getAllUnsent().forEach { save(it.toDto(), authToken) }
     }
 
     override suspend fun removeById(authToken: String, id: Int) {
@@ -102,6 +103,22 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun saveWithAttachment(
+        post: Post,
+        file: File,
+        authToken: String,
+        attachmentType: AttachmentType
+    ) {
+        try {
+            val upload = upload(file, authToken)
+            val postWithAttachment =
+                post.copy(attachment = Attachment(upload.url, attachmentType))
+            save(postWithAttachment, authToken)
+        } catch (e: Exception) {
+            throw RuntimeException(e)
+        }
+    }
+
     override suspend fun likeById(
         id: Int,
         willLike: Boolean,
@@ -125,26 +142,19 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveWithAttachment(
-        post: Post,
-        file: File,
-        authToken: String,
-        attachmentType: AttachmentType
-    ) {
-        try {
-            val upload = upload(file, authToken)
-            val postWithAttachment =
-                post.copy(attachment = Attachment(upload.url, attachmentType))
-            save(postWithAttachment, authToken)
-        } catch (e: Exception) {
-            throw RuntimeException(e)
+    //MY WALL
+    override suspend fun getMyWall(authToken: String, userId: Int) {
+        val response = apiService.getMyWall(authToken)
+        if (!response.isSuccessful) {
+            throw RuntimeException(response.code().toString())
         }
+        val posts = response.body() ?: throw RuntimeException("body is null")
+        postDao.insert(posts.map(PostEntity.Companion::fromDto))
+
+        postDao.getAllUnsent().forEach { save(it.toDto(), authToken) }
     }
 
-    override suspend fun clearDb() {
-        postDao.clear()
-    }
-
+    //MEDIA
     private suspend fun upload(file: File, authToken: String): MediaUpload {
         try {
             val data =
@@ -159,6 +169,37 @@ class PostRepositoryImpl @Inject constructor(
             return response.body() ?: throw RuntimeException("body is null")
         } catch (e: Exception) {
             throw RuntimeException(e)
+        }
+    }
+
+    //USERS
+    override suspend fun getUsers() {
+        try {
+            val response = apiService.getUsers()
+            if (!response.isSuccessful) {
+                throw RuntimeException(response.code().toString())
+            }
+            val users = response.body() ?: throw RuntimeException("body is null")
+            _usersData.postValue(users)
+        } catch (e: Exception) {
+            throw RuntimeException(e)
+        }
+    }
+
+    override suspend fun getBackOldUsers(oldUsers: List<User>) {
+        _usersData.postValue(oldUsers)
+    }
+
+    override suspend fun changeCheckedUsers(id: Int, changeToOtherState: Boolean) {
+        val data = _usersData.value
+        val foundUser = data?.find { it.id == id }
+        foundUser?.let {
+            if (changeToOtherState) {
+                it.checkedNow = !it.checkedNow
+            } else {
+                it.checkedNow = true
+            }
+            _usersData.postValue(data)
         }
     }
 }
