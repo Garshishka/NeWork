@@ -25,15 +25,15 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class PostViewModel @Inject constructor(
-    private val repository: PostRepository,
-    private val apiService: ApiService,
-    private val appAuth: AppAuth
+open class PostViewModel @Inject constructor(
+    protected val repository: PostRepository,
+    protected val apiService: ApiService,
+    protected val appAuth: AppAuth
 ) : ViewModel() {
-    val edited = MutableLiveData(empty)
+    val edited = MutableLiveData(emptyPost)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val data: Flow<PagingData<Post>> = appAuth
+    open val data: Flow<PagingData<Post>> = appAuth
         .state
         .map { it?.id }
         .flatMapLatest { id ->
@@ -44,45 +44,55 @@ class PostViewModel @Inject constructor(
                     }
                 }
         }.flowOn(Dispatchers.Default)
-    private val _usersData = MutableLiveData(emptyUsers)
-    val usersData: LiveData<List<User>>
-        get() = _usersData
 
-    private val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
+    val usersData = repository.usersData
+
+    protected val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
-    private val _attachment = MutableLiveData(noMedia)
+    protected val _attachment = MutableLiveData(noMedia)
     val attachment: LiveData<MediaModel>
         get() = _attachment
 
-    private val _postCreated = SingleLiveEvent<Unit>()
+    protected val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
         get() = _postCreated
-    private val _postCreatedError = SingleLiveEvent<Pair<String, Post>>()
+    protected val _postCreatedError = SingleLiveEvent<Pair<String, Post>>()
     val postCreatedError: LiveData<Pair<String, Post>>
         get() = _postCreatedError
-    private val _postsRemoveError = SingleLiveEvent<Pair<String, Int>>()
+    protected val _postsRemoveError = SingleLiveEvent<Pair<String, Int>>()
     val postsRemoveError: LiveData<Pair<String, Int>>
         get() = _postsRemoveError
-    private val _postsLikeError = SingleLiveEvent<Pair<String, Pair<Int, Boolean>>>()
+    protected val _postsLikeError = SingleLiveEvent<Pair<String, Pair<Int, Boolean>>>()
     val postsLikeError: LiveData<Pair<String, Pair<Int, Boolean>>>
         get() = _postsLikeError
-    private val _usersLoadError = SingleLiveEvent<String>()
+    protected val _usersLoadError = SingleLiveEvent<String>()
     val usersLoadError: LiveData<String>
         get() = _usersLoadError
 
     init {
         load()
+        loadUsers()
     }
 
-    fun load() = viewModelScope.launch {
+    open fun load() = viewModelScope.launch {
         _dataState.value = FeedModelState.Loading
         try {
             repository.getAll(appAuth.getToken())
             _dataState.value = FeedModelState.Idle
         } catch (e: Exception) {
             _dataState.value = FeedModelState.Error
+        }
+    }
+
+    fun loadUsers() = viewModelScope.launch {
+        _dataState.value = FeedModelState.Loading
+        try {
+            repository.getUsers()
+            _dataState.value = FeedModelState.Idle
+        } catch (e: Exception) {
+            _usersLoadError.postValue(e.toString())
         }
     }
 
@@ -131,7 +141,6 @@ class PostViewModel @Inject constructor(
         edited.value?.let {
             appAuth.getToken()?.let { token ->
                 try {
-                    println(it)
                     when (_attachment.value) {
                         noMedia -> repository.save(it, token)
                         else -> _attachment.value?.file?.let { file ->
@@ -158,7 +167,7 @@ class PostViewModel @Inject constructor(
     }
 
     fun empty() {
-        edited.value = empty
+        edited.value = emptyPost
         deleteMedia()
     }
 
@@ -179,44 +188,26 @@ class PostViewModel @Inject constructor(
         _attachment.value = noMedia
     }
 
-    fun loadUsers() = viewModelScope.launch {
-        try {
-            val response = apiService.getUsers()
-            if (!response.isSuccessful) {
-                throw RuntimeException(response.code().toString())
-            }
-            val users = response.body() ?: throw RuntimeException("body is null")
-            _usersData.postValue(users)
-        } catch (e: Exception) {
-            _usersLoadError.postValue(e.toString())
-        }
+    fun getBackOldUsers(oldUserList: List<User>) = viewModelScope.launch {
+        repository.getBackOldUsers(oldUserList)
     }
 
-    fun getBackOldUsers(oldUsers: List<User>){
-        _usersData.postValue(oldUsers)
+    fun changeCheckedUsers(id: Int, changeToOtherState: Boolean) = viewModelScope.launch {
+        repository.changeCheckedUsers(id, changeToOtherState)
     }
 
-    fun checkUsers(id: Int) {
-        val data = _usersData.value
-        val foundUser = data?.find { it.id == id }
-        foundUser?.let { it.checkedNow = true }
-        _usersData.postValue(data)
-    }
-
-    fun changeCheckedUsers(id: Int) {
-        val data = _usersData.value
-        val foundUser = data?.find { it.id == id }
-        foundUser?.let { it.checkedNow = !it.checkedNow }
-        _usersData.postValue(data)
+    fun changeUserId(userId: Int){
+        appAuth.userId = userId
     }
 }
 
-private val empty = Post(
+private val emptyPost = Post(
     id = 0,
     content = "",
     author = "Me",
     authorAvatar = null,
     published = "",
 )
-private val emptyUsers: List<User> = emptyList()
 private val noMedia = MediaModel(null, null, AttachmentType.NONE)
+
+

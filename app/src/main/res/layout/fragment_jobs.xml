@@ -33,6 +33,15 @@
             android:padding="@dimen/margin_small"
             app:icon="@drawable/baseline_feed_28" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/my_wall_button"
+            style="@style/Widget.AppTheme.GrayButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/my_wall"
+            android:padding="@dimen/margin_small"
+            app:icon="@drawable/baseline_my_feed_28" />
+
     </LinearLayout>
 
     <View

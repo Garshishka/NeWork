@@ -9,7 +9,6 @@
         android:id="@+id/user_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -31,6 +30,7 @@
             android:layout_margin="@dimen/margin_small"
             app:layout_constraintStart_toEndOf="@id/user_avatar"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             tools:text="User Name"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textStyle="bold"
@@ -40,6 +40,7 @@
             android:id="@+id/user_job"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_small"
             android:layout_marginBottom="@dimen/margin_small"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:gravity="start"
@@ -47,6 +48,7 @@
             android:textColor="@color/black"
             app:layout_constraintTop_toBottomOf="@id/user_name"
             app:layout_constraintStart_toEndOf="@id/user_avatar"
+            app:layout_constraintEnd_toEndOf="parent"
             style="@style/Widget.Material3.Button.TextButton"
             tools:text="User Job"
             />
@@ -98,7 +100,6 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/feed_wall"
             android:padding="@dimen/margin_small"
-            android:visibility="gone"
             app:icon="@drawable/baseline_feed_28" />
 
         <com.google.android.material.button.MaterialButton

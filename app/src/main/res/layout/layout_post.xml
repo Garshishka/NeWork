@@ -87,7 +87,7 @@
     <ImageButton
         android:id="@+id/attachmentPicture"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:contentDescription="@string/attached_content"
         android:src="@drawable/ic_baseline_downloading_48"
         android:visibility="gone"
@@ -263,7 +263,7 @@
         android:layout_marginStart="@dimen/margin_default"
         android:layout_marginTop="@dimen/margin_small"
         android:contentDescription="@string/description_post_mentions"
-        app:icon="@drawable/ic_baseline_share_24"
+        app:icon="@drawable/baseline_mentions_24"
         app:layout_constraintStart_toEndOf="@id/like_batch_trail"
         app:layout_constraintTop_toBottomOf="@id/barrierBottom"
         tools:text="5" />
