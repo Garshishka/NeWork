@@ -69,7 +69,7 @@ class JobFragment : Fragment() {
         binding.apply {
             jobList.adapter = adapter
             feedButton.setOnClickListener {
-                findNavController().navigateUp()
+                findNavController().navigate(R.id.action_global_postFeedFragment)
             }
             addJobButton.setOnClickListener {
                 bindAddingJobDialog()

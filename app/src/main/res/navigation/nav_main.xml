@@ -77,7 +77,11 @@
         android:id="@+id/userWallFragment"
         android:name="ru.netology.nework.fragment.UserWallFragment"
         android:label="UserWallFragment"
-        tools:layout="@layout/fragment_user_wall" />
+        tools:layout="@layout/fragment_posts" >
+        <action
+            android:id="@+id/action_userWallFragment_self"
+            app:destination="@id/userWallFragment" />
+    </fragment>
     <action android:id="@+id/action_global_postFeedFragment" app:destination="@id/postFeedFragment" />
     <action android:id="@+id/action_global_playFragment" app:destination="@id/playFragment" />
     <action android:id="@+id/action_global_audioFragment" app:destination="@id/audioFragment" />

@@ -28,6 +28,7 @@ import ru.netology.nework.fragment.UserWallFragment.Companion.userJobArg
 import ru.netology.nework.utils.PostInteractionListener
 import ru.netology.nework.viewmodel.AuthViewModel
 import ru.netology.nework.viewmodel.PostViewModel
+import ru.netology.nework.viewmodel.UserWallViewModel
 
 @AndroidEntryPoint
 open class PostFeedFragment : Fragment() {
@@ -38,9 +39,8 @@ open class PostFeedFragment : Fragment() {
 
     protected val onInteractionListener = object : PostInteractionListener {
         override fun onLike(post: Post) {
-            val token = context?.getSharedPreferences("auth", Context.MODE_PRIVATE)
-                ?.getString("TOKEN_KEY", null)
-            if (token == null) {
+            val token = authViewModel.state.value?.token
+            if (token == null || token == "0") {
                 context?.let { showSignInDialog(it) }
             } else {
                 viewModel.likeById(post.id, post.likedByMe)
@@ -75,13 +75,17 @@ open class PostFeedFragment : Fragment() {
         }
 
         override fun onAvatarClick(post: Post) {
-            viewModel.changeUserId(post.authorId)
-            findNavController().navigate(R.id.action_postFeedFragment_to_userWallFragment,
-                Bundle().apply
-                {
-                    userIdArg = post.authorId.toString()
-                    userJobArg = post.authorJob
-                })
+            if(viewModel is UserWallViewModel){
+                //in user wall avatar click does nothing
+            } else {
+                viewModel.changeUserId(post.authorId)
+                findNavController().navigate(R.id.action_postFeedFragment_to_userWallFragment,
+                    Bundle().apply
+                    {
+                        userIdArg = post.authorId.toString()
+                        userJobArg = post.authorJob
+                    })
+            }
         }
     }
 
@@ -131,9 +135,8 @@ open class PostFeedFragment : Fragment() {
             }
 
             jobsButton.setOnClickListener {
-                val token = context?.getSharedPreferences("auth", Context.MODE_PRIVATE)
-                    ?.getString("TOKEN_KEY", null)
-                if (token == null) {
+                val token = authViewModel.state.value?.token
+                if (token == null || token == "0") {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
                     findNavController().navigate(R.id.action_global_jobFragment)
@@ -141,9 +144,8 @@ open class PostFeedFragment : Fragment() {
             }
 
             addPostButton.setOnClickListener {
-                val token = context?.getSharedPreferences("auth", Context.MODE_PRIVATE)
-                    ?.getString("TOKEN_KEY", null)
-                if (token == null) {
+                val token = authViewModel.state.value?.token
+                if (token == null || token == "0") {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
                     findNavController().navigate(R.id.action_global_newPostFragment)
@@ -230,9 +232,8 @@ open class PostFeedFragment : Fragment() {
 
         binding.apply {
             myWallButton.setOnClickListener {
-                val token = context?.getSharedPreferences("auth", Context.MODE_PRIVATE)
-                    ?.getString("TOKEN_KEY", null)
-                if (token == null) {
+                val token = authViewModel.state.value?.token
+                if (token == null || token == "0") {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
                     val id = authViewModel.state.value!!.id

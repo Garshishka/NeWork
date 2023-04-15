@@ -42,13 +42,30 @@ class UserWallFragment : PostFeedFragment() {
 
     private fun subscribeForUserWall(userId: Int, job: String) {
         requireActivity().onBackPressedDispatcher.addCallback(this) {
-            findNavController().navigateUp()
+            findNavController().navigate(R.id.action_global_postFeedFragment)
         }
 
         binding.apply {
             feedButton.isVisible = true
             feedButton.setOnClickListener {
                 findNavController().navigate(R.id.action_global_postFeedFragment)
+            }
+
+            myWallButton.isVisible = userId != authViewModel.state.value?.id
+            myWallButton.setOnClickListener {
+                val token = authViewModel.state.value?.token
+                if (token == null || token == "0") {
+                    context?.let { context -> showSignInDialog(context) }
+                } else {
+                    val id = authViewModel.state.value!!.id
+                    viewModel.changeUserId(id)
+                    findNavController().navigate(R.id.action_userWallFragment_self,
+                        Bundle().apply
+                        {
+                            userIdArg = id.toString()
+                            userJobArg = ""
+                        })
+                }
             }
 
             userInfo.isVisible = true
@@ -67,11 +84,11 @@ class UserWallFragment : PostFeedFragment() {
                     viewModel.getMyJob()
                     viewModel.myJob.observe(viewLifecycleOwner) {
                         userJob.text = it
-                        userJob.isVisible = it != "" && it !="null"
+                        userJob.isVisible = it != "" && it != "null"
                     }
                 } else {
                     userJob.text = job
-                    userJob.isVisible = job != "" && job !="null"
+                    userJob.isVisible = job != "" && job != "null"
                 }
                 userJob.setOnClickListener {
                     findNavController().navigate(R.id.action_global_jobFragment,
