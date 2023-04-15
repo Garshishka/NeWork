@@ -4,10 +4,7 @@ import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 import ru.netology.nework.auth.AuthPair
-import ru.netology.nework.dto.Job
-import ru.netology.nework.dto.MediaUpload
-import ru.netology.nework.dto.Post
-import ru.netology.nework.dto.User
+import ru.netology.nework.dto.*
 
 interface ApiService {
     //POSTS
@@ -41,29 +38,25 @@ interface ApiService {
     @DELETE("posts/{id}")
     suspend fun removeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Unit>
 
-    //MY WALL
-//    @GET("my/wall")
-//    suspend fun getUserWall(@Header("auth") auth: String): Response<List<Post>>
-//
-//    @GET("my/wall/latest")
-//    suspend fun getMyWallLatest(
-//        @Header("auth") auth: String,
-//        @Query("count") count: Int
-//    ): Response<List<Post>>
-//
-//    @GET("my/wall/{post_id}/after")
-//    suspend fun getMyWallAfter(
-//        @Header("auth") auth: String,
-//        @Path("post_id") id: String,
-//        @Query("count") count: Int,
-//    ): Response<List<Post>>
-//
-//    @GET("my/wall/{post_id}/before")
-//    suspend fun getMyWallBefore(
-//        @Header("auth") auth: String,
-//        @Path("post_id") id: String,
-//        @Query("count") count: Int,
-//    ): Response<List<Post>>
+    //EVENTS
+    @GET("events")
+    suspend fun getAllEvents(): Response<List<Event>>
+
+    @GET("events/latest")
+    suspend fun getLatestEvents(@Query("count") count: Int): Response<List<Event>>
+
+    @GET("events/{id}/after")
+    suspend fun getEventsAfter(
+        @Path("event_id") id: String,
+        @Query("count") count: Int,
+    ): Response<List<Event>>
+
+    @GET("events/{event_id}/before")
+    suspend fun getEventsBefore(
+        @Path("event_id") id: String,
+        @Query("count") count: Int,
+    ): Response<List<Event>>
+
 
     //USER WALL
     @GET("{author_id}/wall")
