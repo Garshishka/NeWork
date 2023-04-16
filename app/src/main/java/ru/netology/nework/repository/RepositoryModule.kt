@@ -14,4 +14,16 @@ interface RepositoryModule {
     fun bindsPostRepository(
         postRepositoryImpl: PostRepositoryImpl
     ): PostRepository
+
+    @Singleton
+    @Binds
+    fun bindsMediaRepository(
+        mediaRepositoryImpl: MediaRepositoryImpl
+    ): MediaRepository
+
+    @Singleton
+    @Binds
+    fun bindsUsersRepository(
+        usersRepositoryImpl: UsersRepositoryImpl
+    ): UsersRepository
 }

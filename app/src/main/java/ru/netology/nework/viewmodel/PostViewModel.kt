@@ -20,6 +20,7 @@ import ru.netology.nework.api.ApiService
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.*
 import ru.netology.nework.repository.PostRepository
+import ru.netology.nework.repository.UsersRepository
 import ru.netology.nework.utils.SingleLiveEvent
 import java.io.File
 import javax.inject.Inject
@@ -27,6 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 open class PostViewModel @Inject constructor(
     protected val repository: PostRepository,
+    protected val usersRepository: UsersRepository,
     protected val apiService: ApiService,
     protected val appAuth: AppAuth
 ) : ViewModel() {
@@ -45,7 +47,7 @@ open class PostViewModel @Inject constructor(
                 }
         }.flowOn(Dispatchers.Default)
 
-    val usersData = repository.usersData
+    val usersData = usersRepository.usersData
 
     protected val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
     val dataState: LiveData<FeedModelState>
@@ -89,7 +91,7 @@ open class PostViewModel @Inject constructor(
     fun loadUsers() = viewModelScope.launch {
         _dataState.value = FeedModelState.Loading
         try {
-            repository.getUsers()
+            usersRepository.getUsers()
             _dataState.value = FeedModelState.Idle
         } catch (e: Exception) {
             _usersLoadError.postValue(e.toString())
@@ -189,11 +191,11 @@ open class PostViewModel @Inject constructor(
     }
 
     fun getBackOldUsers(oldUserList: List<User>) = viewModelScope.launch {
-        repository.getBackOldUsers(oldUserList)
+        usersRepository.getBackOldUsers(oldUserList)
     }
 
     fun changeCheckedUsers(id: Int, changeToOtherState: Boolean) = viewModelScope.launch {
-        repository.changeCheckedUsers(id, changeToOtherState)
+        usersRepository.changeCheckedUsers(id, changeToOtherState)
     }
 
     fun changeUserId(userId: Int){
