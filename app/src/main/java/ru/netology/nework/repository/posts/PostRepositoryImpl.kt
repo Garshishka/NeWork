@@ -1,14 +1,10 @@
-package ru.netology.nework.repository
+package ru.netology.nework.repository.posts
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.map
 import kotlinx.coroutines.flow.map
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nework.api.ApiService
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dao.PostDao
@@ -16,6 +12,7 @@ import ru.netology.nework.dao.PostRemoteKeyDao
 import ru.netology.nework.db.AppDb
 import ru.netology.nework.dto.*
 import ru.netology.nework.entity.PostEntity
+import ru.netology.nework.repository.media.MediaRepository
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -27,6 +24,7 @@ class PostRepositoryImpl @Inject constructor(
     postRemoteKeyDao: PostRemoteKeyDao,
     appDb: AppDb,
     private val auth: AppAuth,
+    private val mediaRepository: MediaRepository
 ) : PostRepository {
     @OptIn(ExperimentalPagingApi::class)
     override val data = Pager(
@@ -49,12 +47,6 @@ class PostRepositoryImpl @Inject constructor(
         ),
     ).flow
         .map { it.map(PostEntity::toDto) }
-
-    private val emptyUsers: List<User> = emptyList()
-
-    private val _usersData = MutableLiveData(emptyUsers)
-    override val usersData: LiveData<List<User>>
-        get() = _usersData
 
     //POSTS
     override suspend fun getAll(authToken: String?) {
@@ -110,7 +102,7 @@ class PostRepositoryImpl @Inject constructor(
         attachmentType: AttachmentType
     ) {
         try {
-            val upload = upload(file, authToken)
+            val upload = mediaRepository.upload(file, authToken)
             val postWithAttachment =
                 post.copy(attachment = Attachment(upload.url, attachmentType))
             save(postWithAttachment, authToken)
@@ -153,55 +145,6 @@ class PostRepositoryImpl @Inject constructor(
 
         authToken?.let {
             postDao.getAllUnsent().forEach { save(it.toDto(), authToken) }
-        }
-    }
-
-    //MEDIA
-    private suspend fun upload(file: File, authToken: String): MediaUpload {
-        try {
-            val data =
-                MultipartBody.Part.createFormData("file", file.name, file.asRequestBody())
-
-            val response = apiService.upload(authToken, data)
-            if (!response.isSuccessful) {
-                throw RuntimeException(
-                    response.code().toString()
-                )
-            }
-            return response.body() ?: throw RuntimeException("body is null")
-        } catch (e: Exception) {
-            throw RuntimeException(e)
-        }
-    }
-
-    //USERS
-    override suspend fun getUsers() {
-        try {
-            val response = apiService.getUsers()
-            if (!response.isSuccessful) {
-                throw RuntimeException(response.code().toString())
-            }
-            val users = response.body() ?: throw RuntimeException("body is null")
-            _usersData.postValue(users)
-        } catch (e: Exception) {
-            throw RuntimeException(e)
-        }
-    }
-
-    override suspend fun getBackOldUsers(oldUsers: List<User>) {
-        _usersData.postValue(oldUsers)
-    }
-
-    override suspend fun changeCheckedUsers(id: Int, changeToOtherState: Boolean) {
-        val data = _usersData.value
-        val foundUser = data?.find { it.id == id }
-        foundUser?.let {
-            if (changeToOtherState) {
-                it.checkedNow = !it.checkedNow
-            } else {
-                it.checkedNow = true
-            }
-            _usersData.postValue(data)
         }
     }
 }

@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import ru.netology.nework.databinding.LayoutPostBinding
 import ru.netology.nework.dto.Post
-import ru.netology.nework.utils.PostInteractionListener
+import ru.netology.nework.utils.listeners.PostInteractionListener
 import ru.netology.nework.viewholder.PostDiffCallBack
 import ru.netology.nework.viewholder.PostViewHolder
 

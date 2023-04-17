@@ -7,7 +7,7 @@ import ru.netology.nework.R
 import ru.netology.nework.databinding.LayoutJobBinding
 import ru.netology.nework.dto.Job
 import ru.netology.nework.utils.AndroidUtils.getJobDate
-import ru.netology.nework.utils.JobInteractionListener
+import ru.netology.nework.utils.listeners.JobInteractionListener
 
 class JobViewHolder(
     private val binding: LayoutJobBinding,

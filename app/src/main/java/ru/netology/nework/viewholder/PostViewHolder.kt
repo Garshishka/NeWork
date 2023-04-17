@@ -11,7 +11,7 @@ import ru.netology.nework.databinding.LayoutPostBinding
 import ru.netology.nework.dto.AttachmentType
 import ru.netology.nework.dto.Post
 import ru.netology.nework.dto.UserPreview
-import ru.netology.nework.utils.PostInteractionListener
+import ru.netology.nework.utils.listeners.PostInteractionListener
 import ru.netology.nework.utils.load
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter

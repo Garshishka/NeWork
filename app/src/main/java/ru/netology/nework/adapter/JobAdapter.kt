@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import ru.netology.nework.databinding.LayoutJobBinding
 import ru.netology.nework.dto.Job
-import ru.netology.nework.utils.JobInteractionListener
+import ru.netology.nework.utils.listeners.JobInteractionListener
 import ru.netology.nework.viewholder.JobDiffCallBack
 import ru.netology.nework.viewholder.JobViewHolder
 

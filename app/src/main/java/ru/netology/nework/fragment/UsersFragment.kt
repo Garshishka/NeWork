@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import ru.netology.nework.adapter.UsersAdapter
 import ru.netology.nework.databinding.FragmentUsersBinding
 import ru.netology.nework.dto.User
-import ru.netology.nework.utils.UserListInteractionListener
+import ru.netology.nework.utils.listeners.UserListInteractionListener
 import ru.netology.nework.viewmodel.PostViewModel
 
 class UsersFragment : Fragment() {

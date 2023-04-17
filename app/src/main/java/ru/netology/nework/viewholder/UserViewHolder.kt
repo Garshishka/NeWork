@@ -4,7 +4,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nework.R
 import ru.netology.nework.databinding.LayoutUserBinding
 import ru.netology.nework.dto.User
-import ru.netology.nework.utils.UserListInteractionListener
+import ru.netology.nework.utils.listeners.UserListInteractionListener
 import ru.netology.nework.utils.loadAvatar
 
 class UserViewHolder(
