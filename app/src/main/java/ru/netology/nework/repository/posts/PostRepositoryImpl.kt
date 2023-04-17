@@ -1,4 +1,4 @@
-package ru.netology.nework.repository
+package ru.netology.nework.repository.posts
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
@@ -12,6 +12,7 @@ import ru.netology.nework.dao.PostRemoteKeyDao
 import ru.netology.nework.db.AppDb
 import ru.netology.nework.dto.*
 import ru.netology.nework.entity.PostEntity
+import ru.netology.nework.repository.media.MediaRepository
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton

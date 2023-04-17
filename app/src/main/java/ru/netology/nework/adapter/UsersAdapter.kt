@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import ru.netology.nework.databinding.LayoutUserBinding
 import ru.netology.nework.dto.User
-import ru.netology.nework.utils.UserListInteractionListener
+import ru.netology.nework.utils.listeners.UserListInteractionListener
 import ru.netology.nework.viewholder.UserDiffCallBack
 import ru.netology.nework.viewholder.UserViewHolder
 

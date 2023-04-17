@@ -5,10 +5,10 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import ru.netology.nework.dao.PostDao
 import ru.netology.nework.dao.PostRemoteKeyDao
-import ru.netology.nework.entity.IdListConverter
 import ru.netology.nework.entity.PostEntity
 import ru.netology.nework.entity.PostRemoteKeyEntity
-import ru.netology.nework.entity.UserMapConverter
+import ru.netology.nework.entity.converters.IdListConverter
+import ru.netology.nework.entity.converters.UserMapConverter
 
 @Database(
     entities = [PostEntity::class, PostRemoteKeyEntity::class],

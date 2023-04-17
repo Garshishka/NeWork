@@ -1,4 +1,4 @@
-package ru.netology.nework.fragment
+package ru.netology.nework.fragment.secondary
 
 import android.media.MediaPlayer
 import android.net.Uri

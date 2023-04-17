@@ -22,10 +22,10 @@ import ru.netology.nework.adapter.PostsAdapter
 import ru.netology.nework.databinding.FragmentPostsBinding
 import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.dto.Post
-import ru.netology.nework.fragment.PictureFragment.Companion.urlArg
 import ru.netology.nework.fragment.UserWallFragment.Companion.userIdArg
 import ru.netology.nework.fragment.UserWallFragment.Companion.userJobArg
-import ru.netology.nework.utils.PostInteractionListener
+import ru.netology.nework.fragment.secondary.PictureFragment.Companion.urlArg
+import ru.netology.nework.utils.listeners.PostInteractionListener
 import ru.netology.nework.viewmodel.AuthViewModel
 import ru.netology.nework.viewmodel.PostViewModel
 import ru.netology.nework.viewmodel.UserWallViewModel

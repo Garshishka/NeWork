@@ -18,8 +18,8 @@ import ru.netology.nework.api.ApiService
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.dto.Post
-import ru.netology.nework.repository.PostRepository
-import ru.netology.nework.repository.UsersRepository
+import ru.netology.nework.repository.posts.PostRepository
+import ru.netology.nework.repository.users.UsersRepository
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import javax.inject.Inject

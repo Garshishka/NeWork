@@ -18,22 +18,22 @@
         app:destination="@id/jobFragment" />
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="ru.netology.nework.fragment.SignUpFragment"
+        android:name="ru.netology.nework.fragment.secondary.SignUpFragment"
         android:label="SignUpFragment"
         tools:layout="@layout/fragment_sign_up" />
     <fragment
         android:id="@+id/pictureFragment"
-        android:name="ru.netology.nework.fragment.PictureFragment"
+        android:name="ru.netology.nework.fragment.secondary.PictureFragment"
         android:label="fragment_picture"
         tools:layout="@layout/fragment_picture" />
     <fragment
         android:id="@+id/playFragment"
-        android:name="ru.netology.nework.fragment.VideoFragment"
+        android:name="ru.netology.nework.fragment.secondary.VideoFragment"
         android:label="fragment_play"
         tools:layout="@layout/fragment_video" />
     <fragment
         android:id="@+id/audioFragment"
-        android:name="ru.netology.nework.fragment.AudioFragment"
+        android:name="ru.netology.nework.fragment.secondary.AudioFragment"
         android:label="AudioFragment"
         tools:layout="@layout/fragment_audio" />
     <fragment
@@ -47,7 +47,7 @@
     </fragment>
     <fragment
         android:id="@+id/fragment_sing_in"
-        android:name="ru.netology.nework.fragment.SignInFragment"
+        android:name="ru.netology.nework.fragment.secondary.SignInFragment"
         android:label="fragment_sing_in"
         tools:layout="@layout/fragment_sign_in">
         <action

@@ -19,8 +19,8 @@ import kotlinx.coroutines.launch
 import ru.netology.nework.api.ApiService
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.*
-import ru.netology.nework.repository.PostRepository
-import ru.netology.nework.repository.UsersRepository
+import ru.netology.nework.repository.posts.PostRepository
+import ru.netology.nework.repository.users.UsersRepository
 import ru.netology.nework.utils.SingleLiveEvent
 import java.io.File
 import javax.inject.Inject

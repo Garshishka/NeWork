@@ -1,4 +1,4 @@
-package ru.netology.nework.repository
+package ru.netology.nework.repository.posts
 
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow

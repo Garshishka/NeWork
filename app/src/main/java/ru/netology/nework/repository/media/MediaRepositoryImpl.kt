@@ -1,4 +1,4 @@
-package ru.netology.nework.repository
+package ru.netology.nework.repository.media
 
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -11,7 +11,7 @@ import javax.inject.Singleton
 @Singleton
 class MediaRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
-):MediaRepository {
+): MediaRepository {
     override suspend fun upload(file: File, authToken: String): MediaUpload {
         try {
             val data =
