@@ -67,4 +67,9 @@
     <string name="jobs_empty">Работы отсутствуют</string>
     <string name="my_wall">Мои посты</string>
     <string name="feed_wall">Стена постов</string>
+    <string name="description_post_participants">Участники</string>
+    <string name="description_post_speakers">Спикеры</string>
+    <string name="events_empty">События отсутствуют</string>
+    <string name="add_event">Добавить событие</string>
+    <string name="event_wall">Список событий</string>
 </resources>

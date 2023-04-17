@@ -1,4 +1,4 @@
-package ru.netology.nework.repository
+package ru.netology.nework.repository.events
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType

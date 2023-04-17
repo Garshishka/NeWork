@@ -18,61 +18,61 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nework.R
-import ru.netology.nework.adapter.PostsAdapter
-import ru.netology.nework.databinding.FragmentPostsBinding
+import ru.netology.nework.adapter.EventAdapter
+import ru.netology.nework.databinding.FragmentEventsBinding
+import ru.netology.nework.dto.Event
 import ru.netology.nework.dto.FeedModelState
-import ru.netology.nework.dto.Post
 import ru.netology.nework.fragment.UserWallFragment.Companion.userIdArg
 import ru.netology.nework.fragment.UserWallFragment.Companion.userJobArg
 import ru.netology.nework.fragment.secondary.PictureFragment.Companion.urlArg
+import ru.netology.nework.utils.listeners.EventInteractionListener
 import ru.netology.nework.utils.listeners.MediaInteractionListener
-import ru.netology.nework.utils.listeners.PostInteractionListener
 import ru.netology.nework.viewmodel.AuthViewModel
-import ru.netology.nework.viewmodel.PostViewModel
-import ru.netology.nework.viewmodel.UserWallViewModel
+import ru.netology.nework.viewmodel.EventViewModel
 
 @AndroidEntryPoint
-open class PostFeedFragment : Fragment() {
-    protected open val viewModel: PostViewModel by activityViewModels()
-    protected val authViewModel: AuthViewModel by activityViewModels()
-    protected lateinit var binding: FragmentPostsBinding
-    protected lateinit var postData: Flow<PagingData<Post>>
+open class EventFeedFragment : Fragment() {
+    private val viewModel: EventViewModel by activityViewModels()
+    private val authViewModel: AuthViewModel by activityViewModels()
+    private lateinit var binding: FragmentEventsBinding
+    private lateinit var postData: Flow<PagingData<Event>>
 
-    protected val onInteractionListener = object : PostInteractionListener {
-        override fun onLike(post: Post) {
+    private val onInteractionListener = object : EventInteractionListener {
+        override fun onLike(event: Event) {
             val token = authViewModel.state.value?.token
             if (token == null || token == "0") {
                 context?.let { showSignInDialog(it) }
             } else {
-                viewModel.likeById(post.id, post.likedByMe)
+                viewModel.likeById(event.id, event.likedByMe)
             }
         }
 
-        override fun onEdit(post: Post) {
-            viewModel.edit(post)
+        override fun onEdit(event: Event) {
+            viewModel.edit(event)
             findNavController().navigate(R.id.action_global_newPostFragment)
         }
 
-        override fun onRemove(post: Post) {
-            viewModel.removeById(post.id)
+        override fun onRemove(event: Event) {
+            viewModel.removeById(event.id)
         }
 
-        override fun onAvatarClick(post: Post) {
-            if(viewModel is UserWallViewModel){
-                //in user wall avatar click does nothing
-            } else {
-                viewModel.changeUserId(post.authorId)
-                findNavController().navigate(R.id.action_postFeedFragment_to_userWallFragment,
-                    Bundle().apply
-                    {
-                        userIdArg = post.authorId.toString()
-                        userJobArg = post.authorJob
-                    })
-            }
+        override fun onAvatarClick(event: Event) {
+            viewModel.changeUserId(event.authorId)
+            findNavController().navigate(R.id.action_postFeedFragment_to_userWallFragment,
+                Bundle().apply
+                {
+                    userIdArg = event.authorId.toString()
+                    userJobArg = event.authorJob
+                })
+
+        }
+
+        override fun onParticipate(event: Event) {
+            TODO("Not yet implemented")
         }
     }
 
-    protected val mediaInteractionListener = object : MediaInteractionListener {
+    private val mediaInteractionListener = object : MediaInteractionListener {
         override fun onAudioClick(url: String) {
             findNavController().navigate(R.id.action_global_audioFragment,
                 Bundle().apply
@@ -92,26 +92,25 @@ open class PostFeedFragment : Fragment() {
         }
     }
 
-    protected val adapter = PostsAdapter(onInteractionListener, mediaInteractionListener)
+    private val adapter = EventAdapter(onInteractionListener, mediaInteractionListener)
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPostsBinding.inflate(inflater, container, false)
+        binding = FragmentEventsBinding.inflate(inflater, container, false)
 
-        binding.listPosts.adapter = adapter
+        binding.listEvents.adapter = adapter
         postData = viewModel.data
 
         subscribe()
-        subscribeForFeedWall()
 
         return binding.root
     }
 
 
-    protected fun subscribe() {
+    private fun subscribe() {
         lifecycleScope.launchWhenCreated {
             postData.collectLatest {
                 adapter.submitData(it)
@@ -137,8 +136,20 @@ open class PostFeedFragment : Fragment() {
                 adapter.refresh()
             }
 
-            eventWallButton.setOnClickListener {
-                findNavController().navigate(R.id.action_global_eventFeedFragment)
+            myWallButton.setOnClickListener {
+                val token = authViewModel.state.value?.token
+                if (token == null || token == "0") {
+                    context?.let { context -> showSignInDialog(context) }
+                } else {
+                    val id = authViewModel.state.value!!.id
+                    viewModel.changeUserId(id)
+                    findNavController().navigate(R.id.action_postFeedFragment_to_userWallFragment,
+                        Bundle().apply
+                        {
+                            userIdArg = id.toString()
+                            userJobArg = ""
+                        })
+                }
             }
 
             jobsButton.setOnClickListener {
@@ -161,6 +172,8 @@ open class PostFeedFragment : Fragment() {
         }
 
         viewModel.apply {
+            loadUsers()
+
             dataState.observe(viewLifecycleOwner) {
                 when (it) {
                     FeedModelState.Error -> {
@@ -179,7 +192,7 @@ open class PostFeedFragment : Fragment() {
                 binding.loading.isVisible = it == FeedModelState.Loading
             }
 
-            postCreatedError.observe(viewLifecycleOwner) {
+            eventCreatedError.observe(viewLifecycleOwner) {
                 Snackbar.make(
                     binding.root,
                     getString(R.string.specific_posting_error, it),
@@ -191,7 +204,7 @@ open class PostFeedFragment : Fragment() {
                     .show()
             }
 
-            postsRemoveError.observe(viewLifecycleOwner) {
+            eventsRemoveError.observe(viewLifecycleOwner) {
                 val id = it.second
                 Snackbar.make(
                     binding.root,
@@ -204,7 +217,7 @@ open class PostFeedFragment : Fragment() {
                     .show()
             }
 
-            postsLikeError.observe(viewLifecycleOwner) {
+            eventsLikeError.observe(viewLifecycleOwner) {
                 val id = it.second.first
                 val willLike = it.second.second
                 Snackbar.make(
@@ -232,31 +245,7 @@ open class PostFeedFragment : Fragment() {
         }
     }
 
-    private fun subscribeForFeedWall() {
-        viewModel.apply {
-            loadUsers()
-        }
-
-        binding.apply {
-            myWallButton.setOnClickListener {
-                val token = authViewModel.state.value?.token
-                if (token == null || token == "0") {
-                    context?.let { context -> showSignInDialog(context) }
-                } else {
-                    val id = authViewModel.state.value!!.id
-                    viewModel.changeUserId(id)
-                    findNavController().navigate(R.id.action_postFeedFragment_to_userWallFragment,
-                        Bundle().apply
-                        {
-                            userIdArg = id.toString()
-                            userJobArg = ""
-                        })
-                }
-            }
-        }
-    }
-
-    protected fun showSignInDialog(context: Context) {
+    private fun showSignInDialog(context: Context) {
         val alertDialog: AlertDialog = this.let {
             val builder = AlertDialog.Builder(context)
             builder.apply {

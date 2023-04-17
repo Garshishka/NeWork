@@ -23,18 +23,18 @@ interface EventDao {
     fun getMyWalLPagingSource(id:Int): PagingSource<Int, EventEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(post: EventEntity)
+    suspend fun insert(event: EventEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(posts: List<EventEntity>)
+    suspend fun insert(events: List<EventEntity>)
 
     @Query("UPDATE EventEntity SET content = :content WHERE id = :id")
     suspend fun updateContentByID(id: Int, content: String)
 
-    suspend fun save(post: EventEntity) =
-        if (post.id == 0) insert(post) else updateContentByID(
-            post.id,
-            post.content
+    suspend fun save(event: EventEntity) =
+        if (event.id == 0) insert(event) else updateContentByID(
+            event.id,
+            event.content
         )
 
     @Query("SELECT * FROM EventEntity WHERE id = :id")
@@ -44,14 +44,14 @@ interface EventDao {
     suspend fun removeById(id: Int)
 
     suspend fun likeById(id: Int, userId: Int) {
-        val post = getById(id)
-        val likesList = post.likeOwnerIds as MutableList<Int>
-        if (post.likedByMe) {
+        val event = getById(id)
+        val likesList = event.likeOwnerIds as MutableList<Int>
+        if (event.likedByMe) {
             likesList.remove(userId)
         } else {
             likesList.add(userId)
         }
-        insert(post.copy(likeOwnerIds = likesList, likedByMe = !post.likedByMe))
+        insert(event.copy(likeOwnerIds = likesList, likedByMe = !event.likedByMe))
     }
 
     @Query("DELETE FROM EventEntity")

@@ -1,4 +1,4 @@
-package ru.netology.nework.entity
+package ru.netology.nework.entity.converters
 
 import androidx.room.TypeConverter
 import ru.netology.nework.dto.EventType

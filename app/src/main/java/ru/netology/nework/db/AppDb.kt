@@ -7,7 +7,13 @@ import ru.netology.nework.dao.EventDao
 import ru.netology.nework.dao.EventRemoteKeyDao
 import ru.netology.nework.dao.PostDao
 import ru.netology.nework.dao.PostRemoteKeyDao
-import ru.netology.nework.entity.*
+import ru.netology.nework.entity.EventEntity
+import ru.netology.nework.entity.EventRemoteKeyEntity
+import ru.netology.nework.entity.PostEntity
+import ru.netology.nework.entity.PostRemoteKeyEntity
+import ru.netology.nework.entity.converters.EventTypeConverter
+import ru.netology.nework.entity.converters.IdListConverter
+import ru.netology.nework.entity.converters.UserMapConverter
 
 @Database(
     entities = [PostEntity::class, PostRemoteKeyEntity::class, EventEntity::class, EventRemoteKeyEntity::class],

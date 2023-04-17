@@ -21,7 +21,7 @@ data class EventEntity(
     val published: String,
     val coordinatesLat: String?,
     val coordinatesLong: String?,
-    val type: EventType,
+    val eventType: EventType,
     val likeOwnerIds: List<Int>,
     val likedByMe: Boolean = false,
     val speakersIds: List<Int>,
@@ -49,7 +49,7 @@ data class EventEntity(
         } else {
             Coords(coordinatesLat, coordinatesLong)
         },
-        type,
+        eventType,
         likeOwnerIds,
         likedByMe,
         speakersIds,
@@ -63,6 +63,7 @@ data class EventEntity(
 
     companion object {
         fun fromDto(dto: Event, notOnServer: Boolean = false): EventEntity {
+            println(dto.id)
             return EventEntity(
                 dto.id,
                 dto.authorId,
@@ -77,8 +78,8 @@ data class EventEntity(
                 dto.type,
                 dto.likeOwnerIds,
                 dto.likedByMe,
-                dto.speakersIds,
-                dto.participantIds,
+                dto.speakerIds,
+                dto.participantsIds,
                 dto.participatedByMe,
                 AttachmentEmbedabble.fromDto(dto.attachment),
                 dto.link,

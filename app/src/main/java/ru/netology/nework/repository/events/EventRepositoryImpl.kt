@@ -1,7 +1,5 @@
-package ru.netology.nework.repository
+package ru.netology.nework.repository.events
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -16,6 +14,7 @@ import ru.netology.nework.dao.EventRemoteKeyDao
 import ru.netology.nework.db.AppDb
 import ru.netology.nework.dto.*
 import ru.netology.nework.entity.EventEntity
+import ru.netology.nework.repository.media.MediaRepository
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -27,6 +26,7 @@ class EventRepositoryImpl @Inject constructor(
     eventRemoteKeyDao: EventRemoteKeyDao,
     appDb: AppDb,
     private val auth: AppAuth,
+    private val mediaRepository: MediaRepository
 ) : EventRepository {
     @OptIn(ExperimentalPagingApi::class)
     override val data = Pager(
@@ -35,12 +35,6 @@ class EventRepositoryImpl @Inject constructor(
         remoteMediator = EventRemoteMediator(apiService, eventDao, eventRemoteKeyDao, appDb),
     ).flow
         .map { it.map(EventEntity::toDto) }
-
-    private val emptyUsers: List<User> = emptyList()
-
-    private val _usersData = MutableLiveData(emptyUsers)
-    override val usersData: LiveData<List<User>>
-        get() = _usersData
 
     //EVENTS
     override suspend fun getAll(authToken: String?) {
@@ -96,7 +90,7 @@ class EventRepositoryImpl @Inject constructor(
         attachmentType: AttachmentType
     ) {
         /*  try {
-              val upload = upload(file, authToken)
+              val upload = mediaRepository.upload(file, authToken)
               val eventWithAttachment =
                   event.copy(attachment = Attachment(upload.url, attachmentType))
               save(eventWithAttachment, authToken)
@@ -146,37 +140,6 @@ class EventRepositoryImpl @Inject constructor(
             return response.body() ?: throw RuntimeException("body is null")
         } catch (e: Exception) {
             throw RuntimeException(e)
-        }
-    }
-
-    //USERS
-    override suspend fun getUsers() {
-        try {
-            val response = apiService.getUsers()
-            if (!response.isSuccessful) {
-                throw RuntimeException(response.code().toString())
-            }
-            val users = response.body() ?: throw RuntimeException("body is null")
-            _usersData.postValue(users)
-        } catch (e: Exception) {
-            throw RuntimeException(e)
-        }
-    }
-
-    override suspend fun getBackOldUsers(oldUsers: List<User>) {
-        _usersData.postValue(oldUsers)
-    }
-
-    override suspend fun changeCheckedUsers(id: Int, changeToOtherState: Boolean) {
-        val data = _usersData.value
-        val foundUser = data?.find { it.id == id }
-        foundUser?.let {
-            if (changeToOtherState) {
-                it.checkedNow = !it.checkedNow
-            } else {
-                it.checkedNow = true
-            }
-            _usersData.postValue(data)
         }
     }
 }

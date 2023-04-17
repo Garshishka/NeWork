@@ -4,6 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import ru.netology.nework.repository.events.EventRepository
+import ru.netology.nework.repository.events.EventRepositoryImpl
 import ru.netology.nework.repository.media.MediaRepository
 import ru.netology.nework.repository.media.MediaRepositoryImpl
 import ru.netology.nework.repository.posts.PostRepository
@@ -32,4 +34,10 @@ interface RepositoryModule {
     fun bindsUsersRepository(
         usersRepositoryImpl: UsersRepositoryImpl
     ): UsersRepository
+
+    @Singleton
+    @Binds
+    fun bindsEventRepository(
+        eventRepositoryImpl: EventRepositoryImpl
+    ): EventRepository
 }
