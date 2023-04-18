@@ -71,4 +71,6 @@
     <string name="events_empty">There are no events</string>
     <string name="add_event">Add event</string>
     <string name="event_wall">Event wall</string>
+    <string name="offline">OFFLINE</string>
+    <string name="online">ONLINE</string>
 </resources>

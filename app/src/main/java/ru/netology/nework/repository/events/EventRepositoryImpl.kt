@@ -5,8 +5,6 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.map
 import kotlinx.coroutines.flow.map
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nework.api.ApiService
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dao.EventDao
@@ -54,7 +52,7 @@ class EventRepositoryImpl @Inject constructor(
         val removed = eventDao.getById(id)
         eventDao.removeById(id)
         try {
-            val response = apiService.removeById(authToken, id)
+            val response = apiService.removeEventById(authToken, id)
             if (!response.isSuccessful) {
                 eventDao.insert(removed)
                 throw RuntimeException(response.code().toString())
@@ -66,11 +64,11 @@ class EventRepositoryImpl @Inject constructor(
     }
 
     override suspend fun save(event: Event, authToken: String) {
-  /*      val mentionList =
-            event.mentionIds.toList() //Hacky method, but for some reason ID conversion eats list
+//        val mentionList =
+//            event.mentionIds.toList() //Hacky method, but for some reason ID conversion eats list
         eventDao.save(EventEntity.fromDto(event, true))
         try {
-            val response = apiService.save(authToken), event.copy(mentionIds = mentionList))
+            val response = apiService.saveEvent(authToken, event)//.copy(mentionIds = mentionList))
             if (!response.isSuccessful) {
                 throw RuntimeException(
                     response.code().toString()
@@ -80,7 +78,7 @@ class EventRepositoryImpl @Inject constructor(
             eventDao.insert(EventEntity.fromDto(body))
         } catch (e: Exception) {
             throw RuntimeException(e)
-        }*/
+        }
     }
 
     override suspend fun saveWithAttachment(
@@ -89,14 +87,14 @@ class EventRepositoryImpl @Inject constructor(
         authToken: String,
         attachmentType: AttachmentType
     ) {
-        /*  try {
-              val upload = mediaRepository.upload(file, authToken)
-              val eventWithAttachment =
-                  event.copy(attachment = Attachment(upload.url, attachmentType))
-              save(eventWithAttachment, authToken)
-          } catch (e: Exception) {
-              throw RuntimeException(e)
-          }*/
+        try {
+            val upload = mediaRepository.upload(file, authToken)
+            val eventWithAttachment =
+                event.copy(attachment = Attachment(upload.url, attachmentType))
+            save(eventWithAttachment, authToken)
+        } catch (e: Exception) {
+            throw RuntimeException(e)
+        }
     }
 
     override suspend fun likeById(
@@ -105,12 +103,12 @@ class EventRepositoryImpl @Inject constructor(
         authToken: String,
         userId: Int
     ): Event {
-       /* eventDao.likeById(id, userId)
+        eventDao.likeById(id, userId)
         try {
             val response = if (willLike)
-                apiService.likeById(authToken, id)
+                apiService.likeEventById(authToken, id)
             else
-                apiService.dislikeById(authToken, id)
+                apiService.dislikeEventById(authToken, id)
             if (!response.isSuccessful) {
                 eventDao.likeById(id, userId)
                 throw RuntimeException(response.code().toString())
@@ -118,27 +116,6 @@ class EventRepositoryImpl @Inject constructor(
             return response.body() ?: throw RuntimeException("body is null")
         } catch (e: Exception) {
             eventDao.likeById(id, userId)
-            throw RuntimeException(e)
-     } */
-        return Event(0,0,"",null,null,"","","", Coords("",""),EventType.OFFLINE, emptyList(),false,
-            emptyList(), emptyList(),false,null,null,false, emptyMap()
-        )
-    }
-
-    //MEDIA
-    private suspend fun upload(file: File, authToken: String): MediaUpload {
-        try {
-            val data =
-                MultipartBody.Part.createFormData("file", file.name, file.asRequestBody())
-
-            val response = apiService.upload(authToken, data)
-            if (!response.isSuccessful) {
-                throw RuntimeException(
-                    response.code().toString()
-                )
-            }
-            return response.body() ?: throw RuntimeException("body is null")
-        } catch (e: Exception) {
             throw RuntimeException(e)
         }
     }

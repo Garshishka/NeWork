@@ -161,12 +161,12 @@ open class EventFeedFragment : Fragment() {
                 }
             }
 
-            addPostButton.setOnClickListener {
+            addEventButton.setOnClickListener {
                 val token = authViewModel.state.value?.token
                 if (token == null || token == "0") {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
-                    findNavController().navigate(R.id.action_global_newPostFragment)
+                    findNavController().navigate(R.id.action_eventFeedFragment_to_newEventFragment)
                 }
             }
         }

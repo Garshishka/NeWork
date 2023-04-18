@@ -80,12 +80,12 @@ class EventViewModel @Inject constructor(
 
     fun load() = viewModelScope.launch {
         _dataState.value = FeedModelState.Loading
-//        try {
+        try {
             repository.getAll(appAuth.getToken())
             _dataState.value = FeedModelState.Idle
-//        } catch (e: Exception) {
-//            _dataState.value = FeedModelState.Error
-//        }
+        } catch (e: Exception) {
+            _dataState.value = FeedModelState.Error
+        }
     }
 
     fun loadUsers() = viewModelScope.launch {
@@ -129,6 +129,22 @@ class EventViewModel @Inject constructor(
                 )
         }
     }
+
+    fun changeEventType() {
+        edited.value?.let {
+            val newType = if(it.type == EventType.ONLINE) EventType.OFFLINE else EventType.ONLINE
+            edited.value =
+                it.copy(type = newType)
+        }
+    }
+
+    fun changeEventDateTime(newDateTime: String){
+        edited.value?.let {
+            edited.value =
+                it.copy(datetime = newDateTime)
+        }
+    }
+
 
     fun changeMentionedList(participatedList: List<Int>) {
         edited.value?.let {
@@ -209,7 +225,7 @@ private val emptyEvent = Event(
     author = "Me",
     authorAvatar = null,
     published = "",
-    datetime = "2023-04-16T07:12:10.712094Z",
+    datetime = "",
     type = EventType.OFFLINE,
 )
 private val noMedia = MediaModel(null, null, AttachmentType.NONE)

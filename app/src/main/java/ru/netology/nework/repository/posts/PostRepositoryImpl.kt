@@ -50,7 +50,7 @@ class PostRepositoryImpl @Inject constructor(
 
     //POSTS
     override suspend fun getAll(authToken: String?) {
-        val response = apiService.getAll()
+        val response = apiService.getAllPosts()
         if (!response.isSuccessful) {
             throw RuntimeException(response.code().toString())
         }
@@ -66,7 +66,7 @@ class PostRepositoryImpl @Inject constructor(
         val removed = postDao.getById(id)
         postDao.removeById(id)
         try {
-            val response = apiService.removeById(authToken, id)
+            val response = apiService.removePostById(authToken, id)
             if (!response.isSuccessful) {
                 postDao.insert(removed)
                 throw RuntimeException(response.code().toString())
@@ -82,7 +82,7 @@ class PostRepositoryImpl @Inject constructor(
             post.mentionIds.toList() //Hacky method, but for some reason ID conversion eats list
         postDao.save(PostEntity.fromDto(post, true))
         try {
-            val response = apiService.save(authToken, post.copy(mentionIds = mentionList))
+            val response = apiService.savePost(authToken, post.copy(mentionIds = mentionList))
             if (!response.isSuccessful) {
                 throw RuntimeException(
                     response.code().toString()
@@ -120,9 +120,9 @@ class PostRepositoryImpl @Inject constructor(
         postDao.likeById(id, userId)
         try {
             val response = if (willLike)
-                apiService.likeById(authToken, id)
+                apiService.likePostById(authToken, id)
             else
-                apiService.dislikeById(authToken, id)
+                apiService.dislikePostById(authToken, id)
             if (!response.isSuccessful) {
                 postDao.likeById(id, userId)
                 throw RuntimeException(response.code().toString())

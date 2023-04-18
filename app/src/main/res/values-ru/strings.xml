@@ -72,4 +72,6 @@
     <string name="events_empty">События отсутствуют</string>
     <string name="add_event">Добавить событие</string>
     <string name="event_wall">Список событий</string>
+    <string name="offline">ОФФЛАЙН</string>
+    <string name="online">ОНЛАЙН</string>
 </resources>

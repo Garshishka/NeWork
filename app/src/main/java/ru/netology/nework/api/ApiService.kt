@@ -9,34 +9,34 @@ import ru.netology.nework.dto.*
 interface ApiService {
     //POSTS
     @GET("posts")
-    suspend fun getAll(): Response<List<Post>>
+    suspend fun getAllPosts(): Response<List<Post>>
 
     @GET("posts/latest")
-    suspend fun getLatest(@Query("count") count: Int): Response<List<Post>>
+    suspend fun getLatestPosts(@Query("count") count: Int): Response<List<Post>>
 
     @GET("posts/{id}/after")
-    suspend fun getAfter(
+    suspend fun getPostsAfter(
         @Path("post_id") id: String,
         @Query("count") count: Int,
     ): Response<List<Post>>
 
     @GET("posts/{post_id}/before")
-    suspend fun getBefore(
+    suspend fun getPostsBefore(
         @Path("post_id") id: String,
         @Query("count") count: Int,
     ): Response<List<Post>>
 
     @POST("posts")
-    suspend fun save(@Header("auth") auth: String, @Body post: Post): Response<Post>
+    suspend fun savePost(@Header("auth") auth: String, @Body post: Post): Response<Post>
 
     @POST("posts/{id}/likes ")
-    suspend fun likeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Post>
+    suspend fun likePostById(@Header("auth") auth: String, @Path("id") id: Int): Response<Post>
 
     @DELETE("posts/{id}/likes ")
-    suspend fun dislikeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Post>
+    suspend fun dislikePostById(@Header("auth") auth: String, @Path("id") id: Int): Response<Post>
 
     @DELETE("posts/{id}")
-    suspend fun removeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Unit>
+    suspend fun removePostById(@Header("auth") auth: String, @Path("id") id: Int): Response<Unit>
 
     //EVENTS
     @GET("events")
@@ -57,6 +57,17 @@ interface ApiService {
         @Query("count") count: Int,
     ): Response<List<Event>>
 
+    @POST("events")
+    suspend fun saveEvent(@Header("auth") auth: String, @Body event: Event): Response<Event>
+
+    @POST("events/{id}/likes ")
+    suspend fun likeEventById(@Header("auth") auth: String, @Path("id") id: Int): Response<Event>
+
+    @DELETE("events/{id}/likes ")
+    suspend fun dislikeEventById(@Header("auth") auth: String, @Path("id") id: Int): Response<Event>
+
+    @DELETE("events/{id}")
+    suspend fun removeEventById(@Header("auth") auth: String, @Path("id") id: Int): Response<Unit>
 
     //USER WALL
     @GET("{author_id}/wall")

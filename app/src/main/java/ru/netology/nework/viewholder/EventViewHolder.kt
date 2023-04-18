@@ -45,7 +45,7 @@ class EventViewHolder(
             }
 
             val eventDateTime = OffsetDateTime.parse(event.datetime).toLocalDateTime()
-            val formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd")
+            val formatter = DateTimeFormatter.ofPattern("HH:mm yyyy-MM-dd")
             eventTime.text = eventDateTime.format(formatter)
 
             eventType.text = if(event.type == EventType.OFFLINE)"OFFLINE" else "ONLINE"
