@@ -124,7 +124,7 @@ class EventViewModel @Inject constructor(
             edited.value =
                 it.copy(
                     content = text,
-                    link = if (textLink.isNotBlank()) textLink else null,
+                    link = textLink.ifBlank { null },
                     coords = coords,
                 )
         }
