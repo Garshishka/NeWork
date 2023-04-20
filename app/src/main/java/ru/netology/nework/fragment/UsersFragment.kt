@@ -12,19 +12,17 @@ import ru.netology.nework.adapter.UsersAdapter
 import ru.netology.nework.databinding.FragmentUsersBinding
 import ru.netology.nework.dto.User
 import ru.netology.nework.utils.listeners.UserListInteractionListener
-import ru.netology.nework.viewmodel.PostViewModel
+import ru.netology.nework.viewmodel.UsersViewModel
 
 class UsersFragment : Fragment() {
-    private val viewModel: PostViewModel by activityViewModels()
-
-    val mentionedList = mutableListOf<Int>()
+    private val viewModel: UsersViewModel by activityViewModels()
 
     private val userListInteractionListener = object : UserListInteractionListener {
         override fun onClick(user: User) {
-            if (mentionedList.contains(user.id))
-                mentionedList.remove(user.id)
+            if (viewModel.userIdList.value?.contains(user.id) == true)
+                viewModel.removeUser(user.id)
             else
-                mentionedList.add(user.id)
+                viewModel.addUser(user.id)
             viewModel.changeCheckedUsers(user.id, true)
         }
     }
@@ -36,24 +34,20 @@ class UsersFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val oldUserList = viewModel.usersData.value?.toList()
+        //viewModel.saveOldUsers()
         val binding = FragmentUsersBinding.inflate(inflater, container, false)
-        //For users already in mention list we check them
-        viewModel.edited.value?.mentionIds?.forEach {
+        //For users already in list we check them
+        viewModel.userIdList.value?.forEach {
             viewModel.changeCheckedUsers(it, false)
-            mentionedList.add(it)
         }
         binding.usersList.adapter = adapter
 
         binding.addUsersButton.setOnClickListener {
-            viewModel.changeMentionedList(mentionedList)
             findNavController().navigateUp()
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
-            if (oldUserList != null) {
-                viewModel.getBackOldUsers(oldUserList)
-            }
+            //viewModel.getBackOldUsers()
             findNavController().navigateUp()
         }
 
@@ -63,5 +57,4 @@ class UsersFragment : Fragment() {
 
         return binding.root
     }
-
 }

@@ -62,7 +62,7 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun changeMedia(fileUri: Uri?, toFile: File?, attachmentType: AttachmentType) {
-        _attachment.value = MediaModel(fileUri, toFile, attachmentType)
+        _attachment.value = MediaModel(fileUri, toFile, attachmentType, null)
     }
 
     fun deleteMedia() {
@@ -70,4 +70,4 @@ class SignUpViewModel @Inject constructor(
     }
 }
 
-private val noMedia = MediaModel(null, null, AttachmentType.NONE)
+private val noMedia = MediaModel(null, null, AttachmentType.NONE, null)

@@ -19,7 +19,6 @@ import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.dto.Post
 import ru.netology.nework.repository.posts.PostRepository
-import ru.netology.nework.repository.users.UsersRepository
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import javax.inject.Inject
@@ -27,10 +26,9 @@ import javax.inject.Inject
 @HiltViewModel
 class UserWallViewModel @Inject constructor(
     repository: PostRepository,
-    usersRepository: UsersRepository,
     apiService: ApiService,
     appAuth: AppAuth
-) : PostViewModel(repository, usersRepository, apiService, appAuth) {
+) : PostViewModel(repository, apiService, appAuth) {
     @OptIn(ExperimentalCoroutinesApi::class)
     override val data: Flow<PagingData<Post>> = appAuth
         .state

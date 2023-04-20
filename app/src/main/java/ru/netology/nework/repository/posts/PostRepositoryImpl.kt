@@ -1,5 +1,6 @@
 package ru.netology.nework.repository.posts
 
+import androidx.lifecycle.MutableLiveData
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -47,6 +48,8 @@ class PostRepositoryImpl @Inject constructor(
         ),
     ).flow
         .map { it.map(PostEntity::toDto) }
+
+    override val edited = MutableLiveData(emptyPost)
 
     //POSTS
     override suspend fun getAll(authToken: String?) {
@@ -148,3 +151,11 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 }
+
+private val emptyPost = Post(
+    id = 0,
+    content = "",
+    author = "Me",
+    authorAvatar = null,
+    published = "",
+)

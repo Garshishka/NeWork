@@ -30,10 +30,12 @@ import ru.netology.nework.utils.listeners.PostInteractionListener
 import ru.netology.nework.viewmodel.AuthViewModel
 import ru.netology.nework.viewmodel.PostViewModel
 import ru.netology.nework.viewmodel.UserWallViewModel
+import ru.netology.nework.viewmodel.UsersViewModel
 
 @AndroidEntryPoint
 open class PostFeedFragment : Fragment() {
     protected open val viewModel: PostViewModel by activityViewModels()
+    protected val usersViewModel: UsersViewModel by activityViewModels()
     protected val authViewModel: AuthViewModel by activityViewModels()
     protected lateinit var binding: FragmentPostsBinding
     protected lateinit var postData: Flow<PagingData<Post>>
@@ -58,7 +60,7 @@ open class PostFeedFragment : Fragment() {
         }
 
         override fun onAvatarClick(post: Post) {
-            if(viewModel is UserWallViewModel){
+            if (viewModel is UserWallViewModel) {
                 //in user wall avatar click does nothing
             } else {
                 viewModel.changeUserId(post.authorId)
@@ -176,7 +178,7 @@ open class PostFeedFragment : Fragment() {
                     }
                     else -> {}
                 }
-                binding.loading.isVisible = it == FeedModelState.Loading
+                checkLoading()
             }
 
             postCreatedError.observe(viewLifecycleOwner) {
@@ -217,7 +219,9 @@ open class PostFeedFragment : Fragment() {
                     }
                     .show()
             }
+        }
 
+        usersViewModel.apply {
             usersLoadError.observe(viewLifecycleOwner) {
                 Snackbar.make(
                     binding.root,
@@ -229,13 +233,14 @@ open class PostFeedFragment : Fragment() {
                     }
                     .show()
             }
+            dataState.observe(viewLifecycleOwner){
+                checkLoading()
+            }
         }
     }
 
     private fun subscribeForFeedWall() {
-        viewModel.apply {
-            loadUsers()
-        }
+        usersViewModel.loadUsers()
 
         binding.apply {
             myWallButton.setOnClickListener {
@@ -254,6 +259,12 @@ open class PostFeedFragment : Fragment() {
                 }
             }
         }
+    }
+
+    protected fun checkLoading() {
+        binding.loading.isVisible =
+            (viewModel.dataState.value == FeedModelState.Loading)
+                    || (usersViewModel.dataState.value == FeedModelState.Loading)
     }
 
     protected fun showSignInDialog(context: Context) {

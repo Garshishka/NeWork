@@ -25,6 +25,7 @@ import ru.netology.nework.dto.MediaModel
 import ru.netology.nework.utils.AndroidUtils
 import ru.netology.nework.utils.load
 import ru.netology.nework.viewmodel.PostViewModel
+import ru.netology.nework.viewmodel.UsersViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -33,11 +34,12 @@ class NewPostFragment : Fragment() {
     lateinit var appAuth: AppAuth
 
     private val viewModel: PostViewModel by activityViewModels()
+    private val usersViewModel: UsersViewModel by activityViewModels()
 
     lateinit var binding: FragmentNewPostBinding
 
-//For choosing Audio file. There is an standard Image-Video picker but no Audio picker so it on its own
-    val resultLauncher =
+    //For choosing Audio file. There is an standard Image-Video picker but no Audio picker so it on its own
+    private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val uri: Uri? = result.data?.data
@@ -70,6 +72,7 @@ class NewPostFragment : Fragment() {
     private fun bind() {
         //edited is used as container for post info if we editing and as a draft saver for new post
         val post = viewModel.edited.value
+        post?.mentionIds?.let { usersViewModel.getUserList(it) }
         binding.apply {
             edit.setText(post?.content)
             link.setText(post?.link)
@@ -82,9 +85,10 @@ class NewPostFragment : Fragment() {
                         AttachmentType.VIDEO -> photo.setImageResource(R.drawable.baseline_video_48)
                         AttachmentType.AUDIO -> photo.setImageResource(R.drawable.baseline_audio_file_48)
                         else -> {}
-                    }
+                    } //save the url so changeMedia function doesn't load again
+                    viewModel.changeMedia(null, null, post.attachment.type, post.attachment.url)
                     photoContainer.isVisible = true
-                } else{
+                } else {
                     viewModel.deleteMedia()
                     photoContainer.isVisible = false
                 }
@@ -143,7 +147,7 @@ class NewPostFragment : Fragment() {
                         )
                         viewModel.save()
                         findNavController().navigateUp()
-                    } else{
+                    } else {
                         Toast.makeText(
                             context,
                             getString(R.string.no_context),
@@ -170,9 +174,6 @@ class NewPostFragment : Fragment() {
             removeAttachment.setOnClickListener {
                 viewModel.deleteMedia()
             }
-
-            addMention.text =
-                if (viewModel.edited.value?.mentionIds?.isNotEmpty() == true) viewModel.edited.value!!.mentionIds.size.toString() else ""
             addMention.setOnClickListener {
                 findNavController().navigate(R.id.action_newPostFragment_to_usersFragment)
             }
@@ -180,6 +181,11 @@ class NewPostFragment : Fragment() {
 
         viewModel.attachment.observe(viewLifecycleOwner) {
             showAttachment(it)
+        }
+
+        usersViewModel.userIdList.observe(viewLifecycleOwner) {
+            binding.addMention.text = if (it.isEmpty()) "" else it.size.toString()
+            viewModel.changeMentionedList(it)
         }
 
         activity?.addMenuProvider(object : MenuProvider {
@@ -243,12 +249,16 @@ class NewPostFragment : Fragment() {
     private fun showAttachment(mediaModel: MediaModel) {
         binding.apply {
             when (mediaModel.attachmentType) {
-                AttachmentType.IMAGE -> photo.setImageURI(mediaModel.uri)
+                AttachmentType.IMAGE -> {
+                    if (mediaModel.url == null) { //if we have url - then the image is already loaded
+                        photo.setImageURI(mediaModel.uri)
+                    }
+                }
                 AttachmentType.VIDEO -> photo.setImageResource(R.drawable.baseline_video_48)
                 AttachmentType.AUDIO -> photo.setImageResource(R.drawable.baseline_audio_file_48)
                 else -> {}
             }
-            photoContainer.isVisible = mediaModel.uri != null
+            photoContainer.isVisible = mediaModel.attachmentType != AttachmentType.NONE
         }
     }
 

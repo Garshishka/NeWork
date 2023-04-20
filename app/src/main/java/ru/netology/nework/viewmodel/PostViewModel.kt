@@ -20,7 +20,6 @@ import ru.netology.nework.api.ApiService
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.*
 import ru.netology.nework.repository.posts.PostRepository
-import ru.netology.nework.repository.users.UsersRepository
 import ru.netology.nework.utils.SingleLiveEvent
 import java.io.File
 import javax.inject.Inject
@@ -28,11 +27,10 @@ import javax.inject.Inject
 @HiltViewModel
 open class PostViewModel @Inject constructor(
     protected val repository: PostRepository,
-    protected val usersRepository: UsersRepository,
     protected val apiService: ApiService,
     protected val appAuth: AppAuth
 ) : ViewModel() {
-    val edited = MutableLiveData(emptyPost)
+    val edited = repository.edited
 
     @OptIn(ExperimentalCoroutinesApi::class)
     open val data: Flow<PagingData<Post>> = appAuth
@@ -46,8 +44,6 @@ open class PostViewModel @Inject constructor(
                     }
                 }
         }.flowOn(Dispatchers.Default)
-
-    val usersData = usersRepository.usersData
 
     protected val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
     val dataState: LiveData<FeedModelState>
@@ -69,13 +65,9 @@ open class PostViewModel @Inject constructor(
     protected val _postsLikeError = SingleLiveEvent<Pair<String, Pair<Int, Boolean>>>()
     val postsLikeError: LiveData<Pair<String, Pair<Int, Boolean>>>
         get() = _postsLikeError
-    protected val _usersLoadError = SingleLiveEvent<String>()
-    val usersLoadError: LiveData<String>
-        get() = _usersLoadError
 
     init {
         load()
-        loadUsers()
     }
 
     open fun load() = viewModelScope.launch {
@@ -85,16 +77,6 @@ open class PostViewModel @Inject constructor(
             _dataState.value = FeedModelState.Idle
         } catch (e: Exception) {
             _dataState.value = FeedModelState.Error
-        }
-    }
-
-    fun loadUsers() = viewModelScope.launch {
-        _dataState.value = FeedModelState.Loading
-        try {
-            usersRepository.getUsers()
-            _dataState.value = FeedModelState.Idle
-        } catch (e: Exception) {
-            _usersLoadError.postValue(e.toString())
         }
     }
 
@@ -182,23 +164,15 @@ open class PostViewModel @Inject constructor(
         }
     }
 
-    fun changeMedia(fileUri: Uri?, toFile: File?, attachmentType: AttachmentType) {
-        _attachment.value = MediaModel(fileUri, toFile, attachmentType)
+    fun changeMedia(fileUri: Uri?, toFile: File?, attachmentType: AttachmentType, url: String? = null) {
+        _attachment.value = MediaModel(fileUri, toFile, attachmentType, url)
     }
 
     fun deleteMedia() {
         _attachment.value = noMedia
     }
 
-    fun getBackOldUsers(oldUserList: List<User>) = viewModelScope.launch {
-        usersRepository.getBackOldUsers(oldUserList)
-    }
-
-    fun changeCheckedUsers(id: Int, changeToOtherState: Boolean) = viewModelScope.launch {
-        usersRepository.changeCheckedUsers(id, changeToOtherState)
-    }
-
-    fun changeUserId(userId: Int){
+    fun changeUserId(userId: Int) {
         appAuth.userId = userId
     }
 }
@@ -210,6 +184,6 @@ private val emptyPost = Post(
     authorAvatar = null,
     published = "",
 )
-private val noMedia = MediaModel(null, null, AttachmentType.NONE)
+private val noMedia = MediaModel(null, null, AttachmentType.NONE, null)
 
 
