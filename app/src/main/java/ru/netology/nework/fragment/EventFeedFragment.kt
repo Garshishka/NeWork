@@ -49,7 +49,7 @@ open class EventFeedFragment : Fragment() {
 
         override fun onEdit(event: Event) {
             viewModel.edit(event)
-            findNavController().navigate(R.id.action_global_newPostFragment)
+            findNavController().navigate(R.id.action_eventFeedFragment_to_newEventFragment)
         }
 
         override fun onRemove(event: Event) {

@@ -30,6 +30,7 @@ import ru.netology.nework.dto.MediaModel
 import ru.netology.nework.utils.AndroidUtils
 import ru.netology.nework.utils.load
 import ru.netology.nework.viewmodel.EventViewModel
+import ru.netology.nework.viewmodel.UsersViewModel
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -41,6 +42,7 @@ class NewEventFragment : Fragment() {
     lateinit var appAuth: AppAuth
 
     private val viewModel: EventViewModel by activityViewModels()
+    private val usersViewModel: UsersViewModel by activityViewModels()
 
     lateinit var binding: FragmentNewEventBinding
 
@@ -78,11 +80,12 @@ class NewEventFragment : Fragment() {
     private fun bind() {
         //edited is used as container for event info if we editing and as a draft saver for new event
         val event = viewModel.edited.value
+        event?.speakerIds?.let { usersViewModel.getUserList(it) }
         binding.apply {
-            if(event?.datetime?.isEmpty() == true){
+            if (event?.datetime?.isEmpty() == true) {
                 val formatter = DateTimeFormatter.ofPattern("HH:mm yyyy-MM-dd")
                 dateTimePicker.text = LocalDateTime.now().format(formatter)
-            } else{
+            } else {
                 val eventTime = OffsetDateTime.parse(event?.datetime).toLocalDateTime()
                 val formatter = DateTimeFormatter.ofPattern("HH:mm yyyy-MM-dd")
                 dateTimePicker.text = eventTime.format(formatter)
@@ -90,20 +93,20 @@ class NewEventFragment : Fragment() {
             dateTimePicker.setOnClickListener {
                 val dateDialog = DatePickerDialog(requireContext())
                 dateDialog.setOnDateSetListener { _, y, m, d ->
-                   val currentTime = LocalDateTime.now()
-                   TimePickerDialog(requireContext(), object : TimePickerDialog.OnTimeSetListener {
-                       override fun onTimeSet(p0: TimePicker?, h: Int, min: Int) {
-                          viewModel.changeEventDateTime(setDate(y, m, d, h, min, dateTimePicker))
-                       }
-                   }, currentTime.hour, currentTime.minute, true).show()
+                    val currentTime = LocalDateTime.now()
+                    TimePickerDialog(requireContext(), object : TimePickerDialog.OnTimeSetListener {
+                        override fun onTimeSet(p0: TimePicker?, h: Int, min: Int) {
+                            viewModel.changeEventDateTime(setDate(y, m, d, h, min, dateTimePicker))
+                        }
+                    }, currentTime.hour, currentTime.minute, true).show()
                 }
                 dateDialog.show()
             }
 
-            bindEventTypeButton(eventType,event?.type == EventType.ONLINE)
+            bindEventTypeButton(eventType, event?.type == EventType.ONLINE)
             eventType.setOnClickListener {
                 viewModel.changeEventType()
-                bindEventTypeButton(eventType,viewModel.edited.value?.type == EventType.ONLINE)
+                bindEventTypeButton(eventType, viewModel.edited.value?.type == EventType.ONLINE)
             }
 
             edit.setText(event?.content)
@@ -167,7 +170,7 @@ class NewEventFragment : Fragment() {
                         context,
                         getString(R.string.coords_not_both_filled),
                         Toast.LENGTH_LONG
-                        )
+                    )
                         .show()
                 } else {
                     if (text.isNotBlank()) {
@@ -207,8 +210,6 @@ class NewEventFragment : Fragment() {
                 viewModel.deleteMedia()
             }
 
-            addSpeaker.text =
-                if (viewModel.edited.value?.speakerIds?.isNotEmpty() == true) viewModel.edited.value!!.speakerIds.size.toString() else ""
             addSpeaker.setOnClickListener {
                 findNavController().navigate(R.id.action_newEventFragment_to_usersFragment)
             }
@@ -216,6 +217,11 @@ class NewEventFragment : Fragment() {
 
         viewModel.attachment.observe(viewLifecycleOwner) {
             showAttachment(it)
+        }
+
+        usersViewModel.userIdList.observe(viewLifecycleOwner) {
+            binding.addSpeaker.text = if (it.isEmpty()) "" else it.size.toString()
+            viewModel.changeSpeakerList(it)
         }
 
         activity?.addMenuProvider(object : MenuProvider {
@@ -260,16 +266,16 @@ class NewEventFragment : Fragment() {
         val yString = y.toString().padStart(4, '0')
         val mString = (m + 1).toString().padStart(2, '0')
         val dString = d.toString().padStart(2, '0')
-        val hString = h.toString().padStart(2,'0')
-        val minString = min.toString().padStart(2,'0')
+        val hString = h.toString().padStart(2, '0')
+        val minString = min.toString().padStart(2, '0')
         val date = "$hString:$minString $dString-$mString-$yString"
         button.text = date
         return "$yString-$mString-${dString}T$hString:$minString:01.000Z"
     }
 
-    private fun bindEventTypeButton(button: MaterialButton, state: Boolean){
+    private fun bindEventTypeButton(button: MaterialButton, state: Boolean) {
         button.isChecked = state
-        button.text = if(state) getString(R.string.online) else getString(R.string.offline)
+        button.text = if (state) getString(R.string.online) else getString(R.string.offline)
     }
 
     private fun showLogOutDialog(context: Context) {

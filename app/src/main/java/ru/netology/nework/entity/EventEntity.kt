@@ -30,7 +30,7 @@ data class EventEntity(
     @Embedded
     val attachment: AttachmentEmbedabble?,
     val link: String?,
-    val users: Map<Int,UserPreview>,
+    val users: Map<Int, UserPreview>,
 
     val notOnServer: Boolean = false,
     val show: Boolean = true,
@@ -63,7 +63,6 @@ data class EventEntity(
 
     companion object {
         fun fromDto(dto: Event, notOnServer: Boolean = false): EventEntity {
-            println(dto.id)
             return EventEntity(
                 dto.id,
                 dto.authorId,

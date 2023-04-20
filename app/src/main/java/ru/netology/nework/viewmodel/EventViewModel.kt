@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import ru.netology.nework.api.ApiService
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.*
 import ru.netology.nework.repository.events.EventRepository
@@ -29,7 +28,6 @@ import javax.inject.Inject
 class EventViewModel @Inject constructor(
     private val repository: EventRepository,
     private val usersRepository: UsersRepository,
-    private val apiService: ApiService,
     private val appAuth: AppAuth
 ) : ViewModel() {
     val edited = MutableLiveData(emptyEvent)
@@ -46,8 +44,6 @@ class EventViewModel @Inject constructor(
                     }
                 }
         }.flowOn(Dispatchers.Default)
-
-    val usersData = usersRepository.usersData
 
     private val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
     val dataState: LiveData<FeedModelState>
@@ -111,7 +107,8 @@ class EventViewModel @Inject constructor(
 
     fun participateById(id: Int, participatedByMe: Boolean) = viewModelScope.launch {
         try {
-            appAuth.getToken()?.let { repository.participateById(id, !participatedByMe, it, appAuth.getId()) }
+            appAuth.getToken()
+                ?.let { repository.participateById(id, !participatedByMe, it, appAuth.getId()) }
         } catch (e: Exception) {
             _eventsParticipateError.postValue(e.toString() to (id to participatedByMe))
         }
@@ -143,13 +140,13 @@ class EventViewModel @Inject constructor(
 
     fun changeEventType() {
         edited.value?.let {
-            val newType = if(it.type == EventType.ONLINE) EventType.OFFLINE else EventType.ONLINE
+            val newType = if (it.type == EventType.ONLINE) EventType.OFFLINE else EventType.ONLINE
             edited.value =
                 it.copy(type = newType)
         }
     }
 
-    fun changeEventDateTime(newDateTime: String){
+    fun changeEventDateTime(newDateTime: String) {
         edited.value?.let {
             edited.value =
                 it.copy(datetime = newDateTime)
@@ -157,11 +154,10 @@ class EventViewModel @Inject constructor(
     }
 
 
-    fun changeMentionedList(participatedList: List<Int>) {
+    fun changeSpeakerList(speakerList: List<Int>) {
         edited.value?.let {
             edited.value = it.copy(
-                participantsIds = participatedList,
-                participatedByMe = participatedList.contains(appAuth.getId())
+                speakerIds = speakerList,
             )
         }
     }
@@ -209,7 +205,12 @@ class EventViewModel @Inject constructor(
         }
     }
 
-    fun changeMedia(fileUri: Uri?, toFile: File?, attachmentType: AttachmentType, url: String? = null) {
+    fun changeMedia(
+        fileUri: Uri?,
+        toFile: File?,
+        attachmentType: AttachmentType,
+        url: String? = null
+    ) {
         _attachment.value = MediaModel(fileUri, toFile, attachmentType, url)
     }
 
