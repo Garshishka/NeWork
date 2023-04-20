@@ -71,6 +71,9 @@ class JobFragment : Fragment() {
             feedButton.setOnClickListener {
                 findNavController().navigate(R.id.action_global_postFeedFragment)
             }
+            eventWallButton.setOnClickListener {
+                findNavController().navigate(R.id.action_global_eventFeedFragment)
+            }
             addJobButton.setOnClickListener {
                 bindAddingJobDialog()
                 addJobContainer.isVisible = true

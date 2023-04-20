@@ -16,61 +16,68 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import ru.netology.nework.api.ApiService
 import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.*
-import ru.netology.nework.repository.posts.PostRepository
+import ru.netology.nework.repository.events.EventRepository
+import ru.netology.nework.repository.users.UsersRepository
 import ru.netology.nework.utils.SingleLiveEvent
 import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-open class PostViewModel @Inject constructor(
-    protected val repository: PostRepository,
-    protected val apiService: ApiService,
-    protected val appAuth: AppAuth
+class EventViewModel @Inject constructor(
+    private val repository: EventRepository,
+    private val usersRepository: UsersRepository,
+    private val appAuth: AppAuth
 ) : ViewModel() {
-    val edited = repository.edited
+    val edited = MutableLiveData(emptyEvent)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    open val data: Flow<PagingData<Post>> = appAuth
+    val data: Flow<PagingData<Event>> = appAuth
         .state
         .map { it?.id }
         .flatMapLatest { id ->
             repository.data.cachedIn(viewModelScope)
-                .map { posts ->
-                    posts.map { post ->
-                        post.copy(ownedByMe = post.authorId == id)
+                .map { events ->
+                    events.map { event ->
+                        event.copy(ownedByMe = event.authorId == id)
                     }
                 }
         }.flowOn(Dispatchers.Default)
 
-    protected val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
+    private val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
-    protected val _attachment = MutableLiveData(noMedia)
+    private val _attachment = MutableLiveData(noMedia)
     val attachment: LiveData<MediaModel>
         get() = _attachment
 
-    protected val _postCreated = SingleLiveEvent<Unit>()
-    val postCreated: LiveData<Unit>
-        get() = _postCreated
-    protected val _postCreatedError = SingleLiveEvent<Pair<String, Post>>()
-    val postCreatedError: LiveData<Pair<String, Post>>
-        get() = _postCreatedError
-    protected val _postsRemoveError = SingleLiveEvent<Pair<String, Int>>()
-    val postsRemoveError: LiveData<Pair<String, Int>>
-        get() = _postsRemoveError
-    protected val _postsLikeError = SingleLiveEvent<Pair<String, Pair<Int, Boolean>>>()
-    val postsLikeError: LiveData<Pair<String, Pair<Int, Boolean>>>
-        get() = _postsLikeError
+    private val _eventCreated = SingleLiveEvent<Unit>()
+    val eventCreated: LiveData<Unit>
+        get() = _eventCreated
+    private val _eventCreatedError = SingleLiveEvent<Pair<String, Event>>()
+    val eventCreatedError: LiveData<Pair<String, Event>>
+        get() = _eventCreatedError
+    private val _eventsRemoveError = SingleLiveEvent<Pair<String, Int>>()
+    val eventsRemoveError: LiveData<Pair<String, Int>>
+        get() = _eventsRemoveError
+    private val _eventsLikeError = SingleLiveEvent<Pair<String, Pair<Int, Boolean>>>()
+    val eventsLikeError: LiveData<Pair<String, Pair<Int, Boolean>>>
+        get() = _eventsLikeError
+    private val _eventsParticipateError = SingleLiveEvent<Pair<String, Pair<Int, Boolean>>>()
+    val eventsParticipateError: LiveData<Pair<String, Pair<Int, Boolean>>>
+        get() = _eventsParticipateError
+    private val _usersLoadError = SingleLiveEvent<String>()
+    val usersLoadError: LiveData<String>
+        get() = _usersLoadError
 
     init {
         load()
+        loadUsers()
     }
 
-    open fun load() = viewModelScope.launch {
+    fun load() = viewModelScope.launch {
         _dataState.value = FeedModelState.Loading
         try {
             repository.getAll(appAuth.getToken())
@@ -80,11 +87,30 @@ open class PostViewModel @Inject constructor(
         }
     }
 
+    fun loadUsers() = viewModelScope.launch {
+        _dataState.value = FeedModelState.Loading
+        try {
+            usersRepository.getUsers()
+            _dataState.value = FeedModelState.Idle
+        } catch (e: Exception) {
+            _usersLoadError.postValue(e.toString())
+        }
+    }
+
     fun likeById(id: Int, likedByMe: Boolean) = viewModelScope.launch {
         try {
             appAuth.getToken()?.let { repository.likeById(id, !likedByMe, it, appAuth.getId()) }
         } catch (e: Exception) {
-            _postsLikeError.postValue(e.toString() to (id to likedByMe))
+            _eventsLikeError.postValue(e.toString() to (id to likedByMe))
+        }
+    }
+
+    fun participateById(id: Int, participatedByMe: Boolean) = viewModelScope.launch {
+        try {
+            appAuth.getToken()
+                ?.let { repository.participateById(id, !participatedByMe, it, appAuth.getId()) }
+        } catch (e: Exception) {
+            _eventsParticipateError.postValue(e.toString() to (id to participatedByMe))
         }
     }
 
@@ -112,11 +138,26 @@ open class PostViewModel @Inject constructor(
         }
     }
 
-    fun changeMentionedList(mentionedList: List<Int>) {
+    fun changeEventType() {
+        edited.value?.let {
+            val newType = if (it.type == EventType.ONLINE) EventType.OFFLINE else EventType.ONLINE
+            edited.value =
+                it.copy(type = newType)
+        }
+    }
+
+    fun changeEventDateTime(newDateTime: String) {
+        edited.value?.let {
+            edited.value =
+                it.copy(datetime = newDateTime)
+        }
+    }
+
+
+    fun changeSpeakerList(speakerList: List<Int>) {
         edited.value?.let {
             edited.value = it.copy(
-                mentionIds = mentionedList,
-                mentionedMe = mentionedList.contains(appAuth.getId())
+                speakerIds = speakerList,
             )
         }
     }
@@ -136,22 +177,22 @@ open class PostViewModel @Inject constructor(
                             )
                         }
                     }
-                    _postCreated.postValue(Unit)
+                    _eventCreated.postValue(Unit)
                     empty()
                 } catch (e: Exception) {
                     println(e.message.toString())
-                    _postCreatedError.postValue(e.message.toString() to it)
+                    _eventCreatedError.postValue(e.message.toString() to it)
                 }
             }
         }
     }
 
-    fun edit(post: Post) {
-        edited.value = post
+    fun edit(event: Event) {
+        edited.value = event
     }
 
     fun empty() {
-        edited.value = emptyPost
+        edited.value = emptyEvent
         deleteMedia()
     }
 
@@ -160,11 +201,16 @@ open class PostViewModel @Inject constructor(
             appAuth.getToken()?.let { repository.removeById(it, id) }
         } catch (e: Exception) {
             println(e.message)
-            _postsRemoveError.postValue(e.message.toString() to id)
+            _eventsRemoveError.postValue(e.message.toString() to id)
         }
     }
 
-    fun changeMedia(fileUri: Uri?, toFile: File?, attachmentType: AttachmentType, url: String? = null) {
+    fun changeMedia(
+        fileUri: Uri?,
+        toFile: File?,
+        attachmentType: AttachmentType,
+        url: String? = null
+    ) {
         _attachment.value = MediaModel(fileUri, toFile, attachmentType, url)
     }
 
@@ -177,13 +223,13 @@ open class PostViewModel @Inject constructor(
     }
 }
 
-private val emptyPost = Post(
+private val emptyEvent = Event(
     id = 0,
     content = "",
     author = "Me",
     authorAvatar = null,
     published = "",
+    datetime = "",
+    type = EventType.OFFLINE,
 )
 private val noMedia = MediaModel(null, null, AttachmentType.NONE, null)
-
-

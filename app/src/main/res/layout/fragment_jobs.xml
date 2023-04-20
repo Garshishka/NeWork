@@ -29,9 +29,18 @@
             style="@style/Widget.AppTheme.GrayButtons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/jobs"
+            android:contentDescription="@string/feed_wall"
             android:padding="@dimen/margin_small"
             app:icon="@drawable/baseline_feed_28" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/event_wall_button"
+            style="@style/Widget.AppTheme.GrayButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/event_wall"
+            android:padding="@dimen/margin_small"
+            app:icon="@drawable/baseline_event_wall_28" />
     </LinearLayout>
 
     <View

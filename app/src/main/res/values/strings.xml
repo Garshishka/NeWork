@@ -66,4 +66,11 @@
     <string name="jobs_empty">There are no jobs</string>
     <string name="my_wall">My wall</string>
     <string name="feed_wall">All posts</string>
+    <string name="description_post_participants">Participants</string>
+    <string name="description_post_speakers">Speakers</string>
+    <string name="events_empty">There are no events</string>
+    <string name="add_event">Add event</string>
+    <string name="event_wall">Event wall</string>
+    <string name="offline">OFFLINE</string>
+    <string name="online">ONLINE</string>
 </resources>

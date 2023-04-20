@@ -21,7 +21,7 @@ class AppAuth @Inject constructor(
     private val _state: MutableStateFlow<AuthState?>
 
     var userId = 0 //This used for saving ID fow User wall.
-    // It's here so there is no need to make new DI class just to save this one value
+    // It's here so there is no need to make new DI class just to savePost this one value
 
     init {
         val token = prefs.getString(tokenKey, null)

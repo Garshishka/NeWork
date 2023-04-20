@@ -4,66 +4,76 @@ import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 import ru.netology.nework.auth.AuthPair
-import ru.netology.nework.dto.Job
-import ru.netology.nework.dto.MediaUpload
-import ru.netology.nework.dto.Post
-import ru.netology.nework.dto.User
+import ru.netology.nework.dto.*
 
 interface ApiService {
     //POSTS
     @GET("posts")
-    suspend fun getAll(): Response<List<Post>>
+    suspend fun getAllPosts(): Response<List<Post>>
 
     @GET("posts/latest")
-    suspend fun getLatest(@Query("count") count: Int): Response<List<Post>>
+    suspend fun getLatestPosts(@Query("count") count: Int): Response<List<Post>>
 
     @GET("posts/{id}/after")
-    suspend fun getAfter(
+    suspend fun getPostsAfter(
         @Path("post_id") id: String,
         @Query("count") count: Int,
     ): Response<List<Post>>
 
     @GET("posts/{post_id}/before")
-    suspend fun getBefore(
+    suspend fun getPostsBefore(
         @Path("post_id") id: String,
         @Query("count") count: Int,
     ): Response<List<Post>>
 
     @POST("posts")
-    suspend fun save(@Header("auth") auth: String, @Body post: Post): Response<Post>
+    suspend fun savePost(@Header("auth") auth: String, @Body post: Post): Response<Post>
 
     @POST("posts/{id}/likes ")
-    suspend fun likeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Post>
+    suspend fun likePostById(@Header("auth") auth: String, @Path("id") id: Int): Response<Post>
 
     @DELETE("posts/{id}/likes ")
-    suspend fun dislikeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Post>
+    suspend fun dislikePostById(@Header("auth") auth: String, @Path("id") id: Int): Response<Post>
 
     @DELETE("posts/{id}")
-    suspend fun removeById(@Header("auth") auth: String, @Path("id") id: Int): Response<Unit>
+    suspend fun removePostById(@Header("auth") auth: String, @Path("id") id: Int): Response<Unit>
 
-    //MY WALL
-//    @GET("my/wall")
-//    suspend fun getUserWall(@Header("auth") auth: String): Response<List<Post>>
-//
-//    @GET("my/wall/latest")
-//    suspend fun getMyWallLatest(
-//        @Header("auth") auth: String,
-//        @Query("count") count: Int
-//    ): Response<List<Post>>
-//
-//    @GET("my/wall/{post_id}/after")
-//    suspend fun getMyWallAfter(
-//        @Header("auth") auth: String,
-//        @Path("post_id") id: String,
-//        @Query("count") count: Int,
-//    ): Response<List<Post>>
-//
-//    @GET("my/wall/{post_id}/before")
-//    suspend fun getMyWallBefore(
-//        @Header("auth") auth: String,
-//        @Path("post_id") id: String,
-//        @Query("count") count: Int,
-//    ): Response<List<Post>>
+    //EVENTS
+    @GET("events")
+    suspend fun getAllEvents(): Response<List<Event>>
+
+    @GET("events/latest")
+    suspend fun getLatestEvents(@Query("count") count: Int): Response<List<Event>>
+
+    @GET("events/{id}/after")
+    suspend fun getEventsAfter(
+        @Path("event_id") id: String,
+        @Query("count") count: Int,
+    ): Response<List<Event>>
+
+    @GET("events/{event_id}/before")
+    suspend fun getEventsBefore(
+        @Path("event_id") id: String,
+        @Query("count") count: Int,
+    ): Response<List<Event>>
+
+    @POST("events")
+    suspend fun saveEvent(@Header("auth") auth: String, @Body event: Event): Response<Event>
+
+    @POST("events/{id}/likes ")
+    suspend fun likeEventById(@Header("auth") auth: String, @Path("id") id: Int): Response<Event>
+
+    @DELETE("events/{id}/likes ")
+    suspend fun dislikeEventById(@Header("auth") auth: String, @Path("id") id: Int): Response<Event>
+
+    @POST("events/{id}/participants")
+    suspend fun participateEventById(@Header("auth") auth: String, @Path("id") id: Int): Response<Event>
+
+    @DELETE("events/{id}/participants ")
+    suspend fun unparticipateEventById(@Header("auth") auth: String, @Path("id") id: Int): Response<Event>
+
+    @DELETE("events/{id}")
+    suspend fun removeEventById(@Header("auth") auth: String, @Path("id") id: Int): Response<Unit>
 
     //USER WALL
     @GET("{author_id}/wall")

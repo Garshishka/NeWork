@@ -14,10 +14,10 @@ class PostPagingSource(private val apiService: ApiService) : PagingSource<Int, P
         try {
             val result = when (params) {
                 is LoadParams.Refresh -> {
-                    apiService.getLatest(params.loadSize)
+                    apiService.getLatestPosts(params.loadSize)
                 }
                 is LoadParams.Append -> {
-                    apiService.getBefore(count = params.loadSize, id = params.key.toString(),)
+                    apiService.getPostsBefore(count = params.loadSize, id = params.key.toString(),)
                 }
                 is LoadParams.Prepend -> return LoadResult.Page(
                     data = emptyList(), nextKey = null, prevKey = params.key

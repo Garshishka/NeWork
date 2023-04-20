@@ -1,11 +1,14 @@
 package ru.netology.nework.fragment
 
 import android.app.Activity
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import android.widget.TimePicker
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
@@ -16,27 +19,32 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nework.R
 import ru.netology.nework.auth.AppAuth
-import ru.netology.nework.databinding.FragmentNewPostBinding
+import ru.netology.nework.databinding.FragmentNewEventBinding
 import ru.netology.nework.dto.AttachmentType
+import ru.netology.nework.dto.EventType
 import ru.netology.nework.dto.MediaModel
 import ru.netology.nework.utils.AndroidUtils
 import ru.netology.nework.utils.load
-import ru.netology.nework.viewmodel.PostViewModel
+import ru.netology.nework.viewmodel.EventViewModel
 import ru.netology.nework.viewmodel.UsersViewModel
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class NewPostFragment : Fragment() {
+class NewEventFragment : Fragment() {
     @Inject
     lateinit var appAuth: AppAuth
 
-    private val viewModel: PostViewModel by activityViewModels()
+    private val viewModel: EventViewModel by activityViewModels()
     private val usersViewModel: UsersViewModel by activityViewModels()
 
-    lateinit var binding: FragmentNewPostBinding
+    lateinit var binding: FragmentNewEventBinding
 
     //For choosing Audio file. There is an standard Image-Video picker but no Audio picker so it on its own
     private val resultLauncher =
@@ -60,7 +68,7 @@ class NewPostFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentNewPostBinding.inflate(inflater, container, false)
+        binding = FragmentNewEventBinding.inflate(inflater, container, false)
         bind()
         binding.edit.requestFocus()
 
@@ -70,29 +78,56 @@ class NewPostFragment : Fragment() {
     }
 
     private fun bind() {
-        //edited is used as container for post info if we editing and as a draft saver for new post
-        val post = viewModel.edited.value
-        post?.mentionIds?.let { usersViewModel.getUserList(it) }
+        //edited is used as container for event info if we editing and as a draft saver for new event
+        val event = viewModel.edited.value
+        event?.speakerIds?.let { usersViewModel.getUserList(it) }
         binding.apply {
-            edit.setText(post?.content)
-            link.setText(post?.link)
-            coordinatesLat.setText(post?.coords?.lat)
-            coordinatesLong.setText(post?.coords?.long)
-            if (post?.id != 0) { //If post ID is not 0 - we editing so there can be some attachment
-                if (post?.attachment != null) {
-                    when (post.attachment.type) {
-                        AttachmentType.IMAGE -> photo.load(post.attachment.url)
+            if (event?.datetime?.isEmpty() == true) {
+                val formatter = DateTimeFormatter.ofPattern("HH:mm yyyy-MM-dd")
+                dateTimePicker.text = LocalDateTime.now().format(formatter)
+            } else {
+                val eventTime = OffsetDateTime.parse(event?.datetime).toLocalDateTime()
+                val formatter = DateTimeFormatter.ofPattern("HH:mm yyyy-MM-dd")
+                dateTimePicker.text = eventTime.format(formatter)
+            }
+            dateTimePicker.setOnClickListener {
+                val dateDialog = DatePickerDialog(requireContext())
+                dateDialog.setOnDateSetListener { _, y, m, d ->
+                    val currentTime = LocalDateTime.now()
+                    TimePickerDialog(requireContext(), object : TimePickerDialog.OnTimeSetListener {
+                        override fun onTimeSet(p0: TimePicker?, h: Int, min: Int) {
+                            viewModel.changeEventDateTime(setDate(y, m, d, h, min, dateTimePicker))
+                        }
+                    }, currentTime.hour, currentTime.minute, true).show()
+                }
+                dateDialog.show()
+            }
+
+            bindEventTypeButton(eventType, event?.type == EventType.ONLINE)
+            eventType.setOnClickListener {
+                viewModel.changeEventType()
+                bindEventTypeButton(eventType, viewModel.edited.value?.type == EventType.ONLINE)
+            }
+
+            edit.setText(event?.content)
+            link.setText(event?.link)
+            coordinatesLat.setText(event?.coords?.lat)
+            coordinatesLong.setText(event?.coords?.long)
+            if (event?.id != 0) { //If event ID is not 0 - we editing so there can be some attachment
+                if (event?.attachment != null) {
+                    when (event.attachment.type) {
+                        AttachmentType.IMAGE -> photo.load(event.attachment.url)
                         AttachmentType.VIDEO -> photo.setImageResource(R.drawable.baseline_video_48)
                         AttachmentType.AUDIO -> photo.setImageResource(R.drawable.baseline_audio_file_48)
                         else -> {}
-                    } //save the url so changeMedia function doesn't load again
-                    viewModel.changeMedia(null, null, post.attachment.type, post.attachment.url)
+                    }
+                    viewModel.changeMedia(null, null, event.attachment.type, event.attachment.url)
                     photoContainer.isVisible = true
                 } else {
                     viewModel.deleteMedia()
                     photoContainer.isVisible = false
                 }
-            } else { //If post ID is 0 - it's a new post but some attachment can be as a draft
+            } else { //If event ID is 0 - it's a new event but some attachment can be as a draft
                 viewModel.attachment.value?.let { showAttachment(it) }
             }
         }
@@ -174,8 +209,9 @@ class NewPostFragment : Fragment() {
             removeAttachment.setOnClickListener {
                 viewModel.deleteMedia()
             }
-            addMention.setOnClickListener {
-                findNavController().navigate(R.id.action_newPostFragment_to_usersFragment)
+
+            addSpeaker.setOnClickListener {
+                findNavController().navigate(R.id.action_newEventFragment_to_usersFragment)
             }
         }
 
@@ -184,13 +220,14 @@ class NewPostFragment : Fragment() {
         }
 
         usersViewModel.userIdList.observe(viewLifecycleOwner) {
-            binding.addMention.text = if (it.isEmpty()) "" else it.size.toString()
-            viewModel.changeMentionedList(it)
+            binding.addSpeaker.text = if (it.isEmpty()) "" else it.size.toString()
+            viewModel.changeSpeakerList(it)
         }
 
         activity?.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             }
+
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.logOut -> {
@@ -203,7 +240,7 @@ class NewPostFragment : Fragment() {
         }, viewLifecycleOwner)
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
-            //ID = 0 if new post (even with draft), non-zero will be edited posts
+            //ID = 0 if new event (even with draft), non-zero will be edited events
             if (viewModel.edited.value?.id == 0) {
                 val text = binding.edit.text.toString()
                 val link = binding.link.text.toString()
@@ -222,6 +259,23 @@ class NewPostFragment : Fragment() {
 
             findNavController().navigateUp()
         }
+    }
+
+    private fun setDate(y: Int, m: Int, d: Int, h: Int, min: Int, button: MaterialButton): String {
+        //"yyyy-mm-ddThh:mn:11.996Z" making this type of string
+        val yString = y.toString().padStart(4, '0')
+        val mString = (m + 1).toString().padStart(2, '0')
+        val dString = d.toString().padStart(2, '0')
+        val hString = h.toString().padStart(2, '0')
+        val minString = min.toString().padStart(2, '0')
+        val date = "$hString:$minString $dString-$mString-$yString"
+        button.text = date
+        return "$yString-$mString-${dString}T$hString:$minString:01.000Z"
+    }
+
+    private fun bindEventTypeButton(button: MaterialButton, state: Boolean) {
+        button.isChecked = state
+        button.text = if (state) getString(R.string.online) else getString(R.string.offline)
     }
 
     private fun showLogOutDialog(context: Context) {
