@@ -58,7 +58,7 @@ open class EventFeedFragment : Fragment() {
 
         override fun onAvatarClick(event: Event) {
             viewModel.changeUserId(event.authorId)
-            findNavController().navigate(R.id.action_postFeedFragment_to_userWallFragment,
+            findNavController().navigate(R.id.action_global_userWallFragment,
                 Bundle().apply
                 {
                     userIdArg = event.authorId.toString()
@@ -68,7 +68,12 @@ open class EventFeedFragment : Fragment() {
         }
 
         override fun onParticipate(event: Event) {
-            TODO("Not yet implemented")
+            val token = authViewModel.state.value?.token
+            if (token == null || token == "0") {
+                context?.let { showSignInDialog(it) }
+            } else {
+                viewModel.participateById(event.id, event.participatedByMe)
+            }
         }
     }
 
@@ -136,6 +141,10 @@ open class EventFeedFragment : Fragment() {
                 adapter.refresh()
             }
 
+            feedButton.setOnClickListener {
+                findNavController().navigate(R.id.action_global_postFeedFragment)
+            }
+
             myWallButton.setOnClickListener {
                 val token = authViewModel.state.value?.token
                 if (token == null || token == "0") {
@@ -143,7 +152,7 @@ open class EventFeedFragment : Fragment() {
                 } else {
                     val id = authViewModel.state.value!!.id
                     viewModel.changeUserId(id)
-                    findNavController().navigate(R.id.action_postFeedFragment_to_userWallFragment,
+                    findNavController().navigate(R.id.action_global_userWallFragment,
                         Bundle().apply
                         {
                             userIdArg = id.toString()
@@ -227,6 +236,20 @@ open class EventFeedFragment : Fragment() {
                 )
                     .setAction("Retry") {
                         viewModel.likeById(id, willLike)
+                    }
+                    .show()
+            }
+
+            eventsParticipateError.observe(viewLifecycleOwner) {
+                val id = it.second.first
+                val willLike = it.second.second
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.specific_edit_error, it.first),
+                    Snackbar.LENGTH_LONG
+                )
+                    .setAction("Retry") {
+                        viewModel.participateById(id, willLike)
                     }
                     .show()
             }

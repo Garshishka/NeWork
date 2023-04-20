@@ -12,6 +12,7 @@ interface EventRepository {
     suspend fun removeById(authToken: String, id: Int)
     suspend fun save(event: Event, authToken: String)
     suspend fun likeById(id: Int, willLike: Boolean, authToken: String, userId: Int): Event
+    suspend fun participateById(id: Int, willParticipate: Boolean, authToken: String, userId: Int): Event
     suspend fun saveWithAttachment(
         event: Event,
         file: File,

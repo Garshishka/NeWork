@@ -73,27 +73,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/avatar" />
 
-    <ImageButton
-        android:id="@+id/play_attachment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/play_attachment"
-        android:src="@drawable/baseline_video_48"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/barrier_bottom"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/coordinates" />
-
-    <ImageButton
-        android:id="@+id/attachment_picture"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/attached_content"
-        android:src="@drawable/ic_baseline_downloading_48"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/barrier_bottom"
-        app:layout_constraintTop_toBottomOf="@id/coordinates" />
-
     <ImageView
         android:id="@+id/not_on_server"
         android:layout_width="@dimen/picture_size"
@@ -114,6 +93,7 @@
         android:layout_marginVertical="@dimen/margin_small"
         app:layout_constraintTop_toBottomOf="@id/barrier_top"
         app:layout_constraintBottom_toTopOf="@id/content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textStyle="bold"
         tools:text="12-12-1231"/>
     
@@ -126,6 +106,7 @@
         android:layout_marginVertical="@dimen/margin_small"
         app:layout_constraintTop_toBottomOf="@id/barrier_top"
         app:layout_constraintBottom_toTopOf="@id/content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textStyle="bold"
         tools:text="ONLINE"/>
 
@@ -138,29 +119,66 @@
         app:layout_constraintTop_toBottomOf="@id/event_time"
         tools:text="Some text here" />
 
-    <TextView
-        android:id="@+id/link"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/supplementary_part"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:autoLink="all"
-        android:linksClickable="true"
-        android:padding="@dimen/margin_default"
-        android:textStyle="italic"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/coordinates"
         app:layout_constraintTop_toBottomOf="@id/content"
-        tools:text="link" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/attachment_picture">
 
-    <TextView
-        android:id="@+id/coordinates"
+        <TextView
+            android:id="@+id/link"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:autoLink="all"
+            android:ellipsize="end"
+            android:linksClickable="true"
+            android:padding="@dimen/margin_default"
+            android:singleLine="true"
+            android:textStyle="italic"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/coordinates"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/play_attachment"
+            tools:text="link" />
+
+        <TextView
+            android:id="@+id/coordinates"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/margin_default"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/link"
+            tools:text="12.23123321 | 23.323124" />
+
+        <ImageButton
+            android:id="@+id/play_attachment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/play_attachment"
+            android:src="@drawable/baseline_video_48"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageButton
+        android:id="@+id/attachment_picture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/margin_default"
-        android:textStyle="bold"
+        android:contentDescription="@string/attached_content"
+        android:src="@drawable/ic_baseline_downloading_48"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/attachment_picture"
-        app:layout_constraintTop_toBottomOf="@id/link"
-        tools:text="12.23123321 | 23.323124" />
+        app:layout_constraintBottom_toTopOf="@id/barrier_bottom"
+        app:layout_constraintTop_toBottomOf="@id/supplementary_part" />
 
     <TextView
         android:id="@+id/like_batch_trail"

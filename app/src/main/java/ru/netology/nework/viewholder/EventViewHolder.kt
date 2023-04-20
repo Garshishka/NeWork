@@ -58,7 +58,6 @@ class EventViewHolder(
             like.text = formattingBigNumbers(event.likeOwnerIds.size)
             like.isChecked = event.likedByMe
             like.setOnClickListener { onInteractionListener.onLike(event) }
-
             showAvatarInTrailing(event.likeOwnerIds,0,likeAvatars1,event.users)
             showAvatarInTrailing(event.likeOwnerIds,1,likeAvatars2,event.users)
             showAvatarInTrailing(event.likeOwnerIds,2,likeAvatars3,event.users)
@@ -70,6 +69,8 @@ class EventViewHolder(
             showAvatarInTrailing(event.speakerIds,2,speakerAvatars3,event.users)
             speakerBatchTrail.isVisible = event.speakerIds.size > 3
 
+            participant.isChecked = event.participatedByMe
+            participant.setOnClickListener { onInteractionListener.onParticipate(event) }
             participant.text = formattingBigNumbers(event.participantsIds.size)
             showAvatarInTrailing(event.participantsIds,0,participantAvatars1,event.users)
             showAvatarInTrailing(event.participantsIds,1,participantAvatars2,event.users)

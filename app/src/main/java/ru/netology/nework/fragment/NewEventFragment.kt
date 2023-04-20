@@ -45,7 +45,7 @@ class NewEventFragment : Fragment() {
     lateinit var binding: FragmentNewEventBinding
 
     //For choosing Audio file. There is an standard Image-Video picker but no Audio picker so it on its own
-    val resultLauncher =
+    private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val uri: Uri? = result.data?.data
@@ -118,6 +118,7 @@ class NewEventFragment : Fragment() {
                         AttachmentType.AUDIO -> photo.setImageResource(R.drawable.baseline_audio_file_48)
                         else -> {}
                     }
+                    viewModel.changeMedia(null, null, event.attachment.type, event.attachment.url)
                     photoContainer.isVisible = true
                 } else {
                     viewModel.deleteMedia()
@@ -209,7 +210,7 @@ class NewEventFragment : Fragment() {
             addSpeaker.text =
                 if (viewModel.edited.value?.speakerIds?.isNotEmpty() == true) viewModel.edited.value!!.speakerIds.size.toString() else ""
             addSpeaker.setOnClickListener {
-                //findNavController().navigate(R.id.action_newEventFragment_to_usersFragment)
+                findNavController().navigate(R.id.action_newEventFragment_to_usersFragment)
             }
         }
 
@@ -296,12 +297,16 @@ class NewEventFragment : Fragment() {
     private fun showAttachment(mediaModel: MediaModel) {
         binding.apply {
             when (mediaModel.attachmentType) {
-                AttachmentType.IMAGE -> photo.setImageURI(mediaModel.uri)
+                AttachmentType.IMAGE -> {
+                    if (mediaModel.url == null) { //if we have url - then the image is already loaded
+                        photo.setImageURI(mediaModel.uri)
+                    }
+                }
                 AttachmentType.VIDEO -> photo.setImageResource(R.drawable.baseline_video_48)
                 AttachmentType.AUDIO -> photo.setImageResource(R.drawable.baseline_audio_file_48)
                 else -> {}
             }
-            photoContainer.isVisible = mediaModel.uri != null
+            photoContainer.isVisible = mediaModel.attachmentType != AttachmentType.NONE
         }
     }
 

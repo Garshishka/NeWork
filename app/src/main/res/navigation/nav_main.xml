@@ -116,7 +116,11 @@
         android:id="@+id/newEventFragment"
         android:name="ru.netology.nework.fragment.NewEventFragment"
         android:label="NewEventFragment"
-        tools:layout="@layout/fragment_new_event"/>
+        tools:layout="@layout/fragment_new_event">
+        <action
+            android:id="@+id/action_newEventFragment_to_usersFragment"
+            app:destination="@id/usersFragment" />
+    </fragment>
 
 
 </navigation>

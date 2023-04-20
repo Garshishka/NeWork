@@ -66,6 +66,12 @@ interface ApiService {
     @DELETE("events/{id}/likes ")
     suspend fun dislikeEventById(@Header("auth") auth: String, @Path("id") id: Int): Response<Event>
 
+    @POST("events/{id}/participants")
+    suspend fun participateEventById(@Header("auth") auth: String, @Path("id") id: Int): Response<Event>
+
+    @DELETE("events/{id}/participants ")
+    suspend fun unparticipateEventById(@Header("auth") auth: String, @Path("id") id: Int): Response<Event>
+
     @DELETE("events/{id}")
     suspend fun removeEventById(@Header("auth") auth: String, @Path("id") id: Int): Response<Unit>
 

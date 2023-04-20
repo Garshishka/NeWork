@@ -69,6 +69,9 @@ class EventViewModel @Inject constructor(
     private val _eventsLikeError = SingleLiveEvent<Pair<String, Pair<Int, Boolean>>>()
     val eventsLikeError: LiveData<Pair<String, Pair<Int, Boolean>>>
         get() = _eventsLikeError
+    private val _eventsParticipateError = SingleLiveEvent<Pair<String, Pair<Int, Boolean>>>()
+    val eventsParticipateError: LiveData<Pair<String, Pair<Int, Boolean>>>
+        get() = _eventsParticipateError
     private val _usersLoadError = SingleLiveEvent<String>()
     val usersLoadError: LiveData<String>
         get() = _usersLoadError
@@ -106,6 +109,14 @@ class EventViewModel @Inject constructor(
         }
     }
 
+    fun participateById(id: Int, participatedByMe: Boolean) = viewModelScope.launch {
+        try {
+            appAuth.getToken()?.let { repository.participateById(id, !participatedByMe, it, appAuth.getId()) }
+        } catch (e: Exception) {
+            _eventsParticipateError.postValue(e.toString() to (id to participatedByMe))
+        }
+    }
+
     fun changeContent(
         content: String,
         link: String,
@@ -124,7 +135,7 @@ class EventViewModel @Inject constructor(
             edited.value =
                 it.copy(
                     content = text,
-                    link = textLink.ifBlank { null },
+                    link = if (textLink.isNotBlank()) textLink else null,
                     coords = coords,
                 )
         }
@@ -198,20 +209,12 @@ class EventViewModel @Inject constructor(
         }
     }
 
-    fun changeMedia(fileUri: Uri?, toFile: File?, attachmentType: AttachmentType) {
-        _attachment.value = MediaModel(fileUri, toFile, attachmentType)
+    fun changeMedia(fileUri: Uri?, toFile: File?, attachmentType: AttachmentType, url: String? = null) {
+        _attachment.value = MediaModel(fileUri, toFile, attachmentType, url)
     }
 
     fun deleteMedia() {
         _attachment.value = noMedia
-    }
-
-    fun getBackOldUsers(oldUserList: List<User>) = viewModelScope.launch {
-        usersRepository.getBackOldUsers(oldUserList)
-    }
-
-    fun changeCheckedUsers(id: Int, changeToOtherState: Boolean) = viewModelScope.launch {
-        usersRepository.changeCheckedUsers(id, changeToOtherState)
     }
 
     fun changeUserId(userId: Int) {
@@ -228,4 +231,4 @@ private val emptyEvent = Event(
     datetime = "",
     type = EventType.OFFLINE,
 )
-private val noMedia = MediaModel(null, null, AttachmentType.NONE)
+private val noMedia = MediaModel(null, null, AttachmentType.NONE, null)

@@ -119,4 +119,27 @@ class EventRepositoryImpl @Inject constructor(
             throw RuntimeException(e)
         }
     }
+
+    override suspend fun participateById(
+        id: Int,
+        willParticipate: Boolean,
+        authToken: String,
+        userId: Int
+    ): Event {
+        eventDao.participateById(id, userId)
+        try {
+            val response = if (willParticipate)
+                apiService.participateEventById(authToken, id)
+            else
+                apiService.unparticipateEventById(authToken, id)
+            if (!response.isSuccessful) {
+                eventDao.participateById(id, userId)
+                throw RuntimeException(response.code().toString())
+            }
+            return response.body() ?: throw RuntimeException("body is null")
+        } catch (e: Exception) {
+            eventDao.participateById(id, userId)
+            throw RuntimeException(e)
+        }
+    }
 }

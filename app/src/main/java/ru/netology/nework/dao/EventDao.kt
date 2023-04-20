@@ -20,7 +20,7 @@ interface EventDao {
     fun getPagingSource(): PagingSource<Int, EventEntity>
 
     @Query("SELECT * FROM EventEntity WHERE authorId = :id ORDER BY id DESC")
-    fun getMyWalLPagingSource(id:Int): PagingSource<Int, EventEntity>
+    fun getMyWalLPagingSource(id: Int): PagingSource<Int, EventEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(event: EventEntity)
@@ -52,6 +52,22 @@ interface EventDao {
             likesList.add(userId)
         }
         insert(event.copy(likeOwnerIds = likesList, likedByMe = !event.likedByMe))
+    }
+
+    suspend fun participateById(id: Int, userId: Int) {
+        val event = getById(id)
+        val participatedList = event.participantIds as MutableList<Int>
+        if (event.participatedByMe) {
+            participatedList.remove(userId)
+        } else {
+            participatedList.add(userId)
+        }
+        insert(
+            event.copy(
+                participantIds = participatedList,
+                participatedByMe = !event.participatedByMe
+            )
+        )
     }
 
     @Query("DELETE FROM EventEntity")
