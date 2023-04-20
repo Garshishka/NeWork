@@ -166,15 +166,23 @@ class EventViewModel @Inject constructor(
         edited.value?.let {
             appAuth.getToken()?.let { token ->
                 try {
-                    when (_attachment.value) {
-                        noMedia -> repository.save(it, token)
-                        else -> _attachment.value?.file?.let { file ->
-                            repository.saveWithAttachment(
-                                it,
-                                file,
-                                token,
-                                _attachment.value!!.attachmentType
-                            )
+                    if (_attachment.value == noMedia) {
+                        //if we have no attachment or we deleted it in edit
+                        repository.save(it.copy(attachment = null), token)
+                    } else {
+                        if (_attachment.value!!.url != null) {
+                            //if we edit and had an attachment and didn't change anything
+                            repository.save(it, token)
+                        } else {
+                            //we got new attachment
+                            _attachment.value?.file?.let { file ->
+                                repository.saveWithAttachment(
+                                    it,
+                                    file,
+                                    token,
+                                    _attachment.value!!.attachmentType
+                                )
+                            }
                         }
                     }
                     _eventCreated.postValue(Unit)
