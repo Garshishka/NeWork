@@ -20,11 +20,15 @@ import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nework.R
 import ru.netology.nework.adapter.PostsAdapter
 import ru.netology.nework.databinding.FragmentPostsBinding
+import ru.netology.nework.dto.Coords
 import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.dto.Post
 import ru.netology.nework.fragment.UserWallFragment.Companion.userIdArg
 import ru.netology.nework.fragment.UserWallFragment.Companion.userJobArg
+import ru.netology.nework.fragment.secondary.MapFragment.Companion.latArg
+import ru.netology.nework.fragment.secondary.MapFragment.Companion.longArg
 import ru.netology.nework.fragment.secondary.PictureFragment.Companion.urlArg
+import ru.netology.nework.utils.listeners.MapInteractionListener
 import ru.netology.nework.utils.listeners.MediaInteractionListener
 import ru.netology.nework.utils.listeners.PostInteractionListener
 import ru.netology.nework.viewmodel.AuthViewModel
@@ -94,7 +98,19 @@ open class PostFeedFragment : Fragment() {
         }
     }
 
-    protected val adapter = PostsAdapter(onInteractionListener, mediaInteractionListener)
+    protected val mapInteractionListener = object : MapInteractionListener {
+        override fun onCoordsClick(coords: Coords) {
+            findNavController().navigate(R.id.action_global_mapFragment,
+                Bundle().apply
+                {
+                    latArg = coords.lat
+                    longArg = coords.long
+                })
+        }
+    }
+
+    protected val adapter =
+        PostsAdapter(onInteractionListener, mediaInteractionListener, mapInteractionListener)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -233,7 +249,7 @@ open class PostFeedFragment : Fragment() {
                     }
                     .show()
             }
-            dataState.observe(viewLifecycleOwner){
+            dataState.observe(viewLifecycleOwner) {
                 checkLoading()
             }
         }

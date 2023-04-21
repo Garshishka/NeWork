@@ -145,15 +145,21 @@
             app:layout_constraintEnd_toStartOf="@id/play_attachment"
             tools:text="link" />
 
-        <TextView
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/coordinates"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="@dimen/margin_default"
+            android:padding="@dimen/margin_small"
             android:textStyle="bold"
             android:visibility="gone"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:backgroundTint="@color/light_grey"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/link"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/play_attachment"
             tools:text="12.23123321 | 23.323124" />
 
         <ImageButton

@@ -13,6 +13,7 @@ import ru.netology.nework.dto.Event
 import ru.netology.nework.dto.EventType
 import ru.netology.nework.dto.UserPreview
 import ru.netology.nework.utils.listeners.EventInteractionListener
+import ru.netology.nework.utils.listeners.MapInteractionListener
 import ru.netology.nework.utils.listeners.MediaInteractionListener
 import ru.netology.nework.utils.load
 import java.time.OffsetDateTime
@@ -22,6 +23,7 @@ class EventViewHolder(
     private val binding: LayoutEventBinding,
     private val onInteractionListener: EventInteractionListener,
     private val mediaInteractionListener: MediaInteractionListener,
+    private val mapInteractionListener: MapInteractionListener,
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(event: Event) {
@@ -54,6 +56,9 @@ class EventViewHolder(
             ifHaveTextThenShow(job,event.authorJob)
             ifHaveTextThenShow(link, event.link)
             ifHaveTextThenShow(coordinates, event.coords)
+            if(coordinates.isVisible){
+                coordinates.setOnClickListener { mapInteractionListener.onCoordsClick(event.coords!!) }
+            }
 
             like.text = formattingBigNumbers(event.likeOwnerIds.size)
             like.isChecked = event.likedByMe
