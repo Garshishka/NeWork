@@ -37,6 +37,9 @@
     <action
         android:id="@+id/action_global_eventFeedFragment"
         app:destination="@id/eventFeedFragment" />
+    <action
+        android:id="@+id/action_global_mapFragment"
+        app:destination="@id/mapFragment" />
     <fragment
         android:id="@+id/signUpFragment"
         android:name="ru.netology.nework.fragment.secondary.SignUpFragment"
@@ -107,7 +110,7 @@
         android:id="@+id/eventFeedFragment"
         android:name="ru.netology.nework.fragment.EventFeedFragment"
         android:label="EventFeedFragment"
-        tools:layout="@layout/fragment_events" >
+        tools:layout="@layout/fragment_events">
         <action
             android:id="@+id/action_eventFeedFragment_to_newEventFragment"
             app:destination="@id/newEventFragment" />
@@ -121,6 +124,11 @@
             android:id="@+id/action_newEventFragment_to_usersFragment"
             app:destination="@id/usersFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="ru.netology.nework.fragment.secondary.MapFragment"
+        android:label="MapFragment"
+        tools:layout="@layout/fragment_map"/>
 
 
 </navigation>

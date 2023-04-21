@@ -74,4 +74,8 @@
     <string name="event_wall">Список событий</string>
     <string name="offline">ОФФЛАЙН</string>
     <string name="online">ОНЛАЙН</string>
+    <string name="need_geolocation">Необходимо разрешение на геолокацию чтобы использовать эту функцию</string>
+    <string name="permission">Разрешение</string>
+    <string name="no_user_location_error">Ваша локация еще не определена</string>
+    <string name="retry">Повторить</string>
 </resources>

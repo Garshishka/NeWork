@@ -11,6 +11,7 @@ import ru.netology.nework.databinding.LayoutPostBinding
 import ru.netology.nework.dto.AttachmentType
 import ru.netology.nework.dto.Post
 import ru.netology.nework.dto.UserPreview
+import ru.netology.nework.utils.listeners.MapInteractionListener
 import ru.netology.nework.utils.listeners.MediaInteractionListener
 import ru.netology.nework.utils.listeners.PostInteractionListener
 import ru.netology.nework.utils.load
@@ -21,6 +22,7 @@ class PostViewHolder(
     private val binding: LayoutPostBinding,
     private val onInteractionListener: PostInteractionListener,
     private val mediaInteractionListener: MediaInteractionListener,
+    private val mapInteractionListener: MapInteractionListener,
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(post: Post) {
@@ -46,6 +48,9 @@ class PostViewHolder(
             ifHaveTextThenShow(job,post.authorJob)
             ifHaveTextThenShow(link, post.link)
             ifHaveTextThenShow(coordinates, post.coords)
+            if(coordinates.isVisible){
+                coordinates.setOnClickListener { mapInteractionListener.onCoordsClick(post.coords!!) }
+            }
 
             like.text = formattingBigNumbers(post.likeOwnerIds.size)
             like.isChecked = post.likedByMe

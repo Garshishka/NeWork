@@ -12,10 +12,10 @@ import ru.netology.nework.adapter.UsersAdapter
 import ru.netology.nework.databinding.FragmentUsersBinding
 import ru.netology.nework.dto.User
 import ru.netology.nework.utils.listeners.UserListInteractionListener
-import ru.netology.nework.viewmodel.UsersViewModel
+import ru.netology.nework.viewmodel.UsersAndMapViewModel
 
 class UsersFragment : Fragment() {
-    private val viewModel: UsersViewModel by activityViewModels()
+    private val viewModel: UsersAndMapViewModel by activityViewModels()
 
     private val userListInteractionListener = object : UserListInteractionListener {
         override fun onClick(user: User) {

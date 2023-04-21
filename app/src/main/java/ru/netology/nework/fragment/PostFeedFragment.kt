@@ -20,22 +20,25 @@ import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nework.R
 import ru.netology.nework.adapter.PostsAdapter
 import ru.netology.nework.databinding.FragmentPostsBinding
+import ru.netology.nework.dto.Coords
 import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.dto.Post
 import ru.netology.nework.fragment.UserWallFragment.Companion.userIdArg
 import ru.netology.nework.fragment.UserWallFragment.Companion.userJobArg
+import ru.netology.nework.fragment.secondary.MapFragment.Companion.editingArg
 import ru.netology.nework.fragment.secondary.PictureFragment.Companion.urlArg
+import ru.netology.nework.utils.listeners.MapInteractionListener
 import ru.netology.nework.utils.listeners.MediaInteractionListener
 import ru.netology.nework.utils.listeners.PostInteractionListener
 import ru.netology.nework.viewmodel.AuthViewModel
 import ru.netology.nework.viewmodel.PostViewModel
 import ru.netology.nework.viewmodel.UserWallViewModel
-import ru.netology.nework.viewmodel.UsersViewModel
+import ru.netology.nework.viewmodel.UsersAndMapViewModel
 
 @AndroidEntryPoint
 open class PostFeedFragment : Fragment() {
     protected open val viewModel: PostViewModel by activityViewModels()
-    protected val usersViewModel: UsersViewModel by activityViewModels()
+    protected val usersAndMapViewModel: UsersAndMapViewModel by activityViewModels()
     protected val authViewModel: AuthViewModel by activityViewModels()
     protected lateinit var binding: FragmentPostsBinding
     protected lateinit var postData: Flow<PagingData<Post>>
@@ -52,6 +55,7 @@ open class PostFeedFragment : Fragment() {
 
         override fun onEdit(post: Post) {
             viewModel.edit(post)
+            usersAndMapViewModel.coords = null
             findNavController().navigate(R.id.action_global_newPostFragment)
         }
 
@@ -94,7 +98,19 @@ open class PostFeedFragment : Fragment() {
         }
     }
 
-    protected val adapter = PostsAdapter(onInteractionListener, mediaInteractionListener)
+    protected val mapInteractionListener = object : MapInteractionListener {
+        override fun onCoordsClick(coords: Coords) {
+            usersAndMapViewModel.coords = coords
+            findNavController().navigate(R.id.action_global_mapFragment,
+                Bundle().apply
+                {
+                    editingArg = false
+                })
+        }
+    }
+
+    protected val adapter =
+        PostsAdapter(onInteractionListener, mediaInteractionListener, mapInteractionListener)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -157,6 +173,7 @@ open class PostFeedFragment : Fragment() {
                 if (token == null || token == "0") {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
+                    usersAndMapViewModel.coords = null
                     findNavController().navigate(R.id.action_global_newPostFragment)
                 }
             }
@@ -221,7 +238,7 @@ open class PostFeedFragment : Fragment() {
             }
         }
 
-        usersViewModel.apply {
+        usersAndMapViewModel.apply {
             usersLoadError.observe(viewLifecycleOwner) {
                 Snackbar.make(
                     binding.root,
@@ -233,14 +250,14 @@ open class PostFeedFragment : Fragment() {
                     }
                     .show()
             }
-            dataState.observe(viewLifecycleOwner){
+            dataState.observe(viewLifecycleOwner) {
                 checkLoading()
             }
         }
     }
 
     private fun subscribeForFeedWall() {
-        usersViewModel.loadUsers()
+        usersAndMapViewModel.loadUsers()
 
         binding.apply {
             myWallButton.setOnClickListener {
@@ -264,7 +281,7 @@ open class PostFeedFragment : Fragment() {
     protected fun checkLoading() {
         binding.loading.isVisible =
             (viewModel.dataState.value == FeedModelState.Loading)
-                    || (usersViewModel.dataState.value == FeedModelState.Loading)
+                    || (usersAndMapViewModel.dataState.value == FeedModelState.Loading)
     }
 
     protected fun showSignInDialog(context: Context) {

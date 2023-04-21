@@ -6,13 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import ru.netology.nework.dto.Coords
 import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.repository.users.UsersRepository
 import ru.netology.nework.utils.SingleLiveEvent
 import javax.inject.Inject
 
 @HiltViewModel
-class UsersViewModel @Inject constructor(
+class UsersAndMapViewModel @Inject constructor(
     private val usersRepository: UsersRepository,
 ) : ViewModel() {
     val usersData = usersRepository.usersData
@@ -24,9 +25,11 @@ class UsersViewModel @Inject constructor(
     private val _dataState = MutableLiveData<FeedModelState>(FeedModelState.Idle)
     val dataState: LiveData<FeedModelState>
         get() = _dataState
-    protected val _usersLoadError = SingleLiveEvent<String>()
+    private val _usersLoadError = SingleLiveEvent<String>()
     val usersLoadError: LiveData<String>
         get() = _usersLoadError
+
+    var coords : Coords? = null
 
     init {
         loadUsers()

@@ -74,7 +74,7 @@ class UserWallFragment : PostFeedFragment() {
     }
 
     private fun bindUserInfo(userId: Int, job: String) {
-        val user: User? = usersViewModel.usersData.value?.find { user -> user.id == userId }
+        val user: User? = usersAndMapViewModel.usersData.value?.find { user -> user.id == userId }
         user?.let { user ->
             binding.apply {
                 userName.text = user.name
