@@ -22,10 +22,11 @@ import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.databinding.FragmentNewPostBinding
 import ru.netology.nework.dto.AttachmentType
 import ru.netology.nework.dto.MediaModel
+import ru.netology.nework.fragment.secondary.MapFragment.Companion.editingArg
 import ru.netology.nework.utils.AndroidUtils
 import ru.netology.nework.utils.load
 import ru.netology.nework.viewmodel.PostViewModel
-import ru.netology.nework.viewmodel.UsersViewModel
+import ru.netology.nework.viewmodel.UsersAndMapViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -34,7 +35,7 @@ class NewPostFragment : Fragment() {
     lateinit var appAuth: AppAuth
 
     private val viewModel: PostViewModel by activityViewModels()
-    private val usersViewModel: UsersViewModel by activityViewModels()
+    private val usersAndMapViewModel: UsersAndMapViewModel by activityViewModels()
 
     lateinit var binding: FragmentNewPostBinding
 
@@ -70,14 +71,27 @@ class NewPostFragment : Fragment() {
     }
 
     private fun bind() {
+        if (usersAndMapViewModel.coords != null) {
+            //we check if we have saved coordinates from map fragment
+            //if we have - we save them to our edited/draft and clear
+            viewModel.changeCoords(usersAndMapViewModel.coords!!)
+            usersAndMapViewModel.coords = null
+        }
         //edited is used as container for post info if we editing and as a draft saver for new post
         val post = viewModel.edited.value
-        post?.mentionIds?.let { usersViewModel.getUserList(it) }
+        post?.mentionIds?.let { usersAndMapViewModel.getUserList(it) }
         binding.apply {
             edit.setText(post?.content)
             link.setText(post?.link)
-            coordinatesLat.setText(post?.coords?.lat)
-            coordinatesLong.setText(post?.coords?.long)
+            if (post?.coords != null) {
+                coordinatesButton.text = "${post.coords.lat.take(9)} | ${post.coords.long.take(9)}"
+                deleteCoordsButton.isVisible = true
+                deleteCoordsButton.setOnClickListener {
+                    deleteCoordsButton.isVisible = false
+                    viewModel.changeCoords(null)
+                    coordinatesButton.text = getText(R.string.coordinates_hint)
+                }
+            }
             if (post?.id != 0) { //If post ID is not 0 - we editing so there can be some attachment
                 if (post?.attachment != null) {
                     when (post.attachment.type) {
@@ -128,35 +142,31 @@ class NewPostFragment : Fragment() {
             sendButton.setOnClickListener {
                 val text = binding.edit.text.toString()
                 val link = binding.link.text.toString()
-                val coordsLat = binding.coordinatesLat.text.toString()
-                val coordsLong = binding.coordinatesLong.text.toString()
-                if ((coordsLat.isBlank() && coordsLong.isNotBlank()) || (coordsLat.isNotBlank() && coordsLong.isBlank())) {
+                if (text.isNotBlank()) {
+                    viewModel.changeContent(
+                        text,
+                        link,
+                    )
+                    viewModel.save()
+                    findNavController().navigateUp()
+                } else {
                     Toast.makeText(
                         context,
-                        getString(R.string.coords_not_both_filled),
+                        getString(R.string.no_context),
                         Toast.LENGTH_LONG
                     )
                         .show()
-                } else {
-                    if (text.isNotBlank()) {
-                        viewModel.changeContent(
-                            text,
-                            link,
-                            coordsLat,
-                            coordsLong,
-                        )
-                        viewModel.save()
-                        findNavController().navigateUp()
-                    } else {
-                        Toast.makeText(
-                            context,
-                            getString(R.string.no_context),
-                            Toast.LENGTH_LONG
-                        )
-                            .show()
-                    }
                 }
                 AndroidUtils.hideKeyboard(requireView())
+            }
+
+            coordinatesButton.setOnClickListener {
+                usersAndMapViewModel.coords = viewModel.edited.value?.coords
+                findNavController().navigate(R.id.action_global_mapFragment,
+                    Bundle().apply
+                    {
+                        editingArg = true
+                    })
             }
 
             pickPhoto.setOnClickListener {
@@ -183,7 +193,7 @@ class NewPostFragment : Fragment() {
             showAttachment(it)
         }
 
-        usersViewModel.userIdList.observe(viewLifecycleOwner) {
+        usersAndMapViewModel.userIdList.observe(viewLifecycleOwner) {
             binding.addMention.text = if (it.isEmpty()) "" else it.size.toString()
             viewModel.changeMentionedList(it)
         }
@@ -191,6 +201,7 @@ class NewPostFragment : Fragment() {
         activity?.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             }
+
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.logOut -> {
@@ -207,13 +218,9 @@ class NewPostFragment : Fragment() {
             if (viewModel.edited.value?.id == 0) {
                 val text = binding.edit.text.toString()
                 val link = binding.link.text.toString()
-                val coordsLat = binding.coordinatesLat.text.toString()
-                val coordsLong = binding.coordinatesLong.text.toString()
                 viewModel.changeContent(
                     text,
                     link,
-                    coordsLat,
-                    coordsLong,
                 )
             } else {
                 viewModel.empty()

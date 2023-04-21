@@ -27,10 +27,11 @@ import ru.netology.nework.databinding.FragmentNewEventBinding
 import ru.netology.nework.dto.AttachmentType
 import ru.netology.nework.dto.EventType
 import ru.netology.nework.dto.MediaModel
+import ru.netology.nework.fragment.secondary.MapFragment.Companion.editingArg
 import ru.netology.nework.utils.AndroidUtils
 import ru.netology.nework.utils.load
 import ru.netology.nework.viewmodel.EventViewModel
-import ru.netology.nework.viewmodel.UsersViewModel
+import ru.netology.nework.viewmodel.UsersAndMapViewModel
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -42,7 +43,7 @@ class NewEventFragment : Fragment() {
     lateinit var appAuth: AppAuth
 
     private val viewModel: EventViewModel by activityViewModels()
-    private val usersViewModel: UsersViewModel by activityViewModels()
+    private val usersAndMapViewModel: UsersAndMapViewModel by activityViewModels()
 
     lateinit var binding: FragmentNewEventBinding
 
@@ -78,9 +79,15 @@ class NewEventFragment : Fragment() {
     }
 
     private fun bind() {
+        if(usersAndMapViewModel.coords!=null){
+            //we check if we have saved coordinates from map fragment
+            //if we have - we save them to our edited/draft and clear
+            viewModel.changeCoords(usersAndMapViewModel.coords!!)
+            usersAndMapViewModel.coords = null
+        }
         //edited is used as container for event info if we editing and as a draft saver for new event
         val event = viewModel.edited.value
-        event?.speakerIds?.let { usersViewModel.getUserList(it) }
+        event?.speakerIds?.let { usersAndMapViewModel.getUserList(it) }
         binding.apply {
             if (event?.datetime?.isEmpty() == true) {
                 val formatter = DateTimeFormatter.ofPattern("HH:mm yyyy-MM-dd")
@@ -111,8 +118,15 @@ class NewEventFragment : Fragment() {
 
             edit.setText(event?.content)
             link.setText(event?.link)
-            coordinatesLat.setText(event?.coords?.lat)
-            coordinatesLong.setText(event?.coords?.long)
+            if (event?.coords != null) {
+                coordinatesButton.text = "${event.coords.lat.take(9)} | ${event.coords.long.take(9)}"
+                deleteCoordsButton.isVisible = true
+                deleteCoordsButton.setOnClickListener {
+                    deleteCoordsButton.isVisible = false
+                    viewModel.changeCoords(null)
+                    coordinatesButton.text = getText(R.string.coordinates_hint)
+                }
+            }
             if (event?.id != 0) { //If event ID is not 0 - we editing so there can be some attachment
                 if (event?.attachment != null) {
                     when (event.attachment.type) {
@@ -163,35 +177,31 @@ class NewEventFragment : Fragment() {
             sendButton.setOnClickListener {
                 val text = binding.edit.text.toString()
                 val link = binding.link.text.toString()
-                val coordsLat = binding.coordinatesLat.text.toString()
-                val coordsLong = binding.coordinatesLong.text.toString()
-                if ((coordsLat.isBlank() && coordsLong.isNotBlank()) || (coordsLat.isNotBlank() && coordsLong.isBlank())) {
+                if (text.isNotBlank()) {
+                    viewModel.changeContent(
+                        text,
+                        link
+                    )
+                    viewModel.save()
+                    findNavController().navigateUp()
+                } else {
                     Toast.makeText(
                         context,
-                        getString(R.string.coords_not_both_filled),
+                        getString(R.string.no_context),
                         Toast.LENGTH_LONG
                     )
                         .show()
-                } else {
-                    if (text.isNotBlank()) {
-                        viewModel.changeContent(
-                            text,
-                            link,
-                            coordsLat,
-                            coordsLong,
-                        )
-                        viewModel.save()
-                        findNavController().navigateUp()
-                    } else {
-                        Toast.makeText(
-                            context,
-                            getString(R.string.no_context),
-                            Toast.LENGTH_LONG
-                        )
-                            .show()
-                    }
                 }
                 AndroidUtils.hideKeyboard(requireView())
+            }
+
+            coordinatesButton.setOnClickListener {
+                usersAndMapViewModel.coords = viewModel.edited.value?.coords
+                findNavController().navigate(R.id.action_global_mapFragment,
+                    Bundle().apply
+                    {
+                        editingArg = true
+                    })
             }
 
             pickPhoto.setOnClickListener {
@@ -219,7 +229,7 @@ class NewEventFragment : Fragment() {
             showAttachment(it)
         }
 
-        usersViewModel.userIdList.observe(viewLifecycleOwner) {
+        usersAndMapViewModel.userIdList.observe(viewLifecycleOwner) {
             binding.addSpeaker.text = if (it.isEmpty()) "" else it.size.toString()
             viewModel.changeSpeakerList(it)
         }
@@ -244,13 +254,9 @@ class NewEventFragment : Fragment() {
             if (viewModel.edited.value?.id == 0) {
                 val text = binding.edit.text.toString()
                 val link = binding.link.text.toString()
-                val coordsLat = binding.coordinatesLat.text.toString()
-                val coordsLong = binding.coordinatesLong.text.toString()
                 viewModel.changeContent(
                     text,
                     link,
-                    coordsLat,
-                    coordsLong,
                 )
             } else {
                 viewModel.empty()

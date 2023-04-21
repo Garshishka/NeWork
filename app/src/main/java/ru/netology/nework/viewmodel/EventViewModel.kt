@@ -117,23 +117,23 @@ class EventViewModel @Inject constructor(
     fun changeContent(
         content: String,
         link: String,
-        coordsLat: String,
-        coordsLong: String,
     ) {
         edited.value?.let {
             val text = content.trim()
             val textLink = link.trim()
-            val textCoordsLat = coordsLat.trim()
-            val textCoordsLong = coordsLong.trim()
-            val coords = if (textCoordsLat.isNotBlank() && textCoordsLong.isNotBlank()) Coords(
-                textCoordsLat,
-                textCoordsLong
-            ) else null
             edited.value =
                 it.copy(
                     content = text,
                     link = if (textLink.isNotBlank()) textLink else null,
-                    coords = coords,
+                )
+        }
+    }
+
+    fun changeCoords(coords: Coords?){
+        edited.value?.let {
+            edited.value =
+                it.copy(
+                    coords = coords
                 )
         }
     }

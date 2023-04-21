@@ -142,66 +142,40 @@
                 android:layout_marginEnd="@dimen/margin_default"
                 android:background="@color/dark_grey" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_small"
-                android:gravity="center"
-                android:text="@string/coordinates_hint"/>
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
+                android:layout_height="wrap_content">
 
-                <EditText
-                    android:id="@+id/coordinates_lat"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/coordinates_button"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/margin_default"
-                    android:layout_marginHorizontal="@dimen/margin_small"
-                    android:background="@android:color/transparent"
-                    android:textStyle="italic"
-                    android:textColor="@color/teal_700"
-                    android:inputType="text"
-                    android:gravity="center"
-                    android:hint="@string/coordinates_hint_lat"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:padding="@dimen/margin_small"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:backgroundTint="@color/light_grey"
+                    android:textColor="@color/black"
+                    android:text="@string/coordinates_hint"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/coords_divider"/>
-
-                <View
-                    android:id="@+id/coords_divider"
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/dark_grey"
-                    app:layout_constraintStart_toEndOf="@id/coordinates_lat"
-                    app:layout_constraintEnd_toStartOf="@id/coordinates_long"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    />
+                    app:layout_constraintEnd_toStartOf="@id/delete_coords_button"
+                     />
 
-                <EditText
-                    android:id="@+id/coordinates_long"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/delete_coords_button"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/margin_default"
-                    android:layout_marginHorizontal="@dimen/margin_small"
-                    android:background="@android:color/transparent"
-                    android:textStyle="italic"
-                    android:textColor="@color/teal_700"
-                    android:inputType="text"
-                    android:gravity="center"
-                    android:hint="@string/coordinates_hint_long"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/coordinates_button"
                     app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/coords_divider"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:icon="@drawable/baseline_delete_24"
+                    style="@style/Widget.Material3.Button.IconButton.Filled"/>
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
                 android:layout_width="match_parent"

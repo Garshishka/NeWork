@@ -75,4 +75,6 @@
     <string name="online">ONLINE</string>
     <string name="need_geolocation">You need geolocation permission to use this feature</string>
     <string name="permission">Permission</string>
+    <string name="no_user_location_error">Can\'t find your location yet</string>
+    <string name="retry">Retry</string>
 </resources>

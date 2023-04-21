@@ -9,20 +9,24 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.user_location.UserLocationLayer
 import ru.netology.nework.R
 import ru.netology.nework.databinding.FragmentMapBinding
-import ru.netology.nework.utils.StringArg
+import ru.netology.nework.dto.Coords
+import ru.netology.nework.utils.BooleanArg
+import ru.netology.nework.viewmodel.UsersAndMapViewModel
 
 class MapFragment : Fragment() {
-
     private var locationPermission = false
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -33,7 +37,11 @@ class MapFragment : Fragment() {
             }
         }
 
+    private val viewModel: UsersAndMapViewModel by activityViewModels()
+
+    private var userLocation = Point(0.0, 0.0)
     private lateinit var userLocationLayer: UserLocationLayer
+    private lateinit var nowTarget: Point
 
     lateinit var binding: FragmentMapBinding
 
@@ -46,6 +54,7 @@ class MapFragment : Fragment() {
         checkMapPermission()
         MapKitFactory.initialize(requireContext())
 
+        binding.gettingPlaceContainer.isVisible = arguments?.editingArg == true
         setUpMap()
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
@@ -68,14 +77,61 @@ class MapFragment : Fragment() {
         userLocationLayer.isVisible = true
         userLocationLayer.isHeadingEnabled = false
 
-        val lat: Double = arguments?.latArg?.toDouble() ?: 0.0
-        val long: Double = arguments?.longArg?.toDouble() ?: 0.0
-        val target = Point(lat, long)
-        moveMap(target)
+        val lat: Double = viewModel.coords?.lat?.toDouble() ?: 0.0
+        val long: Double = viewModel.coords?.long?.toDouble() ?: 0.0
+        if (lat != 0.0 && long != 0.0) {
+            val target = Point(lat, long)
+            moveMap(target)
+        }
 
-        binding.mapView.map.apply {
-            //addCameraListener(cameraListener)
-            //addInputListener(mapInputListener)
+        if (arguments?.editingArg == true)
+            findingCoords()
+    }
+
+    private fun findingCoords() {
+        binding.apply {
+            findMyLocationFab.setOnClickListener {
+                if (locationPermission) {
+                    cameraToUserPosition()
+                } else {
+                    requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                }
+            }
+
+            mapView.map.apply {
+                addCameraListener(cameraListener)
+            }
+
+            addPlaceFab.setOnClickListener {
+                viewModel.coords =
+                    Coords(nowTarget.latitude.toString().take(9), nowTarget.longitude.toString().take(9))
+                findNavController().navigateUp()
+            }
+        }
+    }
+
+    val cameraListener: CameraListener =
+        CameraListener { _, cameraPosition, _, _ ->
+            binding.coordinates.text = "${cameraPosition.target.latitude.toString().take(9)} | ${
+                cameraPosition.target.longitude.toString().take(9)
+            }"
+            nowTarget = cameraPosition.target
+        }
+
+    private fun cameraToUserPosition(zoom: Float = 16f) {
+        if (userLocationLayer.cameraPosition() != null) {
+            userLocation = userLocationLayer.cameraPosition()!!.target
+            moveMap(userLocation, zoom)
+        } else {
+            Snackbar.make(
+                binding.mapView,
+                getString(R.string.no_user_location_error),
+                Snackbar.LENGTH_LONG
+            )
+                .setAction(getString(R.string.retry)) {
+                    cameraToUserPosition()
+                }
+                .show()
         }
     }
 
@@ -115,7 +171,6 @@ class MapFragment : Fragment() {
     }
 
     companion object {
-        var Bundle.latArg by StringArg
-        var Bundle.longArg by StringArg
+        var Bundle.editingArg by BooleanArg
     }
 }
