@@ -20,6 +20,7 @@ import ru.netology.nework.databinding.FragmentJobsBinding
 import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.dto.Job
 import ru.netology.nework.utils.AndroidUtils.getJobDate
+import ru.netology.nework.utils.BooleanArg
 import ru.netology.nework.utils.StringArg
 import ru.netology.nework.utils.listeners.JobInteractionListener
 import ru.netology.nework.viewmodel.JobViewModel
@@ -42,7 +43,6 @@ class JobFragment : Fragment() {
         override fun onRemove(job: Job) {
             viewModel.removeById(job.id)
         }
-
     }
 
     private val adapter = JobAdapter(onInteractionListener)
@@ -74,6 +74,7 @@ class JobFragment : Fragment() {
             eventWallButton.setOnClickListener {
                 findNavController().navigate(R.id.action_global_eventFeedFragment)
             }
+            addJobButton.isVisible = arguments?.myJobsArg == true
             addJobButton.setOnClickListener {
                 bindAddingJobDialog()
                 addJobContainer.isVisible = true
@@ -229,5 +230,6 @@ class JobFragment : Fragment() {
 
     companion object {
         var Bundle.idArg by StringArg
+        var Bundle.myJobsArg by BooleanArg
     }
 }

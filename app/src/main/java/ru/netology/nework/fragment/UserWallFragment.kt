@@ -13,6 +13,7 @@ import ru.netology.nework.R
 import ru.netology.nework.databinding.FragmentPostsBinding
 import ru.netology.nework.dto.User
 import ru.netology.nework.fragment.JobFragment.Companion.idArg
+import ru.netology.nework.fragment.JobFragment.Companion.myJobsArg
 import ru.netology.nework.utils.StringArg
 import ru.netology.nework.utils.load
 import ru.netology.nework.viewmodel.UserWallViewModel
@@ -93,7 +94,8 @@ class UserWallFragment : PostFeedFragment() {
                 userJob.setOnClickListener {
                     findNavController().navigate(R.id.action_global_jobFragment,
                         Bundle().apply
-                        { idArg = userId.toString() })
+                        { idArg = userId.toString()
+                            myJobsArg = userId == authViewModel.state.value?.id })
                 }
                 user.avatar?.let {
                     userAvatar.load(user.avatar, true)

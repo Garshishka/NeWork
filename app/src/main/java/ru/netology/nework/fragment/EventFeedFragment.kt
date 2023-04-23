@@ -23,6 +23,7 @@ import ru.netology.nework.databinding.FragmentEventsBinding
 import ru.netology.nework.dto.Coords
 import ru.netology.nework.dto.Event
 import ru.netology.nework.dto.FeedModelState
+import ru.netology.nework.fragment.JobFragment.Companion.myJobsArg
 import ru.netology.nework.fragment.UserWallFragment.Companion.userIdArg
 import ru.netology.nework.fragment.UserWallFragment.Companion.userJobArg
 import ru.netology.nework.fragment.secondary.MapFragment.Companion.editingArg
@@ -184,7 +185,8 @@ open class EventFeedFragment : Fragment() {
                 if (token == null || token == "0") {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
-                    findNavController().navigate(R.id.action_global_jobFragment)
+                    findNavController().navigate(R.id.action_global_jobFragment,
+                        Bundle().apply { myJobsArg = true })
                 }
             }
 

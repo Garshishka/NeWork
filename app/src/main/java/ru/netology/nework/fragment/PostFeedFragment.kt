@@ -23,6 +23,7 @@ import ru.netology.nework.databinding.FragmentPostsBinding
 import ru.netology.nework.dto.Coords
 import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.dto.Post
+import ru.netology.nework.fragment.JobFragment.Companion.myJobsArg
 import ru.netology.nework.fragment.UserWallFragment.Companion.userIdArg
 import ru.netology.nework.fragment.UserWallFragment.Companion.userJobArg
 import ru.netology.nework.fragment.secondary.MapFragment.Companion.editingArg
@@ -164,7 +165,9 @@ open class PostFeedFragment : Fragment() {
                 if (token == null || token == "0") {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
-                    findNavController().navigate(R.id.action_global_jobFragment)
+                    findNavController().navigate(
+                        R.id.action_global_jobFragment,
+                        Bundle().apply { myJobsArg = true })
                 }
             }
 
@@ -283,8 +286,8 @@ open class PostFeedFragment : Fragment() {
         val usersLoading = usersAndMapViewModel.dataState.value == FeedModelState.Loading
         binding.apply {
             loading.isVisible = postsLoading || usersLoading
-            buttonPanel.isVisible = !postsLoading &&!usersLoading
-            addPostButton.isVisible = !postsLoading &&!usersLoading
+            buttonPanel.isVisible = !postsLoading && !usersLoading
+            addPostButton.isVisible = !postsLoading && !usersLoading
         }
     }
 
