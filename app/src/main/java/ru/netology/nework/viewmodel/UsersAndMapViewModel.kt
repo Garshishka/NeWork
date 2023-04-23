@@ -45,6 +45,7 @@ class UsersAndMapViewModel @Inject constructor(
             usersRepository.getUsers()
             _dataState.value = FeedModelState.Idle
         } catch (e: Exception) {
+            _dataState.value = FeedModelState.Error
             _usersLoadError.postValue(e.toString())
         }
     }

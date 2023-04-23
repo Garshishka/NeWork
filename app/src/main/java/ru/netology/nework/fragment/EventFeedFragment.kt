@@ -114,7 +114,8 @@ open class EventFeedFragment : Fragment() {
         }
     }
 
-    private val adapter = EventAdapter(onInteractionListener, mediaInteractionListener, mapInteractionListener)
+    private val adapter =
+        EventAdapter(onInteractionListener, mediaInteractionListener, mapInteractionListener)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -216,7 +217,11 @@ open class EventFeedFragment : Fragment() {
                     }
                     else -> {}
                 }
-                binding.loading.isVisible = it == FeedModelState.Loading
+                binding.apply {
+                    loading.isVisible = it == FeedModelState.Loading
+                    buttonPanel.isVisible = it != FeedModelState.Loading
+                    addEventButton.isVisible = it != FeedModelState.Loading
+                }
             }
 
             eventCreatedError.observe(viewLifecycleOwner) {

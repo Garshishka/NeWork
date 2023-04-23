@@ -279,9 +279,13 @@ open class PostFeedFragment : Fragment() {
     }
 
     protected fun checkLoading() {
-        binding.loading.isVisible =
-            (viewModel.dataState.value == FeedModelState.Loading)
-                    || (usersAndMapViewModel.dataState.value == FeedModelState.Loading)
+        val postsLoading = viewModel.dataState.value == FeedModelState.Loading
+        val usersLoading = usersAndMapViewModel.dataState.value == FeedModelState.Loading
+        binding.apply {
+            loading.isVisible = postsLoading || usersLoading
+            buttonPanel.isVisible = !postsLoading &&!usersLoading
+            addPostButton.isVisible = !postsLoading &&!usersLoading
+        }
     }
 
     protected fun showSignInDialog(context: Context) {
