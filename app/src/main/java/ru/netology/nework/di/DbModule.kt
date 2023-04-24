@@ -1,4 +1,4 @@
-package ru.netology.nework.db
+package ru.netology.nework.di
 
 import android.content.Context
 import androidx.room.Room
@@ -11,6 +11,7 @@ import ru.netology.nework.dao.EventDao
 import ru.netology.nework.dao.EventRemoteKeyDao
 import ru.netology.nework.dao.PostDao
 import ru.netology.nework.dao.PostRemoteKeyDao
+import ru.netology.nework.db.AppDb
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)

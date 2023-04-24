@@ -1,4 +1,4 @@
-package ru.netology.nework.repository
+package ru.netology.nework.di
 
 import dagger.Binds
 import dagger.Module

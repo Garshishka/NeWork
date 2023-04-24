@@ -1,4 +1,4 @@
-package ru.netology.nework.api
+package ru.netology.nework.di
 
 import dagger.Module
 import dagger.Provides
@@ -10,6 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import ru.netology.nework.BuildConfig
+import ru.netology.nework.api.ApiService
 import ru.netology.nework.auth.AppAuth
 import javax.inject.Singleton
 
