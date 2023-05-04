@@ -11,6 +11,7 @@ import ru.netology.nework.databinding.LayoutPostBinding
 import ru.netology.nework.dto.AttachmentType
 import ru.netology.nework.dto.Post
 import ru.netology.nework.dto.UserPreview
+import ru.netology.nework.utils.AndroidUtils.formattingBigNumbers
 import ru.netology.nework.utils.listeners.MapInteractionListener
 import ru.netology.nework.utils.listeners.MediaInteractionListener
 import ru.netology.nework.utils.listeners.PostInteractionListener
@@ -158,21 +159,6 @@ class PostViewHolder(
             view.text = param.toString()
         } else {
             view.isVisible = false
-        }
-    }
-
-    private fun formattingBigNumbers(number: Int): String {
-        return when (number) {
-            in 0..999 -> number.toString()
-            in 1000..1099 -> "1k"
-            in 1100..9_999 -> (number.toDouble() / 1000).toString().take(3) + "K"
-            in 10_000..99_999 -> (number.toDouble() / 1000).toString().take(2) + "K"
-            in 100_000..999_999 -> (number.toDouble() / 1000).toString().take(3) + "K"
-            else -> {
-                val mNumber = (number.toDouble() / 1_000_000).toString()
-                val strings = mNumber.split(".")
-                strings[0] + "." + strings[1].take(1) + "M"
-            }
         }
     }
 }

@@ -59,4 +59,19 @@ object AndroidUtils {
             target.write(buf, 0, length)
         }
     }
+
+    fun formattingBigNumbers(number: Int): String {
+        return when (number) {
+            in 0..999 -> number.toString()
+            in 1000..1099 -> "1k"
+            in 1100..9_999 -> (number.toDouble() / 1000).toString().take(3) + "K"
+            in 10_000..99_999 -> (number.toDouble() / 1000).toString().take(2) + "K"
+            in 100_000..999_999 -> (number.toDouble() / 1000).toString().take(3) + "K"
+            else -> {
+                val mNumber = (number.toDouble() / 1_000_000).toString()
+                val strings = mNumber.split(".")
+                strings[0] + "." + strings[1].take(1) + "M"
+            }
+        }
+    }
 }
