@@ -5,9 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import ru.netology.nework.R
 import ru.netology.nework.databinding.FragmentPictureBinding
@@ -23,10 +21,6 @@ class PictureFragment : Fragment() {
         val binding= FragmentPictureBinding.inflate(inflater,container,false)
 
         arguments?.urlArg?.let { binding.photo.load(it) }
-
-        requireActivity().onBackPressedDispatcher.addCallback(this) {
-            findNavController().navigateUp()
-        }
 
         return binding.root
     }

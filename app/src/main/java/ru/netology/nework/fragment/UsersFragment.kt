@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -46,10 +45,10 @@ class UsersFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(this) {
+        /*requireActivity().onBackPressedDispatcher.addCallback(this) {
             //viewModel.getBackOldUsers()
             findNavController().navigateUp()
-        }
+        }*/
 
         viewModel.usersData.observe(viewLifecycleOwner) {
             adapter.submitList(it)

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
@@ -43,10 +42,6 @@ class SignUpFragment : Fragment() {
     }
 
     private fun subscribe() {
-        requireActivity().onBackPressedDispatcher.addCallback(this) {
-            goBack()
-        }
-
         val pickImageContract =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -57,9 +56,6 @@ class MapFragment : Fragment() {
         binding.gettingPlaceContainer.isVisible = arguments?.editingArg == true
         setUpMap()
 
-        requireActivity().onBackPressedDispatcher.addCallback(this) {
-            findNavController().navigateUp()
-        }
         return binding.root
     }
 
