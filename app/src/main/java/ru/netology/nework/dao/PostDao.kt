@@ -45,7 +45,7 @@ interface PostDao {
 
     suspend fun likeById(id: Int, userId: Int) {
         val post = getById(id)
-        val likesList = post.likeOwnerIds as MutableList<Int>
+        val likesList = post.likeOwnerIds.toMutableList()
         if (post.likedByMe) {
             likesList.remove(userId)
         } else {

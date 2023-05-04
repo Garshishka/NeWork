@@ -56,7 +56,7 @@ interface EventDao {
 
     suspend fun participateById(id: Int, userId: Int) {
         val event = getById(id)
-        val participatedList = event.participantIds as MutableList<Int>
+        val participatedList = event.participantIds.toMutableList()
         if (event.participatedByMe) {
             participatedList.remove(userId)
         } else {
