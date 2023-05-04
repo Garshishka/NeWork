@@ -6,7 +6,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.map
 import kotlinx.coroutines.flow.map
 import ru.netology.nework.api.ApiService
-import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dao.EventDao
 import ru.netology.nework.dao.EventRemoteKeyDao
 import ru.netology.nework.db.AppDb
@@ -23,7 +22,6 @@ class EventRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     eventRemoteKeyDao: EventRemoteKeyDao,
     appDb: AppDb,
-    private val auth: AppAuth,
     private val mediaRepository: MediaRepository
 ) : EventRepository {
     @OptIn(ExperimentalPagingApi::class)
@@ -54,11 +52,11 @@ class EventRepositoryImpl @Inject constructor(
         try {
             val response = apiService.removeEventById(authToken, id)
             if (!response.isSuccessful) {
-                eventDao.insert(removed)
+                eventDao.save(removed)
                 throw RuntimeException(response.code().toString())
             }
         } catch (e: Exception) {
-            eventDao.insert(removed)
+            eventDao.save(removed)
             throw RuntimeException(e)
         }
     }
@@ -75,7 +73,7 @@ class EventRepositoryImpl @Inject constructor(
                 )
             }
             val body = response.body() ?: throw RuntimeException("body is null")
-            eventDao.insert(EventEntity.fromDto(body))
+            eventDao.save(EventEntity.fromDto(body))
         } catch (e: Exception) {
             throw RuntimeException(e)
         }

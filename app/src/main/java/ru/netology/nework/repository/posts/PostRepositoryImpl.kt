@@ -71,11 +71,11 @@ class PostRepositoryImpl @Inject constructor(
         try {
             val response = apiService.removePostById(authToken, id)
             if (!response.isSuccessful) {
-                postDao.insert(removed)
+                postDao.save(removed)
                 throw RuntimeException(response.code().toString())
             }
         } catch (e: Exception) {
-            postDao.insert(removed)
+            postDao.save(removed)
             throw RuntimeException(e)
         }
     }
@@ -92,7 +92,7 @@ class PostRepositoryImpl @Inject constructor(
                 )
             }
             val body = response.body() ?: throw RuntimeException("body is null")
-            postDao.insert(PostEntity.fromDto(body))
+            postDao.save(PostEntity.fromDto(body))
         } catch (e: Exception) {
             throw RuntimeException(e)
         }

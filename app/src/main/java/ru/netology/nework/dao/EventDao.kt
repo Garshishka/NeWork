@@ -1,10 +1,7 @@
 package ru.netology.nework.dao
 
 import androidx.paging.PagingSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 import ru.netology.nework.entity.EventEntity
 
@@ -23,19 +20,10 @@ interface EventDao {
     fun getMyWalLPagingSource(id: Int): PagingSource<Int, EventEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(event: EventEntity)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(events: List<EventEntity>)
 
-    @Query("UPDATE EventEntity SET content = :content WHERE id = :id")
-    suspend fun updateContentByID(id: Int, content: String)
-
-    suspend fun save(event: EventEntity) =
-        if (event.id == 0) insert(event) else updateContentByID(
-            event.id,
-            event.content
-        )
+    @Upsert
+    suspend fun save(event: EventEntity)
 
     @Query("SELECT * FROM EventEntity WHERE id = :id")
     suspend fun getById(id: Int): EventEntity
@@ -51,7 +39,7 @@ interface EventDao {
         } else {
             likesList.add(userId)
         }
-        insert(event.copy(likeOwnerIds = likesList, likedByMe = !event.likedByMe))
+        save(event.copy(likeOwnerIds = likesList, likedByMe = !event.likedByMe))
     }
 
     suspend fun participateById(id: Int, userId: Int) {
@@ -62,7 +50,7 @@ interface EventDao {
         } else {
             participatedList.add(userId)
         }
-        insert(
+        save(
             event.copy(
                 participantIds = participatedList,
                 participatedByMe = !event.participatedByMe

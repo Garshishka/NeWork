@@ -1,10 +1,7 @@
 package ru.netology.nework.dao
 
 import androidx.paging.PagingSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 import ru.netology.nework.entity.PostEntity
 
@@ -23,19 +20,10 @@ interface PostDao {
     fun getMyWalLPagingSource(id:Int): PagingSource<Int, PostEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(post: PostEntity)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(posts: List<PostEntity>)
 
-    @Query("UPDATE PostEntity SET content = :content WHERE id = :id")
-    suspend fun updateContentByID(id: Int, content: String)
-
-    suspend fun save(post: PostEntity) =
-        if (post.id == 0) insert(post) else updateContentByID(
-            post.id,
-            post.content
-        )
+    @Upsert
+    suspend fun save(post: PostEntity)
 
     @Query("SELECT * FROM PostEntity WHERE id = :id")
     suspend fun getById(id: Int): PostEntity
@@ -51,7 +39,7 @@ interface PostDao {
         } else {
             likesList.add(userId)
         }
-        insert(post.copy(likeOwnerIds = likesList, likedByMe = !post.likedByMe))
+        save(post.copy(likeOwnerIds = likesList, likedByMe = !post.likedByMe))
     }
 
     @Query("DELETE FROM PostEntity")
