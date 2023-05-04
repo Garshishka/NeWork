@@ -11,7 +11,6 @@ import ru.netology.nework.entity.EventEntity
 import ru.netology.nework.entity.EventRemoteKeyEntity
 import ru.netology.nework.entity.PostEntity
 import ru.netology.nework.entity.PostRemoteKeyEntity
-import ru.netology.nework.entity.converters.EventTypeConverter
 import ru.netology.nework.entity.converters.IdListConverter
 import ru.netology.nework.entity.converters.UserMapConverter
 
@@ -20,7 +19,7 @@ import ru.netology.nework.entity.converters.UserMapConverter
     version = 2,
     exportSchema = false,
 )
-@TypeConverters(IdListConverter::class, UserMapConverter::class, EventTypeConverter::class)
+@TypeConverters(IdListConverter::class, UserMapConverter::class)
 abstract class AppDb : RoomDatabase() {
     abstract fun postDao(): PostDao
     abstract fun postRemoteKeyDao(): PostRemoteKeyDao
