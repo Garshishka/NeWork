@@ -15,7 +15,6 @@
     <string name="play_attachment">Проиграть файл</string>
     <string name="description_post_likes">Нравится</string>
     <string name="description_post_mentions">Упоминания</string>
-    <string name="description_post_views">Кол-во просмотров</string>
     <string name="not_on_server_yet">Еще не загружено</string>
     <string name="etc">…</string>
     <string name="edit">Редактировать</string>
@@ -24,7 +23,6 @@
     <string name="log_out">Выйти из системы</string>
     <string name="add_post">Добавить пост</string>
     <string name="select_photo">Выбрать фото</string>
-    <string name="take_photo">Сделать фото</string>
     <string name="removePhoto">Удалить прикрепленное</string>
     <string name="specific_posting_error">Код ошибки:%1$s Попробуйте отправить сообщение снова</string>
     <string name="back">Назад</string>
@@ -37,9 +35,6 @@
     <string name="post_content_hint">Текст сообщения</string>
     <string name="link_hint">Добавить ссылку к посту</string>
     <string name="coordinates_hint">Добавить координаты к посту</string>
-    <string name="coordinates_hint_lat">Добавить широту</string>
-    <string name="coordinates_hint_long">Добавить долготу</string>
-    <string name="coords_not_both_filled">Обе координаты должны быть заполнены!</string>
     <string name="select_audio">Выбрать аудио</string>
     <string name="plus">+</string>
     <string name="description_choose_avatar">Выберите ваш аватар</string>
@@ -54,9 +49,6 @@
     <string name="job_name">Имя работы</string>
     <string name="job_position">Должность</string>
     <string name="add_job">Добавить работу</string>
-    <string name="job_start">Начало работы</string>
-    <string name="job_finish">Окончание работы</string>
-    <string name="job_link">Ссылка на работу</string>
     <string name="no_context">У поста должен быть текст</string>
     <string name="job_not_filled">Пожалуйста заполните все обязательные поля</string>
     <string name="job_finish_date">Дата окончания работы (опционально)</string>

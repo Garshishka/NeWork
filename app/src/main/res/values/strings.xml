@@ -14,7 +14,6 @@
     <string name="play_attachment">Play attachment</string>
     <string name="description_post_likes">Like</string>
     <string name="description_post_mentions">Mentions</string>
-    <string name="description_post_views">Views</string>
     <string name="not_on_server_yet">Not loaded yet</string>
     <string name="etc">…</string>
     <string name="edit">Edit</string>
@@ -23,7 +22,6 @@
     <string name="log_out">Log out</string>
     <string name="add_post">Add post</string>
     <string name="select_photo">Select photo</string>
-    <string name="take_photo">Take photo</string>
     <string name="removePhoto">Remove attachment</string>
     <string name="specific_posting_error">Error code:%1$s Try sending the message again</string>
     <string name="back">Back</string>
@@ -36,9 +34,6 @@
     <string name="post_content_hint">Post content</string>
     <string name="link_hint">Add link to your post</string>
     <string name="coordinates_hint">Add coordinates to your post</string>
-    <string name="coordinates_hint_lat">Add latitude</string>
-    <string name="coordinates_hint_long">Add longitude</string>
-    <string name="coords_not_both_filled">Both coordinates fields must be filled!</string>
     <string name="select_audio">Select audio</string>
     <string name="plus">+</string>
     <string name="description_choose_avatar">Choose your avatar</string>
@@ -53,9 +48,6 @@
     <string name="job_name">Job name</string>
     <string name="job_position">Job position</string>
     <string name="add_job">Add job</string>
-    <string name="job_start">Job start</string>
-    <string name="job_finish">Job finish</string>
-    <string name="job_link">Job link</string>
     <string name="no_context">Please fill the post text</string>
     <string name="job_not_filled">Please fill all the required fields</string>
     <string name="job_finish_date">Job finish date (optional)</string>
