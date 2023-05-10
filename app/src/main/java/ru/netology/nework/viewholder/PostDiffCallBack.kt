@@ -5,10 +5,6 @@ import ru.netology.nework.dto.Post
 
 class PostDiffCallBack: DiffUtil.ItemCallback<Post>() {
     override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
-        if(oldItem::class != newItem::class){
-            return false
-        }
-
         return oldItem.id == newItem.id
     }
 

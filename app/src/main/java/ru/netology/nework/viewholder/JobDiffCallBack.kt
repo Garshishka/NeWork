@@ -5,10 +5,6 @@ import ru.netology.nework.dto.Job
 
 class JobDiffCallBack: DiffUtil.ItemCallback<Job>() {
     override fun areItemsTheSame(oldItem: Job, newItem: Job): Boolean {
-        if(oldItem::class != newItem::class){
-            return false
-        }
-
         return oldItem.id == newItem.id
     }
 

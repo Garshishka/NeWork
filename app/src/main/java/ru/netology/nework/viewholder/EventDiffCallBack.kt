@@ -5,9 +5,6 @@ import ru.netology.nework.dto.Event
 
 class EventDiffCallBack: DiffUtil.ItemCallback<Event>() {
     override fun areItemsTheSame(oldItem: Event, newItem: Event): Boolean {
-        if(oldItem::class != newItem::class){
-            return false
-        }
         return oldItem.id == newItem.id
     }
 
