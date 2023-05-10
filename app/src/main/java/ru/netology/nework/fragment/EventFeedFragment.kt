@@ -49,7 +49,7 @@ open class EventFeedFragment : Fragment() {
     private val onInteractionListener = object : EventInteractionListener {
         override fun onLike(event: Event) {
             val token = authViewModel.state.value?.token
-            if (token == null || token == "0") {
+            if (token == null) {
                 context?.let { showSignInDialog(it) }
             } else {
                 viewModel.likeById(event.id, event.likedByMe)
@@ -79,7 +79,7 @@ open class EventFeedFragment : Fragment() {
 
         override fun onParticipate(event: Event) {
             val token = authViewModel.state.value?.token
-            if (token == null || token == "0") {
+            if (token == null) {
                 context?.let { showSignInDialog(it) }
             } else {
                 viewModel.participateById(event.id, event.participatedByMe)
@@ -173,7 +173,7 @@ open class EventFeedFragment : Fragment() {
 
             myWallButton.setOnClickListener {
                 val token = authViewModel.state.value?.token
-                if (token == null || token == "0") {
+                if (token == null) {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
                     val id = authViewModel.state.value!!.id
@@ -189,7 +189,7 @@ open class EventFeedFragment : Fragment() {
 
             jobsButton.setOnClickListener {
                 val token = authViewModel.state.value?.token
-                if (token == null || token == "0") {
+                if (token == null) {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
                     findNavController().navigate(R.id.action_global_jobFragment,
@@ -199,7 +199,7 @@ open class EventFeedFragment : Fragment() {
 
             addEventButton.setOnClickListener {
                 val token = authViewModel.state.value?.token
-                if (token == null || token == "0") {
+                if (token == null) {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
                     usersAndMapViewModel.coords = null

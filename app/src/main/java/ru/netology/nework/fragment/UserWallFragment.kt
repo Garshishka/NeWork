@@ -50,7 +50,7 @@ class UserWallFragment : PostFeedFragment() {
             myWallButton.isVisible = userId != authViewModel.state.value?.id
             myWallButton.setOnClickListener {
                 val token = authViewModel.state.value?.token
-                if (token == null || token == "0") {
+                if (token == null) {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
                     val id = authViewModel.state.value!!.id

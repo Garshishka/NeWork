@@ -50,7 +50,7 @@ open class PostFeedFragment : Fragment() {
     protected val onInteractionListener = object : PostInteractionListener {
         override fun onLike(post: Post) {
             val token = authViewModel.state.value?.token
-            if (token == null || token == "0") {
+            if (token == null) {
                 context?.let { showSignInDialog(it) }
             } else {
                 viewModel.likeById(post.id, post.likedByMe)
@@ -169,7 +169,7 @@ open class PostFeedFragment : Fragment() {
 
             jobsButton.setOnClickListener {
                 val token = authViewModel.state.value?.token
-                if (token == null || token == "0") {
+                if (token == null) {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
                     findNavController().navigate(
@@ -180,7 +180,7 @@ open class PostFeedFragment : Fragment() {
 
             addPostButton.setOnClickListener {
                 val token = authViewModel.state.value?.token
-                if (token == null || token == "0") {
+                if (token == null) {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
                     usersAndMapViewModel.coords = null
@@ -272,7 +272,7 @@ open class PostFeedFragment : Fragment() {
         binding.apply {
             myWallButton.setOnClickListener {
                 val token = authViewModel.state.value?.token
-                if (token == null || token == "0") {
+                if (token == null) {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
                     val id = authViewModel.state.value!!.id
