@@ -31,6 +31,7 @@ class MapFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
                 locationPermission = true
+                cameraToUserPosition()
             } else {
                 showPermissionSnackbar()
             }
