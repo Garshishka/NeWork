@@ -58,8 +58,12 @@ class UsersAndMapViewModel @Inject constructor(
         _userIdList.value?.remove(id)
     }
 
-    fun changeCheckedUsers(id: Int, changeToOtherState: Boolean) = viewModelScope.launch {
-        usersRepository.changeCheckedUsers(id, changeToOtherState)
+    fun changeCheckedUsers(id: Int) = viewModelScope.launch {
+        usersRepository.changeCheckedUsers(id)
+    }
+
+    fun checkCheckedUser(ids: List<Int>) = viewModelScope.launch {
+        usersRepository.checkCheckedUsers(ids)
     }
 
 /*  This part just doesn't work for some reason

@@ -7,5 +7,6 @@ interface UsersRepository {
     val usersData: LiveData<List<User>>
     suspend fun getUsers()
     suspend fun getBackOldUsers(oldUsers: List<User>)
-    suspend fun changeCheckedUsers(id: Int, changeToOtherState: Boolean)
+    suspend fun checkCheckedUsers(ids: List<Int>)
+    suspend fun changeCheckedUsers(id: Int)
 }

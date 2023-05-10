@@ -60,8 +60,7 @@ class JobViewModel @Inject constructor(
                     throw RuntimeException(response.code().toString())
                 }
                 val jobs = response.body() ?: throw RuntimeException("body is null")
-                jobs.forEach() { it.ownedByMe = true }
-                _jobsData.postValue(jobs)
+                _jobsData.postValue(jobs.map { it.copy(ownedByMe = true) })
             } catch (e: Exception) {
                 println(e.message.toString())
             }

@@ -22,7 +22,7 @@ class UsersFragment : Fragment() {
                 viewModel.removeUser(user.id)
             else
                 viewModel.addUser(user.id)
-            viewModel.changeCheckedUsers(user.id, true)
+            viewModel.changeCheckedUsers(user.id)
         }
     }
 
@@ -36,9 +36,7 @@ class UsersFragment : Fragment() {
         //viewModel.saveOldUsers()
         val binding = FragmentUsersBinding.inflate(inflater, container, false)
         //For users already in list we check them
-        viewModel.userIdList.value?.forEach {
-            viewModel.changeCheckedUsers(it, false)
-        }
+        viewModel.userIdList.value?.let { viewModel.checkCheckedUser(it) }
         binding.usersList.adapter = adapter
 
         binding.addUsersButton.setOnClickListener {

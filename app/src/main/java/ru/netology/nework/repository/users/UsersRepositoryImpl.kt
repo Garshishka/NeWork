@@ -35,16 +35,21 @@ class UsersRepositoryImpl @Inject constructor(
         _usersData.postValue(oldUsers)
     }
 
-    override suspend fun changeCheckedUsers(id: Int, changeToOtherState: Boolean) {
+    override suspend fun checkCheckedUsers(ids: List<Int>) {
         val data = _usersData.value
-        val foundUser = data?.find { it.id == id }
-        foundUser?.let {
-            if (changeToOtherState) {
-                it.checkedNow = !it.checkedNow
-            } else {
-                it.checkedNow = true
-            }
-            _usersData.postValue(data)
-        }
+        _usersData.postValue(data?.map {
+            it.copy(
+                checkedNow = if (ids.contains(it.id)) true else it.checkedNow
+            )
+        })
+    }
+
+    override suspend fun changeCheckedUsers(id: Int) {
+        val data = _usersData.value
+        _usersData.postValue(data?.map {
+            it.copy(
+                checkedNow = if (it.id == id)  !it.checkedNow else it.checkedNow
+            )
+        })
     }
 }
