@@ -1,9 +1,16 @@
 package ru.netology.nework.dto
 
+import com.google.gson.annotations.SerializedName
+
 data class User(
+    @SerializedName("id")
     val id : Int,
+    @SerializedName("login")
     val login: String,
+    @SerializedName("name")
     val name: String,
+    @SerializedName("avatar")
     val avatar: String?,
-    var checkedNow: Boolean = false
+
+    val checkedNow: Boolean = false
 )
