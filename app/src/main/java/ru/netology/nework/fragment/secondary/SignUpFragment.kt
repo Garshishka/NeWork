@@ -11,6 +11,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import by.kirich1409.viewbindingdelegate.CreateMethod
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nework.R
@@ -26,7 +28,7 @@ class SignUpFragment : Fragment() {
     @Inject
     lateinit var appAuth: AppAuth
 
-    lateinit var binding: FragmentSignUpBinding
+    private val binding: FragmentSignUpBinding by viewBinding(createMethod = CreateMethod.INFLATE)
     private val viewModel: SignUpViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -34,8 +36,6 @@ class SignUpFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSignUpBinding.inflate(inflater, container, false)
-
         subscribe()
 
         return binding.root

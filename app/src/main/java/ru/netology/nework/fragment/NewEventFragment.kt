@@ -19,6 +19,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import by.kirich1409.viewbindingdelegate.CreateMethod
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nework.R
@@ -45,7 +47,7 @@ class NewEventFragment : Fragment() {
     private val viewModel: EventViewModel by activityViewModels()
     private val usersAndMapViewModel: UsersAndMapViewModel by activityViewModels()
 
-    lateinit var binding: FragmentNewEventBinding
+    private val binding: FragmentNewEventBinding by viewBinding(createMethod = CreateMethod.INFLATE)
 
     //For choosing Audio file. There is an standard Image-Video picker but no Audio picker so it on its own
     private val resultLauncher =
@@ -69,7 +71,6 @@ class NewEventFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentNewEventBinding.inflate(inflater, container, false)
         bind()
         binding.edit.requestFocus()
 

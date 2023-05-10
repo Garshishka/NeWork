@@ -8,6 +8,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import by.kirich1409.viewbindingdelegate.CreateMethod
+import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nework.R
 import ru.netology.nework.auth.AppAuth
@@ -20,7 +22,7 @@ class SignInFragment : Fragment() {
     @Inject
     lateinit var appAuth: AppAuth
 
-    lateinit var binding: FragmentSignInBinding
+    private val binding: FragmentSignInBinding by viewBinding(createMethod = CreateMethod.INFLATE)
     private val viewModel: SignInViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -28,8 +30,6 @@ class SignInFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSignInBinding.inflate(inflater, container, false)
-
         subscribe()
 
         return binding.root

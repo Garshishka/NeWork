@@ -15,6 +15,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
+import by.kirich1409.viewbindingdelegate.CreateMethod
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
@@ -43,7 +45,7 @@ open class EventFeedFragment : Fragment() {
     private val viewModel: EventViewModel by activityViewModels()
     protected val usersAndMapViewModel: UsersAndMapViewModel by activityViewModels()
     private val authViewModel: AuthViewModel by activityViewModels()
-    private lateinit var binding: FragmentEventsBinding
+    private val binding: FragmentEventsBinding by viewBinding(createMethod = CreateMethod.INFLATE)
     private lateinit var postData: Flow<PagingData<Event>>
 
     private val onInteractionListener = object : EventInteractionListener {
@@ -126,8 +128,6 @@ open class EventFeedFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentEventsBinding.inflate(inflater, container, false)
-
         binding.listEvents.adapter = adapter
         postData = viewModel.data
 

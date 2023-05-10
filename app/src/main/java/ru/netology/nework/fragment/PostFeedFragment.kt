@@ -15,6 +15,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
+import by.kirich1409.viewbindingdelegate.CreateMethod
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
@@ -44,7 +46,7 @@ open class PostFeedFragment : Fragment() {
     protected open val viewModel: PostViewModel by activityViewModels()
     protected val usersAndMapViewModel: UsersAndMapViewModel by activityViewModels()
     protected val authViewModel: AuthViewModel by activityViewModels()
-    protected lateinit var binding: FragmentPostsBinding
+    protected val binding: FragmentPostsBinding by viewBinding(createMethod = CreateMethod.INFLATE)
     protected lateinit var postData: Flow<PagingData<Post>>
 
     protected val onInteractionListener = object : PostInteractionListener {
@@ -121,8 +123,6 @@ open class PostFeedFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPostsBinding.inflate(inflater, container, false)
-
         binding.listPosts.adapter = adapter
         postData = viewModel.data
 

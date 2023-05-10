@@ -12,6 +12,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import by.kirich1409.viewbindingdelegate.CreateMethod
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.snackbar.Snackbar
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -43,14 +45,13 @@ class MapFragment : Fragment() {
     private lateinit var userLocationLayer: UserLocationLayer
     private lateinit var nowTarget: Point
 
-    lateinit var binding: FragmentMapBinding
+    private val binding: FragmentMapBinding by viewBinding(createMethod = CreateMethod.INFLATE)
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMapBinding.inflate(inflater, container, false)
         checkMapPermission()
         MapKitFactory.initialize(requireContext())
 

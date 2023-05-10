@@ -12,6 +12,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import by.kirich1409.viewbindingdelegate.CreateMethod
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nework.R
@@ -46,7 +48,7 @@ class JobFragment : Fragment() {
     }
 
     private val adapter = JobAdapter(onInteractionListener)
-    lateinit var binding: FragmentJobsBinding
+    private val binding: FragmentJobsBinding by viewBinding(createMethod = CreateMethod.INFLATE)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,7 +56,7 @@ class JobFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val userId = arguments?.idArg
-        binding = FragmentJobsBinding.inflate(inflater, container, false)
+
         viewModel.load(userId)
 
         subscribe(userId)

@@ -9,7 +9,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nework.R
-import ru.netology.nework.databinding.FragmentPostsBinding
 import ru.netology.nework.dto.User
 import ru.netology.nework.fragment.JobFragment.Companion.idArg
 import ru.netology.nework.fragment.JobFragment.Companion.myJobsArg
@@ -28,8 +27,6 @@ class UserWallFragment : PostFeedFragment() {
     ): View {
         val userId: Int = arguments?.userIdArg?.let { arguments?.userIdArg?.toInt() } ?: 0
         val userJob = arguments?.userJobArg.toString()
-
-        binding = FragmentPostsBinding.inflate(inflater, container, false)
 
         binding.listPosts.adapter = adapter
         postData = viewModel.data

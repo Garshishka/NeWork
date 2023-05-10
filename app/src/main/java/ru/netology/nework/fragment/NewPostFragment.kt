@@ -16,6 +16,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import by.kirich1409.viewbindingdelegate.CreateMethod
+import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nework.R
 import ru.netology.nework.auth.AppAuth
@@ -37,7 +39,7 @@ class NewPostFragment : Fragment() {
     private val viewModel: PostViewModel by activityViewModels()
     private val usersAndMapViewModel: UsersAndMapViewModel by activityViewModels()
 
-    lateinit var binding: FragmentNewPostBinding
+    private val binding: FragmentNewPostBinding by viewBinding(createMethod = CreateMethod.INFLATE)
 
     //For choosing Audio file. There is an standard Image-Video picker but no Audio picker so it on its own
     private val resultLauncher =
@@ -61,7 +63,6 @@ class NewPostFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentNewPostBinding.inflate(inflater, container, false)
         bind()
         binding.edit.requestFocus()
 
