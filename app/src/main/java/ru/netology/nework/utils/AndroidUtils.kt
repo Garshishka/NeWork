@@ -30,17 +30,12 @@ object AndroidUtils {
         val tempFile = File(context.cacheDir, fileName)
         tempFile.createNewFile()
 
-        try {
-            val oStream = FileOutputStream(tempFile)
+        FileOutputStream(tempFile).use { oStream ->
             val inputStream = context.contentResolver.openInputStream(contentUri)
-
             inputStream?.let {
                 copy(inputStream, oStream)
             }
-
             oStream.flush()
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
 
         return tempFile
