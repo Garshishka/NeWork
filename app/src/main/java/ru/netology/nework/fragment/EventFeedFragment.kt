@@ -259,11 +259,11 @@ open class EventFeedFragment : Fragment() {
             }
 
             eventsLikeError.observe(viewLifecycleOwner) {
-                val id = it.second.first
-                val willLike = it.second.second
+                val id = it.first
+                val willLike = it.second
                 Snackbar.make(
                     binding.root,
-                    getString(R.string.specific_edit_error, it.first),
+                    getString(R.string.like_error),
                     Snackbar.LENGTH_LONG
                 )
                     .setAction("Retry") {
@@ -273,11 +273,11 @@ open class EventFeedFragment : Fragment() {
             }
 
             eventsParticipateError.observe(viewLifecycleOwner) {
-                val id = it.second.first
-                val willLike = it.second.second
+                val id = it.first
+                val willLike = it.second
                 Snackbar.make(
                     binding.root,
-                    getString(R.string.specific_edit_error, it.first),
+                    getString(R.string.participation_error),
                     Snackbar.LENGTH_LONG
                 )
                     .setAction("Retry") {

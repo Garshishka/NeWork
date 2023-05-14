@@ -62,11 +62,11 @@ class EventViewModel @Inject constructor(
     private val _eventsRemoveError = SingleLiveEvent<Pair<String, Int>>()
     val eventsRemoveError: LiveData<Pair<String, Int>>
         get() = _eventsRemoveError
-    private val _eventsLikeError = SingleLiveEvent<Pair<String, Pair<Int, Boolean>>>()
-    val eventsLikeError: LiveData<Pair<String, Pair<Int, Boolean>>>
+    private val _eventsLikeError = SingleLiveEvent< Pair<Int, Boolean>>()
+    val eventsLikeError: LiveData<Pair<Int, Boolean>>
         get() = _eventsLikeError
-    private val _eventsParticipateError = SingleLiveEvent<Pair<String, Pair<Int, Boolean>>>()
-    val eventsParticipateError: LiveData<Pair<String, Pair<Int, Boolean>>>
+    private val _eventsParticipateError = SingleLiveEvent<Pair<Int, Boolean>>()
+    val eventsParticipateError: LiveData<Pair<Int, Boolean>>
         get() = _eventsParticipateError
     private val _usersLoadError = SingleLiveEvent<String>()
     val usersLoadError: LiveData<String>
@@ -101,7 +101,8 @@ class EventViewModel @Inject constructor(
         try {
             appAuth.getToken()?.let { repository.likeById(id, !likedByMe, it, appAuth.getId()) }
         } catch (e: Exception) {
-            _eventsLikeError.postValue(e.toString() to (id to likedByMe))
+            //TODO log error
+            _eventsLikeError.postValue(id to likedByMe)
         }
     }
 
@@ -110,7 +111,8 @@ class EventViewModel @Inject constructor(
             appAuth.getToken()
                 ?.let { repository.participateById(id, !participatedByMe, it, appAuth.getId()) }
         } catch (e: Exception) {
-            _eventsParticipateError.postValue(e.toString() to (id to participatedByMe))
+            //TODO log error
+            _eventsParticipateError.postValue(id to participatedByMe)
         }
     }
 

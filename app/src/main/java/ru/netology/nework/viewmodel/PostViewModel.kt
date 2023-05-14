@@ -62,8 +62,8 @@ open class PostViewModel @Inject constructor(
     protected val _postsRemoveError = SingleLiveEvent<Pair<String, Int>>()
     val postsRemoveError: LiveData<Pair<String, Int>>
         get() = _postsRemoveError
-    protected val _postsLikeError = SingleLiveEvent<Pair<String, Pair<Int, Boolean>>>()
-    val postsLikeError: LiveData<Pair<String, Pair<Int, Boolean>>>
+    protected val _postsLikeError = SingleLiveEvent<Pair<Int, Boolean>>()
+    val postsLikeError: LiveData<Pair<Int, Boolean>>
         get() = _postsLikeError
 
     init {
@@ -84,7 +84,8 @@ open class PostViewModel @Inject constructor(
         try {
             appAuth.getToken()?.let { repository.likeById(id, !likedByMe, it, appAuth.getId()) }
         } catch (e: Exception) {
-            _postsLikeError.postValue(e.toString() to (id to likedByMe))
+            //TODO Log error
+            _postsLikeError.postValue(id to likedByMe)
         }
     }
 
