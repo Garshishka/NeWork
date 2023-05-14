@@ -21,8 +21,8 @@ jobs:
   
       - name: Decode Constants.kt
         env:
-          FIREBASE_SECRET: ${{ secrets.MAP_TOKEN }}
-        run: echo $MAP_TOKEN > ./app/Constants.kt
+          MAP_TOKEN: ${{ secrets.MAP_TOKEN }}
+        run: echo $MAP_TOKEN > ./app/src/main/java/ru/netology/nework/Constants.kt
 
       - name: Build
         run: |
