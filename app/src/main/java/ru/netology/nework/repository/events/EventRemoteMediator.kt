@@ -12,6 +12,7 @@ import ru.netology.nework.db.AppDb
 import ru.netology.nework.entity.EventEntity
 import ru.netology.nework.entity.EventRemoteKeyEntity
 import ru.netology.nmedia.error.ApiError
+import timber.log.Timber
 
 @OptIn(ExperimentalPagingApi::class)
 class EventRemoteMediator(
@@ -95,6 +96,7 @@ class EventRemoteMediator(
             }
             return MediatorResult.Success(body.isEmpty())
         } catch (e: Exception) {
+            Timber.e("Error loading more events: ${e.message}")
             return MediatorResult.Error(e)
         }
     }

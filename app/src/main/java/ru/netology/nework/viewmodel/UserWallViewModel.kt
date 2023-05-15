@@ -19,6 +19,7 @@ import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.dto.Post
 import ru.netology.nework.repository.posts.PostRepository
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import javax.inject.Inject
@@ -51,7 +52,9 @@ class UserWallViewModel @Inject constructor(
         try {
             repository.getUserWall(appAuth.getToken(), appAuth.userId)
             _dataState.value = FeedModelState.Idle
+            Timber.i("Loaded wall")
         } catch (e: Exception) {
+            Timber.e("Error loading user wall: ${e.message}")
             _dataState.value = FeedModelState.Error
         }
     }
@@ -72,8 +75,9 @@ class UserWallViewModel @Inject constructor(
                     )
                 }
                 _myJob.postValue(pack.maxBy { it.key }.value)
+                Timber.i("Loaded job")
             } catch (e: Exception) {
-                println(e.message)
+                Timber.e("Error loading job: ${e.message}")
                 _myJob.postValue("")
             }
         }

@@ -14,6 +14,7 @@ import ru.netology.nework.auth.AuthPair
 import ru.netology.nework.dto.AttachmentType
 import ru.netology.nework.dto.MediaModel
 import ru.netology.nework.utils.SingleLiveEvent
+import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -50,13 +51,14 @@ class SignUpViewModel @Inject constructor(
                 }
             }
             if (!response.isSuccessful) {
-                println(response.message())
+                Timber.e("Bad response: ${response.message()}")
                 _signUpError.postValue(response.message())
             }
             val authPair = response.body() ?: throw RuntimeException("body is null")
             _signUpRight.postValue(authPair)
+            Timber.i("Signed up as $login")
         } catch (e: Exception) {
-            println(e)
+            Timber.e("Error signing up: ${e.message}")
             _signUpError.postValue(e.toString())
         }
     }

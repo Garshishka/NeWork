@@ -21,6 +21,7 @@ import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.*
 import ru.netology.nework.repository.posts.PostRepository
 import ru.netology.nework.utils.SingleLiveEvent
+import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -75,7 +76,9 @@ open class PostViewModel @Inject constructor(
         try {
             repository.getAll(appAuth.getToken())
             _dataState.value = FeedModelState.Idle
+            Timber.i("Loaded posts")
         } catch (e: Exception) {
+            Timber.e("Error loading posts: ${e.message}")
             _dataState.value = FeedModelState.Error
         }
     }
@@ -83,8 +86,9 @@ open class PostViewModel @Inject constructor(
     fun likeById(id: Int, likedByMe: Boolean) = viewModelScope.launch {
         try {
             appAuth.getToken()?.let { repository.likeById(id, !likedByMe, it, appAuth.getId()) }
+            Timber.i("Like on posts $id to ${!likedByMe}")
         } catch (e: Exception) {
-            //TODO Log error
+            Timber.e("Error liking post: ${e.message}")
             _postsLikeError.postValue(id to likedByMe)
         }
     }
@@ -146,8 +150,9 @@ open class PostViewModel @Inject constructor(
                     }
                     _postCreated.postValue(Unit)
                     empty()
+                    Timber.i("New post made")
                 } catch (e: Exception) {
-                    println(e.message.toString())
+                    Timber.e("Error creating post: ${e.message}")
                     _postCreatedError.postValue(e.message.toString() to it)
                 }
             }
@@ -166,8 +171,9 @@ open class PostViewModel @Inject constructor(
     fun removeById(id: Int) = viewModelScope.launch {
         try {
             appAuth.getToken()?.let { repository.removeById(it, id) }
+            Timber.i("Removed post $id")
         } catch (e: Exception) {
-            println(e.message)
+            Timber.e("Error removing post: ${e.message}")
             _postsRemoveError.postValue(e.message.toString() to id)
         }
     }
