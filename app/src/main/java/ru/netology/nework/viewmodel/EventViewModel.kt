@@ -21,6 +21,7 @@ import ru.netology.nework.dto.*
 import ru.netology.nework.repository.events.EventRepository
 import ru.netology.nework.repository.users.UsersRepository
 import ru.netology.nework.utils.SingleLiveEvent
+import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -82,7 +83,9 @@ class EventViewModel @Inject constructor(
         try {
             repository.getAll(appAuth.getToken())
             _dataState.value = FeedModelState.Idle
+            Timber.i("Loaded events")
         } catch (e: Exception) {
+            Timber.e("Error loading events: ${e.message}")
             _dataState.value = FeedModelState.Error
         }
     }
@@ -92,7 +95,9 @@ class EventViewModel @Inject constructor(
         try {
             usersRepository.getUsers()
             _dataState.value = FeedModelState.Idle
+            Timber.i("Loaded users")
         } catch (e: Exception) {
+            Timber.e("Error loading users: ${e.message}")
             _usersLoadError.postValue(e.toString())
         }
     }
@@ -100,8 +105,9 @@ class EventViewModel @Inject constructor(
     fun likeById(id: Int, likedByMe: Boolean) = viewModelScope.launch {
         try {
             appAuth.getToken()?.let { repository.likeById(id, !likedByMe, it, appAuth.getId()) }
+            Timber.i("Like on event $id to ${!likedByMe}")
         } catch (e: Exception) {
-            //TODO log error
+            Timber.e("Error liking event: ${e.message}")
             _eventsLikeError.postValue(id to likedByMe)
         }
     }
@@ -110,8 +116,9 @@ class EventViewModel @Inject constructor(
         try {
             appAuth.getToken()
                 ?.let { repository.participateById(id, !participatedByMe, it, appAuth.getId()) }
+            Timber.i("Participation on event $id to ${!participatedByMe}")
         } catch (e: Exception) {
-            //TODO log error
+            Timber.e("Error participating in event: ${e.message}")
             _eventsParticipateError.postValue(id to participatedByMe)
         }
     }
@@ -189,8 +196,9 @@ class EventViewModel @Inject constructor(
                     }
                     _eventCreated.postValue(Unit)
                     empty()
+                    Timber.i("New event made")
                 } catch (e: Exception) {
-                    println(e.message.toString())
+                    Timber.e("Error creating event: ${e.message}")
                     _eventCreatedError.postValue(e.message.toString() to it)
                 }
             }
@@ -209,8 +217,9 @@ class EventViewModel @Inject constructor(
     fun removeById(id: Int) = viewModelScope.launch {
         try {
             appAuth.getToken()?.let { repository.removeById(it, id) }
+            Timber.i("Removed event $id")
         } catch (e: Exception) {
-            println(e.message)
+            Timber.e("Error removing event: ${e.message}")
             _eventsRemoveError.postValue(e.message.toString() to id)
         }
     }

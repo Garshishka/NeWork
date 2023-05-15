@@ -12,6 +12,7 @@ import ru.netology.nework.db.AppDb
 import ru.netology.nework.entity.PostEntity
 import ru.netology.nework.entity.PostRemoteKeyEntity
 import ru.netology.nmedia.error.ApiError
+import timber.log.Timber
 
 @OptIn(ExperimentalPagingApi::class)
 class PostRemoteMediator(
@@ -95,6 +96,7 @@ class PostRemoteMediator(
             }
             return MediatorResult.Success(body.isEmpty())
         } catch (e: Exception) {
+            Timber.e("Error loading more posts: ${e.message}")
             return MediatorResult.Error(e)
         }
     }

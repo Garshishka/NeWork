@@ -10,6 +10,7 @@ import ru.netology.nework.dto.Coords
 import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.repository.users.UsersRepository
 import ru.netology.nework.utils.SingleLiveEvent
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,7 +45,9 @@ class UsersAndMapViewModel @Inject constructor(
         try {
             usersRepository.getUsers()
             _dataState.value = FeedModelState.Idle
+            Timber.i("Loaded users")
         } catch (e: Exception) {
+            Timber.e("Error loading users: ${e.message}")
             _dataState.value = FeedModelState.Error
             _usersLoadError.postValue(e.toString())
         }

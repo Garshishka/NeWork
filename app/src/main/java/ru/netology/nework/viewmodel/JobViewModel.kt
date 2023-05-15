@@ -11,6 +11,7 @@ import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dto.FeedModelState
 import ru.netology.nework.dto.Job
 import ru.netology.nework.utils.SingleLiveEvent
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,6 +49,7 @@ class JobViewModel @Inject constructor(
             }
             _dataState.value = FeedModelState.Idle
         } catch (e: Exception) {
+            Timber.e("Error loading user $id jobs: ${e.message}")
             _dataState.value = FeedModelState.Error
         }
     }
@@ -61,8 +63,9 @@ class JobViewModel @Inject constructor(
                 }
                 val jobs = response.body() ?: throw RuntimeException("body is null")
                 _jobsData.postValue(jobs.map { it.copy(ownedByMe = true) })
+                Timber.i("Loaded my jobs")
             } catch (e: Exception) {
-                println(e.message.toString())
+                Timber.e("Error loading my jobs: ${e.message}")
             }
         }
     }
@@ -75,8 +78,9 @@ class JobViewModel @Inject constructor(
             }
             val jobs = response.body() ?: throw RuntimeException("body is null")
             _jobsData.postValue(jobs)
+            Timber.i("Loaded user $id jobs")
         } catch (e: Exception) {
-            println(e.message.toString())
+            Timber.e("Error loading user $id jobs: ${e.message}")
         }
     }
 
@@ -93,7 +97,9 @@ class JobViewModel @Inject constructor(
                     } else {
                         load(userId)
                     }
+                    Timber.i("Saved new job")
                 } catch (e: Exception) {
+                    Timber.e("Error saving new job: ${e.message}")
                     _newJobLoadError.postValue(e.toString())
                 }
             }
@@ -110,8 +116,9 @@ class JobViewModel @Inject constructor(
                     load(userId)
                 }
             }
+            Timber.i("Removed $id job")
         } catch (e: Exception) {
-            println(e.message)
+            Timber.e("Error removing $id job: ${e.message}")
             _jobRemoveError.postValue(e.message.toString())
         }
     }

@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import ru.netology.nework.api.ApiService
 import ru.netology.nework.auth.AuthPair
 import ru.netology.nework.utils.SingleLiveEvent
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,7 +36,9 @@ class SignInViewModel @Inject constructor(
             }
             val authPair = response.body() ?: throw RuntimeException("body is null")
             _signInRight.postValue(authPair)
+            Timber.i("Signed in as $login")
         } catch (e: Exception) {
+            Timber.e("Error signing in: ${e.message}")
             _signInError.postValue(e.toString())
         }
     }
