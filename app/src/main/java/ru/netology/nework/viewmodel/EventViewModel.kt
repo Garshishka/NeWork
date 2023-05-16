@@ -236,10 +236,6 @@ class EventViewModel @Inject constructor(
     fun deleteMedia() {
         _attachment.value = noMedia
     }
-
-    fun changeUserId(userId: Int) {
-        appAuth.userId = userId
-    }
 }
 
 private val emptyEvent = Event(

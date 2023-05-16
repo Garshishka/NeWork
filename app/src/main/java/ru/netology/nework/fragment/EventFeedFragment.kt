@@ -69,7 +69,7 @@ open class EventFeedFragment : Fragment() {
         }
 
         override fun onAvatarClick(event: Event) {
-            viewModel.changeUserId(event.authorId)
+            //viewModel.changeUserId(event.authorId)
             findNavController().navigate(R.id.action_global_userWallFragment,
                 Bundle().apply
                 {
@@ -177,7 +177,6 @@ open class EventFeedFragment : Fragment() {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
                     val id = authViewModel.state.value!!.id
-                    viewModel.changeUserId(id)
                     findNavController().navigate(R.id.action_global_userWallFragment,
                         Bundle().apply
                         {

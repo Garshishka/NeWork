@@ -6,7 +6,6 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import ru.netology.nework.api.ApiService
-import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dao.PostDao
 import ru.netology.nework.dao.PostRemoteKeyDao
 import ru.netology.nework.db.AppDb
@@ -20,7 +19,7 @@ class PostRemoteMediatorUserWall(
     private val postDao: PostDao,
     private val postRemoteKeyDao: PostRemoteKeyDao,
     private val appDb: AppDb,
-    private val appAuth: AppAuth,
+    private val userId: Int,
 ) : RemoteMediator<Int, PostEntity>() {
     override suspend fun load(
         loadType: LoadType,
@@ -31,15 +30,15 @@ class PostRemoteMediatorUserWall(
             val result = when (loadType) {
                 LoadType.REFRESH -> {
                     if (maxId == null) {
-                        service.getUserWallLatest(state.config.pageSize, appAuth.userId)
+                        service.getUserWallLatest(state.config.pageSize, userId)
                     } else {
                         val id = postRemoteKeyDao.max() ?: return MediatorResult.Success(false)
-                        service.getUserWallAfter(appAuth.userId, id, state.config.pageSize)
+                        service.getUserWallAfter(userId, id, state.config.pageSize)
                     }
                 }
                 LoadType.APPEND -> {
                     val id = postRemoteKeyDao.min() ?: return MediatorResult.Success(false)
-                    service.getUserWallBefore(appAuth.userId, id, state.config.pageSize)
+                    service.getUserWallBefore(userId, id, state.config.pageSize)
                 }
                 LoadType.PREPEND -> {
                     return MediatorResult.Success(false)

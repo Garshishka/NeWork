@@ -73,7 +73,6 @@ open class PostFeedFragment : Fragment() {
             if (viewModel is UserWallViewModel) {
                 //in user wall avatar click does nothing
             } else {
-                viewModel.changeUserId(post.authorId)
                 findNavController().navigate(R.id.action_postFeedFragment_to_userWallFragment,
                     Bundle().apply
                     {
@@ -276,7 +275,7 @@ open class PostFeedFragment : Fragment() {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
                     val id = authViewModel.state.value!!.id
-                    viewModel.changeUserId(id)
+                    //viewModel.changeUserId(id)
                     findNavController().navigate(R.id.action_postFeedFragment_to_userWallFragment,
                         Bundle().apply
                         {

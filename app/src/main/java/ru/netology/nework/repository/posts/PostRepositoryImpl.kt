@@ -7,7 +7,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.map
 import kotlinx.coroutines.flow.map
 import ru.netology.nework.api.ApiService
-import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.dao.PostDao
 import ru.netology.nework.dao.PostRemoteKeyDao
 import ru.netology.nework.db.AppDb
@@ -24,7 +23,6 @@ class PostRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     postRemoteKeyDao: PostRemoteKeyDao,
     appDb: AppDb,
-    private val auth: AppAuth,
     private val mediaRepository: MediaRepository
 ) : PostRepository {
     @OptIn(ExperimentalPagingApi::class)
@@ -35,16 +33,18 @@ class PostRepositoryImpl @Inject constructor(
     ).flow
         .map { it.map(PostEntity::toDto) }
 
+
+    var userId = 0
     @OptIn(ExperimentalPagingApi::class)
     override val dataUserWall = Pager(
         config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-        pagingSourceFactory = { postDao.getMyWalLPagingSource(auth.userId) },
+        pagingSourceFactory = { postDao.getMyWalLPagingSource(userId) },
         remoteMediator = PostRemoteMediatorUserWall(
             apiService,
             postDao,
             postRemoteKeyDao,
             appDb,
-            auth
+            userId,
         ),
     ).flow
         .map { it.map(PostEntity::toDto) }
@@ -138,7 +138,8 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     //USER WALL
-    override suspend fun getUserWall(authToken: String?, userId: Int) {
+    override suspend fun getUserWall(authToken: String?, sentUserId: Int) {
+        userId = sentUserId
         val response = apiService.getUserWall(userId)
         if (!response.isSuccessful) {
             throw RuntimeException(response.code().toString())

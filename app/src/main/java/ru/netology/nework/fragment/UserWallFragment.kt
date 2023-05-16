@@ -27,6 +27,7 @@ class UserWallFragment : PostFeedFragment() {
     ): View {
         val userId: Int = arguments?.userIdArg?.let { arguments?.userIdArg?.toInt() } ?: 0
         val userJob = arguments?.userJobArg.toString()
+        viewModel.userId = userId
 
         binding.listPosts.adapter = adapter
         postData = viewModel.data
@@ -51,7 +52,7 @@ class UserWallFragment : PostFeedFragment() {
                     context?.let { context -> showSignInDialog(context) }
                 } else {
                     val id = authViewModel.state.value!!.id
-                    viewModel.changeUserId(id)
+                    //viewModel.changeUserId(id)
                     findNavController().navigate(R.id.action_userWallFragment_self,
                         Bundle().apply
                         {

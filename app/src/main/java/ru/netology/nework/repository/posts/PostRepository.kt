@@ -12,7 +12,7 @@ interface PostRepository {
     val dataUserWall: Flow<PagingData<Post>>
     val edited : MutableLiveData<Post>
     suspend fun getAll(authToken: String?)
-    suspend fun getUserWall(authToken: String?, userId: Int)
+    suspend fun getUserWall(authToken: String?, sentUserId: Int)
     suspend fun removeById(authToken: String, id: Int)
     suspend fun save(post: Post, authToken: String)
     suspend fun likeById(id: Int, willLike: Boolean, authToken: String, userId: Int): Post
